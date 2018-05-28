@@ -7,12 +7,20 @@
 <ion-header>
 
   <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+
     <ion-title>Schützenfest</ion-title>
   </ion-navbar>
 
 </ion-header>
 
-
 <ion-content padding>
+  <ion-list>
+    <button ion-item *ngFor="let schuetzenfest of schuetzenfeste" (click)="itemSelected(item)">
+      {{ schuetzenfest }}
+    </button>
+  </ion-list>
 
 </ion-content>

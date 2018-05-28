@@ -22,4 +22,9 @@ export class SchuetzenfestPage {
     console.log('ionViewDidLoad SchuetzenfestPage');
   }
 
+  schuetzenfeste = [
+    'Vindonissa 2018',
+    'Volksschiessen 2018'
+  ]
+
 }
