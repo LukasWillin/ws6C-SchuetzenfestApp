@@ -15,7 +15,10 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class StichPage {
 
+  schuetzenfest: string;
+
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+    this.schuetzenfest = navParams.get('schuetzenfest');
   }
 
   ionViewDidLoad() {

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {StichPage} from "../stich/stich";
 
 /**
  * Generated class for the SchuetzenfestPage page.
@@ -26,5 +27,12 @@ export class SchuetzenfestPage {
     'Vindonissa 2018',
     'Volksschiessen 2018'
   ]
+
+  schuetzenfestSelected(schuetzenfest: string) {
+    console.log("selected schuetzenfest ", schuetzenfest);
+    this.navCtrl.push(StichPage, {
+      schuetzenfest: schuetzenfest
+    });
+  }
 
 }
