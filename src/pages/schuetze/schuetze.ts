@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 /**
- * Generated class for the NeuerSchuetzeViewPage page.
+ * Generated class for the SchuetzePage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -10,16 +10,16 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 @IonicPage()
 @Component({
-  selector: 'page-neuer-schuetze-view',
-  templateUrl: 'neuer-schuetze-view.html',
+  selector: 'page-schuetze',
+  templateUrl: 'schuetze.html',
 })
-export class NeuerSchuetzeViewPage {
+export class SchuetzePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad NeuerSchuetzeViewPage');
+    console.log('ionViewDidLoad SchuetzePage');
   }
 
 }

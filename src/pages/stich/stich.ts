@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 /**
- * Generated class for the ResultatViewPage page.
+ * Generated class for the StichPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -10,16 +10,16 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 @IonicPage()
 @Component({
-  selector: 'page-resultat-view',
-  templateUrl: 'resultat-view.html',
+  selector: 'page-stich',
+  templateUrl: 'stich.html',
 })
-export class ResultatViewPage {
+export class StichPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ResultatViewPage');
+    console.log('ionViewDidLoad StichPage');
   }
 
 }
