@@ -6,11 +6,24 @@ import { MyApp } from './app.component';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { FirebaseServiceProvider } from '../providers/firebase-service/firebase-service';
-import {SchuetzenfestPage} from "../pages/schuetzenfest/schuetzenfest";
-import {SchuetzePage} from "../pages/schuetze/schuetze";
-import {ResultatPage} from "../pages/resultat/resultat";
-import {StichPage} from "../pages/stich/stich";
+import { FirebaseServiceProvider } from './firebase-service';
+import { SchuetzenfestPage } from "../pages/schuetzenfest/schuetzenfest";
+import { SchuetzePage } from "../pages/schuetze/schuetze";
+import { ResultatPage } from "../pages/resultat/resultat";
+import { StichPage } from "../pages/stich/stich";
+
+import { HttpModule } from "@angular/http";
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireModule } from 'angularfire2';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCkW_Qob61IQRreDHnDtqw3nhAPwZ7dywM",
+  authDomain: "schuetzenfestapp.firebaseapp.com",
+  databaseURL: "https://schuetzenfestapp.firebaseio.com",
+  projectId: "schuetzenfestapp",
+  storageBucket: "schuetzenfestapp.appspot.com",
+  messagingSenderId: "793873349094"
+};
 
 @NgModule({
   declarations: [
@@ -21,6 +34,9 @@ import {StichPage} from "../pages/stich/stich";
     StichPage
   ],
   imports: [
+    HttpModule,
+    AngularFireDatabaseModule,
+    AngularFireModule.initializeApp(firebaseConfig),
     BrowserModule,
     IonicModule.forRoot(MyApp),
   ],

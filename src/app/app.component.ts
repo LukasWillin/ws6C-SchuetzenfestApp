@@ -3,8 +3,8 @@ import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
-import {SchuetzenfestPage} from "../pages/schuetzenfest/schuetzenfest";
-import {SchuetzePage} from "../pages/schuetze/schuetze";
+import { SchuetzenfestPage } from "../pages/schuetzenfest/schuetzenfest";
+import { SchuetzePage } from "../pages/schuetze/schuetze";
 
 @Component({
   templateUrl: 'app.html'
