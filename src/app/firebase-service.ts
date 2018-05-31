@@ -9,6 +9,7 @@ import { Schuetze } from "./entities/Schuetze";
 import { Schuetzenfest } from "./entities/Schuetzenfest";
 import { Resultat } from "./entities/Resultat";
 import { Stich } from "./entities/Stich";
+import { toPromise } from "rxjs/operator/toPromise";
 
 const FBREF_PATH_SCHUETZEN = '/schuetzen';
 const FBREF_PATH_SCHUETZENFESTE = '/schuetzenfeste';
@@ -83,6 +84,13 @@ export class FirebaseServiceProvider {
     this._schuetzen = this._fbRefSchuetzen.snapshotChanges().map(changes => {
       return changes.map(self.mapSchuetzePayload);
     });
+
+    this.schuetze = this.schuetze.bind(this);
+    this.batchResultat = this.batchResultat.bind(this);
+    this.resultat = this.resultat.bind(this);
+    this.mapSchuetzePayload = this.mapSchuetzePayload.bind(this);
+    this.getResultateBySchuetzeKey = this.getResultateBySchuetzeKey.bind(this);
+    this.checkIfItemExists = this.checkIfItemExists.bind(this);
   }
 
   /**
@@ -102,31 +110,40 @@ export class FirebaseServiceProvider {
     let resultatBatchKeys: string[];
 
     if (crudOp !== CRUD.GET) {
-      if (typeof instance === 'object') schuetze = instance;
-      else this.getSchuetzeByKey(fbKey).subscribe(s => schuetze = s).unsubscribe();
-      schuetze.resultate.subscribe(rL => {
-          rL.forEach(r => {
-            r._fbSchuetzeKey = fbKey;
-          });
-          resultatBatch = rL;
-          resultatBatchKeys = rL.map(r => r._fbKey);
-          this.batchResultat(resultatBatch, crudOp).then(_ => {});
+      let asyncBatch:Promise<Schuetze>;
+      if (typeof instance === 'object') asyncBatch = Promise.resolve(instance);
+      else asyncBatch = this.getSchuetzeByKey(fbKey).toPromise();
+      if(asyncBatch) {
+        asyncBatch.then(s => {
+          if (s.resultate && !s.resultate.isEmpty()) {
+            schuetze.resultate.subscribe(rL => {
+              rL.forEach(r => {
+                r._fbSchuetzeKey = fbKey;
+              });
+              resultatBatch = rL;
+              resultatBatchKeys = rL.map(r => r._fbKey);
+              this.batchResultat(resultatBatch, crudOp).then(_ => {
+              });
+            })
+            .unsubscribe();
+          }
         })
-        .unsubscribe();
+      }
     }
 
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
-      checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).then( exists => {
-        instance = (instance as Schuetze).clone;
-        instance.resultate = undefined;
+      return this.checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).then( exists => {
+        instance = new Schuetze(instance);
+        instance.resultate = null;
         if(exists && crudOp === undefined || crudOp === CRUD.UPDATE) {
           return self._fbRefSchuetzen.update(fbKey, instance).then(_ => {
               return self.getSchuetzeByKey(fbKey);
             });
+
         } else if (!exists || !exists && crudOp === CRUD.PUSH) {
           return self._fbRefSchuetzen.push(instance).once('value').then(item => {
-            return self.getSchuetzeByKey(item.key);
-          });
+              return self.getSchuetzeByKey(item.key);
+            });
 
         } else {
           return Promise.reject(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
@@ -136,8 +153,14 @@ export class FirebaseServiceProvider {
       if (crudOp === undefined || crudOp === CRUD.GET) {
         return Promise.resolve(self.getSchuetzeByKey(fbKey));
       } else if (crudOp === CRUD.DELETE) {
-        return Promise.resolve(self.getSchuetzeByKey(fbKey)).then(s => {
-          return self._fbRefSchuetzen.remove(fbKey).then(() => { return s});
+        return self.checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).then(exists => {
+          if (exists) {
+            let s = self.getSchuetzeByKey(fbKey);
+            self._fbRefSchuetzen.remove(fbKey);
+            return s;
+          } else {
+            return new Observable<null>();
+          }
         });
       } else {
         return Promise.reject(new Error(`Tried to call FireBaseProvider#schuetzen with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
@@ -164,19 +187,22 @@ export class FirebaseServiceProvider {
       if (crudOp !== CRUD.GET) {
         if (typeof instance === 'object') schuetzenfest = instance;
         else this.getSchuetzenfestByKey(fbKey).subscribe(s => schuetzenfest = s).unsubscribe();
-        schuetzenfest.stiche.subscribe(stL => {
+        if(!schuetzenfest.stiche.isEmpty()) {
+          schuetzenfest.stiche.subscribe(stL => {
             stL.forEach(r => {
               r._fbSchuetzenfestKey = fbKey;
             });
             stichBatch = stL;
             stichBatchKeys = stL.map(r => r._fbKey);
-            this.batchStich(stichBatch, crudOp).then(_ => {});
+            this.batchStich(stichBatch, crudOp).then(_ => {
+            });
           })
-          .unsubscribe();
+            .unsubscribe();
+        }
       }
 
-      return checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).then(exists => {
-        
+      return this.checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).then(exists => {
+
         instance = (instance as Schuetzenfest).clone;
         instance.stiche = undefined;
 
@@ -199,8 +225,9 @@ export class FirebaseServiceProvider {
       if (crudOp === undefined || crudOp === CRUD.GET) {
         return Promise.resolve(self.getSchuetzenfestByKey(fbKey));
       } else if (crudOp === CRUD.DELETE) {
-        return Promise.resolve(this.getSchuetzenfestByKey(fbKey)).then(s => {
-          return self._fbRefSchuetzenfeste.remove(fbKey).then(() => s );
+        return Promise.resolve(this.getSchuetzenfestByKey(fbKey)).then(sf => {
+          self._fbRefSchuetzenfeste.remove(fbKey);
+          return sf;
         });
       } else {
         return Promise.reject(new Error(`Tried to call FireBaseProvider#schuetzenfest with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
@@ -224,7 +251,7 @@ export class FirebaseServiceProvider {
     const self = this;
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
 
-      return checkIfItemExists(FBREF_PATH_STICHE, fbKey).then(exists => {
+      return this.checkIfItemExists(FBREF_PATH_STICHE, fbKey).then(exists => {
         instance = (instance as Stich).clone;
         if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
           return self._fbRefStiche.update(fbKey, instance).then(_ => {
@@ -276,7 +303,7 @@ export class FirebaseServiceProvider {
     const self = this;
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
 
-      return checkIfItemExists(FBREF_PATH_RESULTATE, fbKey).then(exists => {
+      return this.checkIfItemExists(FBREF_PATH_RESULTATE, fbKey).then(exists => {
         instance = (instance as Resultat).clone;
         if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
           return self._fbRefResultate.update(fbKey, instance).then(_ => {
@@ -367,15 +394,19 @@ export class FirebaseServiceProvider {
     s.resultate = this.getResultateBySchuetzeKey(s._fbKey);
     return s;
   }
-}
+  private checkIfItemExists(path: string, id:string): Promise<boolean> {
+    if (!path) throw new Error(`[IllegalArgumentException] path must be a string to check for existence of '${id}' but was '${path}'`);
 
-function checkIfItemExists(path: string, id:string): Promise<boolean> {
-  if (!path) throw new Error(`[IllegalArgumentException] path must be a string to check for existence of '${id}' but was '${path}'`);
+    if (!id) return Promise.resolve(false);
 
-  if (!id) return Promise.resolve(false);
-
-  var usersRef = this.afd(path);
-  return usersRef.child(id).once('value', function(snapshot) {
-    return (snapshot.val() !== null);
-  }).toPromise();
+    return this.afd.object(`${path}/${id}`)
+      .snapshotChanges()
+      .first()
+      .toPromise()
+      .then(v => {
+        return v.payload.val() !== null;
+      }, e => {
+        return false;
+      });
+  }
 }

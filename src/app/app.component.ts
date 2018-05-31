@@ -6,6 +6,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { SchuetzenfestPage } from "../pages/schuetzenfest/schuetzenfest";
 import { SchuetzePage } from "../pages/schuetze/schuetze";
 
+import {FirebaseServiceProvider} from "./firebase-service";
+import {Schuetze} from "./entities/Schuetze";
+
 @Component({
   templateUrl: 'app.html'
 })
@@ -16,7 +19,7 @@ export class MyApp {
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public fb:FirebaseServiceProvider) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
@@ -25,6 +28,8 @@ export class MyApp {
       { title: 'Schützen', component: SchuetzePage},
     ];
 
+    (<any>window).gFb = fb;
+    (<any>window).Schuetze = Schuetze;
   }
 
   initializeApp() {
