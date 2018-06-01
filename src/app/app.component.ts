@@ -8,6 +8,7 @@ import { SchuetzePage } from "../pages/schuetze/schuetze";
 
 import {FirebaseServiceProvider} from "./firebase-service";
 import {Schuetze} from "./entities/Schuetze";
+import {Schuetzenfest} from "./entities/Schuetzenfest";
 
 @Component({
   templateUrl: 'app.html'
@@ -29,7 +30,8 @@ export class MyApp {
     ];
 
     (<any>window).gFb = fb;
-    (<any>window).Schuetze = Schuetze;
+    (<any>window).GlobalSchuetze = Schuetze;
+    (<any>window).GlobalSchuetzenfest = Schuetzenfest;
   }
 
   initializeApp() {

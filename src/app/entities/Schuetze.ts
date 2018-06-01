@@ -2,6 +2,11 @@
 import {Resultat} from "./Resultat";
 import {Observable} from "rxjs/Observable";
 
+import isObject from 'lodash/isObject';
+import isInteger from 'lodash/isInteger';
+import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
+
 export class Schuetze {
   public vorname: string = "";
   public nachname: string = "";
@@ -26,13 +31,13 @@ export class Schuetze {
   }
 
   constructor(obj?:any) {
-    if (typeof obj === 'object') {
-      if (obj.vorname) this.vorname = obj.vorname;
-      if (obj.nachname) this.nachname = obj.nachname;
+    if (isObject(obj)) {
+      if (isString(obj.vorname) && !isEmpty(obj.vorname)) this.vorname = obj.vorname;
+      if (isString(obj.nachname) && !isEmpty(obj.nachname)) this.nachname = obj.nachname;
       if (obj.resultate) this.resultate = obj.resultate;
       if (obj.lizenzNr) this.lizenzNr = obj.lizenzNr;
 
-      if(obj._fbKey) this._fbKey = obj._fbKey;
+      if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
     }
   }
 

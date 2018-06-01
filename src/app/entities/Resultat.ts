@@ -1,4 +1,9 @@
 
+import isObject from 'lodash/isObject';
+import isInteger from 'lodash/isInteger';
+import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
+
 import { Stich } from './Stich';
 import { Observable } from "rxjs/Observable";
 
@@ -24,13 +29,13 @@ export class Resultat {
   }
 
   constructor(obj?:any) {
-    if (typeof obj === 'object') {
-      if (obj.stich) this.stich = obj.stich;
-      if (obj.punktzahl) this.punktzahl = obj.punktzahl;
+    if (isObject(obj)) {
+      if (isObject(obj.stich)) this.stich = obj.stich;
+      if (isInteger(obj.punktzahl)) this.punktzahl = obj.punktzahl;
 
-      if (obj._fbKey) this._fbKey = obj._fbKey;
-      if (obj._fbStichKey) this._fbStichKey = obj._fbStichKey;
-      if (obj._fbSchuetzeKey) this._fbSchuetzeKey = obj._fbSchuetzeKey;
+      if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
+      if (isString(obj._fbStichKey) && !isEmpty(obj._fbStichKey)) this._fbStichKey = obj._fbStichKey;
+      if (isString(obj._fbSchuetzeKey) && !isEmpty(obj._fbSchuetzeKey)) this._fbSchuetzeKey = obj._fbSchuetzeKey;
     }
   }
 

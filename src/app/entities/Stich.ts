@@ -1,4 +1,9 @@
 
+import isObject from 'lodash/isObject';
+import isInteger from 'lodash/isInteger';
+import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
+
 export class Stich {
   public anzahlschuss: number;
   public scheibe: number;
@@ -17,6 +22,16 @@ export class Stich {
     sC._fbSchuetzenfestKey = this._fbSchuetzenfestKey;
 
     return sC;
+  }
+
+  constructor(obj?:any) {
+    if (isObject(obj)) {
+      if (isInteger(obj.anzahlschuss)) this.anzahlschuss =  obj.anzahlschuss;
+      if (isInteger(obj.scheibe)) this.scheibe = obj.scheibe;
+
+      if (isString(obj._fbKey)) this._fbKey = obj._fbKey;
+      if (isString(obj._fbSchuetzenfestKey)) this._fbSchuetzenfestKey = obj._fbSchuetzenfestKey;
+    }
   }
 
   // --- Used by FirebaseServiceProvider : do only read

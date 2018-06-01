@@ -5,11 +5,12 @@ import { DatabaseSnapshotDoesNotExist, DatabaseSnapshotExists } from "angularfir
 import { AngularFireAction } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 
+import isObject from 'lodash/isObject';
+
 import { Schuetze } from "./entities/Schuetze";
 import { Schuetzenfest } from "./entities/Schuetzenfest";
 import { Resultat } from "./entities/Resultat";
 import { Stich } from "./entities/Stich";
-import {toPromise} from "rxjs/operator/toPromise";
 
 const FBREF_PATH_SCHUETZEN = '/schuetzen';
 const FBREF_PATH_SCHUETZENFESTE = '/schuetzenfeste';
@@ -85,12 +86,13 @@ export class FirebaseServiceProvider {
       return changes.map(self.mapSchuetzePayload);
     });
 
-    // this.sendSchuetze = this.sendSchuetze.bind(this);
     // this.batchResultat = this.batchResultat.bind(this);
     // this.resultat = this.resultat.bind(this);
     this.mapSchuetzePayload = this.mapSchuetzePayload.bind(this);
+    this.mapSchuetzenfestPayload = this.mapSchuetzenfestPayload.bind(this);
     this.getResultateBySchuetzeKey = this.getResultateBySchuetzeKey.bind(this);
     this.checkIfItemExists = this.checkIfItemExists.bind(this);
+    this.getSticheBySchuetzenfestKey = this.getSticheBySchuetzenfestKey.bind(this);
   }
 
 
@@ -142,10 +144,10 @@ export class FirebaseServiceProvider {
           return Observable.create(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
         }
       })).first().flatMap(o => {
-        if (o._fbKey || o.key) {
-          return o.first().map(s => s);
-        } else {
+        if (o._fbKey) {
           return o;
+        } else {
+          return o.first().map(s => s);
         }
       });
     } else {
@@ -230,72 +232,71 @@ export class FirebaseServiceProvider {
     return this._fbRefSchuetzen.remove(key).then(_ => key);
   }*/
 
-  // /**
-  //  *
-  //  * @param lizenzNr required - LizenzNummer of Schuetze.
-  //  * @param instance optional, default:undefined - Ommit to #get. Pass object to #push or #update. Set null to #delete.
-  //  * @param crudOp optional - One of delete, update, push, get
-  //  * @returns {Promise<Schuetze|Error>}
-  //  */
-  // public schuetzenfest(instance: Schuetzenfest|string, crudOp?: string): Promise<Observable<Schuetzenfest>> {
-  //   const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
-  //   const self = this;
-  //   if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
-  //
-  //     let stichBatch: Stich[];
-  //     let stichBatchKeys: string[];
-  //     let schuetzenfest:Schuetzenfest;
-  //
-  //     if (crudOp !== CRUD.GET) {
-  //       if (typeof instance === 'object') schuetzenfest = instance;
-  //       else this.getSchuetzenfestByKey(fbKey).subscribe(s => schuetzenfest = s).unsubscribe();
-  //       if(!schuetzenfest.stiche.isEmpty()) {
-  //         schuetzenfest.stiche.subscribe(stL => {
-  //           stL.forEach(r => {
-  //             r._fbSchuetzenfestKey = fbKey;
-  //           });
-  //           stichBatch = stL;
-  //           stichBatchKeys = stL.map(r => r._fbKey);
-  //           this.batchStich(stichBatch, crudOp).then(_ => {
-  //           });
-  //         })
-  //           .unsubscribe();
-  //       }
-  //     }
-  //
-  //     return this.checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).then(exists => {
-  //
-  //       instance = (instance as Schuetzenfest).clone;
-  //       instance.stiche = undefined;
-  //
-  //       if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
-  //
-  //         return self._fbRefSchuetzenfeste.update(fbKey, instance).then(_ => {
-  //           return self.getSchuetzenfestByKey(fbKey);
-  //         });
-  //
-  //       } else if (!exists || !exists && crudOp === CRUD.PUSH) {
-  //         return self._fbRefSchuetzenfeste.push(instance).once('value').then(item => {
-  //           return self.getSchuetzenfestByKey(item.key);
-  //         });
-  //
-  //       } else {
-  //         return Promise.reject(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
-  //       }
-  //     });
-  //   } else {
-  //     if (crudOp === undefined || crudOp === CRUD.GET) {
-  //       return Promise.resolve(self.getSchuetzenfestByKey(fbKey));
-  //     } else if (crudOp === CRUD.DELETE) {
-  //       return Promise.resolve(this.getSchuetzenfestByKey(fbKey)).then(sf => {
-  //         self._fbRefSchuetzenfeste.remove(fbKey);
-  //         return sf;
-  //       });
-  //     } else {
-  //       return Promise.reject(new Error(`Tried to call FireBaseProvider#schuetzenfest with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
-  //     }
-  //   }
-  // }
+  /**
+   *
+   * @param lizenzNr required - LizenzNummer of Schuetze.
+   * @param instance optional, default:undefined - Ommit to #get. Pass object to #push or #update. Set null to #delete.
+   * @param crudOp optional - One of delete, update, push, get
+   * @returns {Promise<Schuetze|Error>}
+   */
+  public schuetzenfest(instance: Schuetzenfest|string, crudOp?: string): Observable<Schuetzenfest> {
+    const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
+    const self = this;
+    if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
+
+      let stichBatch: Stich[];
+      let stichBatchKeys: string[];
+      let schuetzenfest:Schuetzenfest;
+
+      if (crudOp !== CRUD.GET) {
+        if (typeof instance === 'object') schuetzenfest = instance;
+        else this.getSchuetzenfestByKey(fbKey).subscribe(s => schuetzenfest = s).unsubscribe();
+        if(!schuetzenfest.stiche.isEmpty()) {
+          schuetzenfest.stiche.subscribe(stL => {
+              stL.forEach(r => {
+                r._fbSchuetzenfestKey = fbKey;
+              });
+              stichBatch = stL;
+              stichBatchKeys = stL.map(r => r._fbKey);
+              // this.batchStich(stichBatch, crudOp).then(_ => {});
+            })
+            .unsubscribe();
+        }
+      }
+
+      return Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).then(exists => {
+
+        instance = new Schuetzenfest(instance);
+        instance.stiche = null;
+
+        if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
+
+          return self._fbRefSchuetzenfeste.update(fbKey, instance).then(_ => {
+            return self.getSchuetzenfestByKey(fbKey);
+          });
+
+        } else if (!exists || !exists && crudOp === CRUD.PUSH) {
+          return self._fbRefSchuetzenfeste.push(instance).once('value').then(item => {
+            return self.getSchuetzenfestByKey(item.key);
+          });
+
+        } else {
+          return Promise.reject(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
+        }
+      })).first().flatMap(o => { return o.first().map(s => s); });
+    } else {
+      if (crudOp === undefined || crudOp === CRUD.GET) {
+        return self.getSchuetzenfestByKey(fbKey);
+      } else if (crudOp === CRUD.DELETE) {
+        return Observable.fromPromise(Promise.resolve(this.getSchuetzenfestByKey(fbKey)).then(sf => {
+          self._fbRefSchuetzenfeste.remove(fbKey);
+          return sf;
+        })).first().flatMap(o => { return o.first().map(s => s); });
+      } else {
+        return Observable.create(new Error(`Tried to call FireBaseProvider#schuetzenfest with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
+      }
+    }
+  }
   //
   // public batchStich(instances: Stich[]|string[], crudOp:string): Promise<Observable<Stich>[]> {
   //   const self = this;
@@ -435,22 +436,37 @@ export class FirebaseServiceProvider {
 
   private mapStichPayload(c:AngularFireAction<DatabaseSnapshotExists<Stich>>|AngularFireAction<DatabaseSnapshotDoesNotExist<Stich>>):Stich {
     const st = c.payload.val();
-    st._fbKey = c.payload.key;
-    return st;
+    if (isObject) {
+      st._fbKey = c.payload.key;
+      return new Stich(st);
+    } else {
+      console.warn("A given key was probably faulty or not existing in firebase");
+      return st;
+    }
   }
 
   private mapResultatPayload(c:AngularFireAction<DatabaseSnapshotExists<Resultat>>|AngularFireAction<DatabaseSnapshotDoesNotExist<Resultat>>):Resultat {
     const r = c.payload.val();
-    r._fbKey = c.payload.key;
-    r.stich = this.getStichByKey(r._fbStichKey);
-    return r;
+    if (isObject) {
+      r._fbKey = c.payload.key;
+      r.stich = this.getStichByKey(r._fbStichKey);
+      return new Resultat(r)
+    } else {
+      console.warn("A given key was probably faulty or not existing in firebase");
+      return r;
+    }
   }
 
   private mapSchuetzenfestPayload(c:AngularFireAction<DatabaseSnapshotExists<Schuetzenfest>>|AngularFireAction<DatabaseSnapshotDoesNotExist<Schuetzenfest>>):Schuetzenfest {
     const sf = c.payload.val();
-    sf._fbKey = c.payload.key;
-    sf.stiche = this.getSticheBySchuetzenfestKey(sf._fbKey);
-    return sf;
+    if (isObject(sf)) {
+      sf._fbKey = c.payload.key;
+      sf.stiche = this.getSticheBySchuetzenfestKey(sf._fbKey);
+      return new Schuetzenfest(sf);
+    } else {
+      console.warn("A given key was probably faulty or not existing in firebase");
+      return sf;
+    }
   }
 
   private mapSchuetzePayload(c:AngularFireAction<DatabaseSnapshot<Schuetze>>|AngularFireAction<DatabaseSnapshotExists<Schuetze>>|AngularFireAction<DatabaseSnapshotDoesNotExist<Schuetze>>):Schuetze {
@@ -460,7 +476,7 @@ export class FirebaseServiceProvider {
       s.resultate = this.getResultateBySchuetzeKey(s._fbKey);
       return new Schuetze(s);
     } else {
-      console.warn("A given key was probably faulty");
+      console.warn("A given key was probably faulty or not existing in firebase");
       return s;
     }
   }
