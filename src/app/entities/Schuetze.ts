@@ -5,7 +5,7 @@ import {Observable} from "rxjs/Observable";
 export class Schuetze {
   public vorname: string = "";
   public nachname: string = "";
-  public resultate: Observable<Resultat[]> = new Observable<Resultat[]>();
+  public resultate: Observable<Resultat[]> = Observable.empty<Resultat[]>();
   public lizenzNr: string = "";
 
   public get key(): string {

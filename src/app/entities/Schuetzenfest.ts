@@ -1,9 +1,10 @@
 
 import { Stich } from './Stich'
 import { Observable } from "rxjs/Observable";
+import {Resultat} from "./Resultat";
 
 export class Schuetzenfest {
-  public stiche: Observable<Stich[]>;
+  public stiche: Observable<Stich[]> = Observable.empty<Stich[]>();
   public name: string;
 
   public get key():string {

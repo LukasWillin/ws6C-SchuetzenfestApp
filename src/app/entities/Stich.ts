@@ -1,6 +1,4 @@
 
-// import { Schuetzenfest} from "./Schuetzenfest";
-
 export class Stich {
   public anzahlschuss: number;
   public scheibe: number;
