@@ -8,6 +8,9 @@ import { Observable } from 'rxjs/Observable';
 import isObject from 'lodash/isObject';
 import isString from 'lodash/isString';
 import filter from 'lodash/filter';
+import isEmpty from 'lodash/isEmpty';
+import findIndex from 'lodash/findIndex';
+import find from 'lodash/find';
 
 import { Schuetze } from "./entities/Schuetze";
 import { Schuetzenfest } from "./entities/Schuetzenfest";
@@ -53,24 +56,28 @@ export class FirebaseServiceProvider {
   private _fbRefStiche:AngularFireList<Stich>;
 
 
-  private _online_schuetzenfeste : Observable<Schuetzenfest[]>
-  private _local_schuetzenfeste : Observable<Schuetzenfest[]>;
-  get schuetzenfeste() : Observable<Schuetzenfest[]> {
+  private _online_schuetzenfeste : BehaviorSubject<Schuetzenfest[]>;
+  private _local_schuetzenfeste : BehaviorSubject<Schuetzenfest[]>;
+  get schuetzenfeste() : BehaviorSubject<Schuetzenfest[]> {
     return this._local_schuetzenfeste;
   }
 
-  private _online_schuetzenfeste : Observable<Schuetzenfest>
-  private _schuetzen : Observable<Schuetze[]>;
-  get schuetzen(): Observable<Schuetze[]> {
-    return this._schuetzen;
+  private _online_schuetzen : BehaviorSubject<Schuetze[]>;
+  private _local_schuetzen : BehaviorSubject<Schuetze[]>;
+  get schuetzen(): BehaviorSubject<Schuetze[]> {
+    return this._local_schuetzen;
   }
-  private _resultate : Observable<Resultat[]>;
-  get resultate() : Observable<Resultat[]> {
-    return this._resultate;
+
+  private _online_resultate : BehaviorSubject<Resultat[]>;
+  private _local_resultate : BehaviorSubject<Resultat[]>;
+  get resultate() : BehaviorSubject<Resultat[]> {
+    return this._local_resultate;
   }
-  private _stiche : Observable<Stich[]>;
-  get stiche() : Observable<Stich[]> {
-    return this._stiche;
+
+  private _online_stiche : BehaviorSubject<Stich[]>;
+  private _local_stiche : BehaviorSubject<Stich[]>;
+  get stiche() : BehaviorSubject<Stich[]> {
+    return this._local_stiche;
   }
 
   public constructor(public afd: AngularFireDatabase) {
@@ -80,29 +87,90 @@ export class FirebaseServiceProvider {
     this._fbRefStiche = this.afd.list(FBREF_PATH_STICHE);
 
     const self = this;
-
-    this._stiche = this._fbRefStiche.snapshotChanges().map(changes => {
+    this._local_stiche = new BehaviorSubject<Stich[]>([]);
+    this._online_stiche = new BehaviorSubject<Stich[]>([]);
+    this._fbRefStiche.snapshotChanges().map(changes => {
       return changes.map(self.mapStichPayload);
-    });
-    this._resultate = this._fbRefResultate.snapshotChanges().map(changes => {
-      return changes.map(self.mapResultatPayload);
-    });
-    this._online_schuetzenfeste = this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
-      return changes.map(self.mapSchuetzenfestPayload);
-    });
-    this._schuetzen = this._fbRefSchuetzen.snapshotChanges().map(changes => {
-      return changes.map(self.mapSchuetzePayload);
+    }).do(stL => {
+      const val = this._online_stiche.value;
+      val.push.apply(val, stL);
+      this._online_stiche.next(val);
     });
 
-    // this.batchResultat = this.batchResultat.bind(this);
-    // this.resultat = this.resultat.bind(this);
+    this._local_resultate = new BehaviorSubject<Resultat[]>([]);
+    this._online_resultate = new BehaviorSubject<Resultat[]>([]);
+    this._fbRefResultate.snapshotChanges().map(changes => {
+      return changes.map(self.mapResultatPayload);
+    }).do(rL => {
+      const val = this._online_resultate.value;
+      val.push.apply(val, rL);
+      this._online_resultate.next(val);
+    });
+
+    this._online_schuetzenfeste = new BehaviorSubject<Schuetzenfest[]>([]);
+    this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
+      return changes.map(self.mapSchuetzenfestPayload);
+    }).do(sfL => {
+      const val = this._online_schuetzenfeste.value;
+      val.push.apply(val, sfL);
+      this._online_schuetzenfeste.next(val);
+    });
+
+    this._online_schuetzen = new BehaviorSubject<Schuetze[]>([]);
+    this._fbRefSchuetzen.snapshotChanges().map(changes => {
+      return changes.map(self.mapSchuetzePayload);
+    }).do(sL => {
+      const val = this._online_schuetzen.value;
+      val.push.apply(val, sL);
+      this._online_schuetzen.next(val);
+    });
+
+    this.batchResultat = this.batchResultat.bind(this);
+    this.resultat = this.resultat.bind(this);
+    this.batchStich = this.batchStich.bind(this);
+    this.stich = this.stich.bind(this);
+
     this.mapSchuetzePayload = this.mapSchuetzePayload.bind(this);
     this.mapSchuetzenfestPayload = this.mapSchuetzenfestPayload.bind(this);
+    this.mapResultatPayload = this.mapResultatPayload.bind(this);
+    this.mapStichPayload = this.mapStichPayload.bind(this);
+
     this.getResultateBySchuetzeKey = this.getResultateBySchuetzeKey.bind(this);
     this.checkIfItemExists = this.checkIfItemExists.bind(this);
     this.getSticheBySchuetzenfestKey = this.getSticheBySchuetzenfestKey.bind(this);
   }
 
+  private syncBatchStich(instances:Stich[], fbKeySchuetzenfest?:string) {
+    for (let i = 0; i < instances.length; i++) {
+      const instance = instances[i];
+      const oIIndex = findIndex(this._online_resultate.value, (oI) => oI.key === instance.key);
+      if (isEmpty(instance._fbKey)) {
+        this.stich(instance, CRUD.PUSH);
+
+      } else if (oIIndex < 0) {
+        this.stich(instance, CRUD.DELETE);
+
+      } else if (this._online_resultate.value[oIIndex].lastChanged.getTime() <= instance.lastChanged.getTime()) {
+        this.stich(instance, CRUD.UPDATE);
+      }
+    }
+  }
+
+  private syncBatchResultat(instances:Resultat[], fbKeySchuetze?:string) {
+    for (let i = 0; i < instances.length; i++) {
+      const instance = instances[i];
+      const oIIndex = findIndex(this._online_resultate.value, (oI) => oI.key === instance.key);
+      if (isEmpty(instance._fbKey)) {
+        this.resultat(instance, CRUD.PUSH);
+
+      } else if (oIIndex < 0) {
+        this.resultat(instance, CRUD.DELETE);
+
+      } else if (this._online_resultate.value[oIIndex].lastChanged.getTime() <= instance.lastChanged.getTime()) {
+        this.resultat(instance, CRUD.UPDATE);
+      }
+    }
+  }
 
   public schuetze(instance: Schuetze|string, crudOp?: string): BehaviorSubject<Schuetze> {
     const self = this;
@@ -110,35 +178,34 @@ export class FirebaseServiceProvider {
     const bhs : BehaviorSubject<Schuetzenfest> = new BehaviorSubject<Schuetzenfest>(new Schuetzenfest(true));
     let cobs : ConnectableObservable<Schuetzenfest>;
 
-    const fbKey:string = (isObject(instance)) ? (instance as any)._fbKey : instance;
+    const fbKey : string = (isObject(instance)) ? (instance as Schuetze)._fbKey : (instance as string);
 
-    let schuetze:Schuetze;
-    let resultatBatch: Resultat[];
-    let resultatBatchKeys: string[];
-
-    if (crudOp !== CRUD.GET) {
-      this._fbRefResultate.snapshotChanges().flatMap(changes => changes.map(self.mapResultatPayload))
-        .filter(rL => rL.)
-      let asyncBatch : BehaviorSubject<Resultat[]>;
-      if (typeof instance === 'object') {
-        asyncBatch = instance.resultate;
-        asyncBatch.then(s => {
-          if (s.resultate && !s.resultate.isEmpty()) {
-
-            schuetze.resultate.first().take(1).subscribe(rL => {
-              rL.forEach(r => {
-                r._fbSchuetzeKey = fbKey;
-              });
-              resultatBatch = rL;
-              resultatBatchKeys = rL.map(r => r._fbKey);
-              self.batchResultat(resultatBatch, crudOp)
-            });
-          }
-        })
+    if (isEmpty(crudOp)) {
+      if (isString(instance)) {
+        crudOp = CRUD.GET;
+      }
+      if (isObject(instance) && !isEmpty((instance as Schuetze).key)) {
+        crudOp = CRUD.UPDATE;
+      }
+      if (isObject(instance) && isEmpty((instance as Schuetze).key)) {
+        crudOp = CRUD.PUSH;
       }
     }
 
-    if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
+    if (crudOp === CRUD.DELETE) {
+      this._fbRefResultate.snapshotChanges().map(changes => {
+        return changes
+          .map(self.mapResultatPayload)
+          .filter(r => r._fbSchuetzeKey === fbKey);
+      }).do(rL => {
+        this.batchResultat(rL, crudOp);
+      });
+    }
+    if (!isString(instance) && crudOp !== CRUD.GET) {
+      this.syncBatchResultat((instance as Schuetze).resultate.value, fbKey);
+    }
+
+    if(isObject(instance) && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
       return BehaviorSubject.create(Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).then( exists => {
 
         instance = new Schuetze(instance);
@@ -189,29 +256,37 @@ export class FirebaseServiceProvider {
     const bhs : BehaviorSubject<Schuetzenfest> = new BehaviorSubject<Schuetzenfest>(new Schuetzenfest(true));
     let cobs : ConnectableObservable<Schuetzenfest>;
 
-    const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
+    const fbKey : string = (isObject(instance)) ? (instance as Schuetzenfest)._fbKey : (instance as string);
     const self = this;
-    if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
 
-      let stichBatch: Stich[];
-      let stichBatchKeys: string[];
-      let schuetzenfest:Schuetzenfest;
-
-      if (crudOp !== CRUD.GET) {
-        if (typeof instance === 'object') schuetzenfest = instance;
-        else this.getSchuetzenfestByKey(fbKey).subscribe(s => schuetzenfest = s).unsubscribe();
-        if(!schuetzenfest.stiche.isEmpty()) {
-          schuetzenfest.stiche.subscribe(stL => {
-              stL.forEach(r => {
-                r._fbSchuetzenfestKey = fbKey;
-              });
-              stichBatch = stL;
-              stichBatchKeys = stL.map(r => r._fbKey);
-              this.batchStich(stichBatch, crudOp);
-            })
-            .unsubscribe();
-        }
+    if (isEmpty(crudOp)) {
+      if (isString(instance)) {
+        crudOp = CRUD.GET;
       }
+      if (isObject(instance) && !isEmpty((instance as Schuetzenfest).key)) {
+        crudOp = CRUD.UPDATE;
+      }
+      if (isObject(instance) && isEmpty((instance as Schuetzenfest).key)) {
+        crudOp = CRUD.PUSH;
+      }
+    }
+
+    // wenn crudOp delete _> delete all
+
+    if (crudOp === CRUD.DELETE) {
+      this._fbRefStiche.snapshotChanges().map(changes => {
+        return changes
+          .map(self.mapStichPayload)
+          .filter(st => st._fbSchuetzenfestKey === fbKey);
+      }).do(stL => {
+        this.batchStich(stL, crudOp);
+      });
+    }
+    if (!isString(instance) && crudOp !== CRUD.GET) {
+      this.syncBatchStich((instance as Schuetzenfest).stiche.value, fbKey);
+    }
+
+    if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
 
       cobs = Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).then(exists => {
 
@@ -241,10 +316,10 @@ export class FirebaseServiceProvider {
           self._fbRefSchuetzenfeste.remove(fbKey);
           return sf;
         }).publish();
+
       } else {
         console.error(new Error(`Tried to call FireBaseProvider#schuetzenfest with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
         cobs = Observable.create(null).publish();
-
       }
     }
   }
@@ -451,14 +526,14 @@ export class FirebaseServiceProvider {
   }
 
   public getSticheBySchuetzenfestKey(schuetzenfestKey: string) : BehaviorSubject<Stich[]> {
-    return BehaviorSubject.create(this._stiche
+    return BehaviorSubject.create(this._local_stiche
       .map(stL =>
         stL.filter(st =>
           st._fbSchuetzenfestKey === schuetzenfestKey)));
   }
 
   public getResultateBySchuetzeKey(schuetzeKey: string): BehaviorSubject<Resultat[]> {
-    return BehaviorSubject.create(this._resultate
+    return BehaviorSubject.create(this._local_resultate
       .map(rL => rL.filter(r => r._fbSchuetzeKey === schuetzeKey)));
   }
 

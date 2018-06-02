@@ -10,7 +10,7 @@
     <ion-title>Schütze erfassen</ion-title>
     <ion-buttons end>
       <!--TODO: define "click" method" and proper form-->
-      <button ion-button icon-only> <!--(click)="" [disabled]="!form.valid"-->
+      <button ion-button icon-only (click)="createSchuetze(vorname, nachname, lizenzNr)"> <!--[disabled]="!form.valid"-->
         <ion-icon name="checkmark"></ion-icon>
       </button>
     </ion-buttons>
@@ -22,17 +22,17 @@
 <ion-content padding>
   <ion-item>
     <ion-label stacked>Vorname</ion-label>
-    <ion-input type="text" value=""></ion-input>
+    <ion-input type="text" value="vorname"></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label stacked>Nachname</ion-label>
-    <ion-input type="text" value=""></ion-input>
+    <ion-input type="text" value="nachname"></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label stacked>Lizenznummer</ion-label>
-    <ion-input type="text" value=""></ion-input>
+    <ion-input type="text" value="lizenznr"></ion-input>
   </ion-item>
 
 </ion-content>
