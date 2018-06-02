@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {CreateSchuetzePage} from "../create-schuetze/create-schuetze";
 
 /**
  * Generated class for the SchuetzePage page.
@@ -20,6 +21,21 @@ export class SchuetzePage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SchuetzePage');
+  }
+
+  schuetzen = [
+    'François Martin',
+    'Roger Iten'
+  ]
+
+  schuetzeSelected(schuetze: string) {
+    console.log("selected schuetze ", schuetze);
+    // this.navCtrl.push()
+  }
+
+  addSchuetze() {
+    console.log("creating new schuetze");
+    this.navCtrl.push(CreateSchuetzePage);
   }
 
 }
