@@ -763,3 +763,8 @@ freeline_project_description.json
 
 /.idea/
 /ws6C.iml
+/www/
+/package-lock.json
+/.editorconfig
+/.sourcemaps/
+/node_modules/
