@@ -4,21 +4,39 @@ import isInteger from 'lodash/isInteger';
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isBoolean from 'lodash/isBoolean';
+import isDate from 'lodash/isDate';
 
 import { Stich } from './Stich';
 import { Observable } from "rxjs/Observable";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 export class Resultat {
-  public stich : BehaviorSubject<Stich> = new BehaviorSubject<Stich>(null);
-  public punktzahl : number = 0;
+  get stich(): BehaviorSubject<Stich> {
+    return this._fb_field_stich;
+  }
+
+  set stich(value: BehaviorSubject<Stich>) {
+    this._fb_field_stich = value;
+  }
+
+  get punktzahl(): number {
+    return this._fb_field_punktzahl;
+  }
+
+  set punktzahl(value: number) {
+    this._fb_field_punktzahl = value;
+  }
 
   public get key() : string {
     return this._fbKey;
   }
 
   public get isPlaceholder() : boolean {
-    return !!this._fb_isBoolean;
+    return !!this._fb_isPlaceholder;
+  }
+
+  public get lastChanged() : Date {
+    return new Date(this._fb_lastChanged.getTime());
   }
 
   public get clone() : Resultat {
@@ -30,6 +48,9 @@ export class Resultat {
     rC._fbSchuetzeKey = this._fbSchuetzeKey;
     rC._fbKey = this._fbKey;
     rC._fbStichKey = this._fbStichKey;
+
+    rC._fb_lastChanged = this._fb_lastChanged;
+    rC._fb_isPlaceholder = this._fb_isPlaceholder;
 
     return rC
   }
@@ -46,14 +67,21 @@ export class Resultat {
       if (isString(obj._fbStichKey) && !isEmpty(obj._fbStichKey)) this._fbStichKey = obj._fbStichKey;
       if (isString(obj._fbSchuetzeKey) && !isEmpty(obj._fbSchuetzeKey)) this._fbSchuetzeKey = obj._fbSchuetzeKey;
 
-    } else if (isBoolean(setPlaceholder)) {
-      this._fb_isBoolean = setPlaceholder;
+      if (isDate(obj._fb_lastChanged)) this._fb_lastChanged = obj._fb_lastChanged;
+    }
+    if (isBoolean(setPlaceholder)) {
+      this._fb_isPlaceholder = setPlaceholder;
     }
   }
 
   // --- Used by FirebaseServiceProvider : do only read
   public _fbKey : string;
-  public _fbStichKey : string;
   public _fbSchuetzeKey : string;
-  public _fb_isBoolean : boolean = false;
+  public _fbStichKey : string;
+
+  public _fb_lastChanged : Date = new Date();
+  public _fb_isPlaceholder : boolean = false;
+
+  public _fb_field_stich : BehaviorSubject<Stich> = new BehaviorSubject<Stich>(null);
+  public _fb_field_punktzahl : number = 0;
 }

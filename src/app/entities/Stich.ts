@@ -4,10 +4,22 @@ import isInteger from 'lodash/isInteger';
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isBoolean from "lodash/isBoolean";
+import isDate from "lodash/isDate";
 
 export class Stich {
-  public anzahlschuss : number = 0;
-  public scheibe : number = -1;
+  get scheibe(): number {
+    return this._fb_field_scheibe;
+  }
+
+  set scheibe(value: number) {
+    this._fb_field_scheibe = value;
+  }
+  get anzahlschuss(): number {
+    return this._fb_field_anzahlschuss;
+  }
+  set anzahlschuss(value: number) {
+    this._fb_field_anzahlschuss = value;
+  }
 
   public get key() : string {
     return this._fbKey;
@@ -16,17 +28,22 @@ export class Stich {
   public get isPlaceholder() : boolean {
     return !!this._fb_isPlaceholder;
   }
-
+  public get lastChanged() : Date {
+    return new Date(this._fb_lastChanged.getTime());
+  }
   public get clone() : Stich {
-    const sC = new Stich();
+    const stC = new Stich();
 
-    sC.anzahlschuss = this.anzahlschuss;
-    sC.scheibe = this.scheibe;
+    stC.anzahlschuss = this.anzahlschuss;
+    stC.scheibe = this.scheibe;
 
-    sC._fbKey = this._fbKey;
-    sC._fbSchuetzenfestKey = this._fbSchuetzenfestKey;
+    stC._fbKey = this._fbKey;
+    stC._fbSchuetzenfestKey = this._fbSchuetzenfestKey;
 
-    return sC;
+    stC._fb_lastChanged = this._fb_lastChanged;
+    stC._fb_isPlaceholder = this._fb_isPlaceholder;
+
+    return stC;
   }
 
   constructor(obj?:any, setPlaceholder?:boolean) {
@@ -40,7 +57,9 @@ export class Stich {
       if (isString(obj._fbKey)) this._fbKey = obj._fbKey;
       if (isString(obj._fbSchuetzenfestKey)) this._fbSchuetzenfestKey = obj._fbSchuetzenfestKey;
 
-    } else if (isBoolean(setPlaceholder)) {
+      if (isDate(obj._fb_lastChanged)) this._fb_lastChanged = obj._fb_lastChanged;
+    }
+    if (isBoolean(setPlaceholder)) {
       this._fb_isPlaceholder = setPlaceholder;
     }
   }
@@ -48,5 +67,10 @@ export class Stich {
   // --- Used by FirebaseServiceProvider : do only read
   public _fbKey : string;
   public _fbSchuetzenfestKey : string;
+
   public _fb_isPlaceholder : boolean = false;
+  public _fb_lastChanged : Date = new Date();
+
+  public _fb_field_anzahlschuss : number = 0;
+  public _fb_field_scheibe : number = -1;
 }

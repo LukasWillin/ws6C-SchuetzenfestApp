@@ -1,0 +1,25 @@
+import {Stich} from "../Stich";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Resultat} from "../Resultat";
+
+export class ResultatTo {
+
+  public _fbKey : string;
+  public _fbSchuetzeKey : string;
+  public _fbStichKey : string;
+
+  public _fb_lastChanged : Date = new Date();
+  public _fb_isPlaceholder : boolean = false;
+
+  public punktzahl : number = 0;
+
+  constructor(obj:Resultat) {
+    this.punktzahl = obj.punktzahl;
+    this._fb_isPlaceholder = obj._fb_isPlaceholder;
+    this._fb_lastChanged = obj._fb_lastChanged;
+    this._fbSchuetzeKey = obj._fbSchuetzeKey;
+    this._fbStichKey = obj._fbStichKey;
+    this._fbKey = obj._fbKey;
+  }
+
+}
