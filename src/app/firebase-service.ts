@@ -7,13 +7,14 @@ import { Observable } from 'rxjs/Observable';
 
 import isObject from 'lodash/isObject';
 import isString from 'lodash/isString';
+import filter from 'lodash/filter';
 
 import { Schuetze } from "./entities/Schuetze";
 import { Schuetzenfest } from "./entities/Schuetzenfest";
 import { Resultat } from "./entities/Resultat";
 import { Stich } from "./entities/Stich";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {ConnectableObservable} from "rxjs/observable/ConnectableObservable";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { ConnectableObservable } from "rxjs/observable/ConnectableObservable";
 
 const FBREF_PATH_SCHUETZEN = '/schuetzen';
 const FBREF_PATH_SCHUETZENFESTE = '/schuetzenfeste';
@@ -51,20 +52,24 @@ export class FirebaseServiceProvider {
   private _fbRefResultate:AngularFireList<Resultat>;
   private _fbRefStiche:AngularFireList<Stich>;
 
-  private _schuetzenfeste: Observable<Schuetzenfest[]>;
-  get schuetzenfeste(): Observable<Schuetzenfest[]> {
-    return this._schuetzenfeste;
+
+  private _online_schuetzenfeste : Observable<Schuetzenfest[]>
+  private _local_schuetzenfeste : Observable<Schuetzenfest[]>;
+  get schuetzenfeste() : Observable<Schuetzenfest[]> {
+    return this._local_schuetzenfeste;
   }
-  private _schuetzen: Observable<Schuetze[]>;
+
+  private _online_schuetzenfeste : Observable<Schuetzenfest>
+  private _schuetzen : Observable<Schuetze[]>;
   get schuetzen(): Observable<Schuetze[]> {
     return this._schuetzen;
   }
-  private _resultate: Observable<Resultat[]>;
-  get resultate(): Observable<Resultat[]> {
+  private _resultate : Observable<Resultat[]>;
+  get resultate() : Observable<Resultat[]> {
     return this._resultate;
   }
-  private _stiche: Observable<Stich[]>;
-  get stiche(): Observable<Stich[]> {
+  private _stiche : Observable<Stich[]>;
+  get stiche() : Observable<Stich[]> {
     return this._stiche;
   }
 
@@ -82,7 +87,7 @@ export class FirebaseServiceProvider {
     this._resultate = this._fbRefResultate.snapshotChanges().map(changes => {
       return changes.map(self.mapResultatPayload);
     });
-    this._schuetzenfeste = this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
+    this._online_schuetzenfeste = this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
       return changes.map(self.mapSchuetzenfestPayload);
     });
     this._schuetzen = this._fbRefSchuetzen.snapshotChanges().map(changes => {
@@ -102,28 +107,32 @@ export class FirebaseServiceProvider {
   public schuetze(instance: Schuetze|string, crudOp?: string): BehaviorSubject<Schuetze> {
     const self = this;
 
-    const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
+    const bhs : BehaviorSubject<Schuetzenfest> = new BehaviorSubject<Schuetzenfest>(new Schuetzenfest(true));
+    let cobs : ConnectableObservable<Schuetzenfest>;
+
+    const fbKey:string = (isObject(instance)) ? (instance as any)._fbKey : instance;
 
     let schuetze:Schuetze;
     let resultatBatch: Resultat[];
     let resultatBatchKeys: string[];
 
     if (crudOp !== CRUD.GET) {
-      let asyncBatch:Promise<Schuetze>;
-      if (typeof instance === 'object') asyncBatch = Promise.resolve(instance);
-      else asyncBatch = this.getSchuetzeByKey(fbKey).toPromise();
-      if(asyncBatch) {
+      this._fbRefResultate.snapshotChanges().flatMap(changes => changes.map(self.mapResultatPayload))
+        .filter(rL => rL.)
+      let asyncBatch : BehaviorSubject<Resultat[]>;
+      if (typeof instance === 'object') {
+        asyncBatch = instance.resultate;
         asyncBatch.then(s => {
           if (s.resultate && !s.resultate.isEmpty()) {
-            schuetze.resultate.subscribe(rL => {
-                rL.forEach(r => {
-                  r._fbSchuetzeKey = fbKey;
-                });
-                resultatBatch = rL;
-                resultatBatchKeys = rL.map(r => r._fbKey);
-                // self.batchResultat(resultatBatch, crudOp).then(_ => {});
-              })
-              .unsubscribe();
+
+            schuetze.resultate.first().take(1).subscribe(rL => {
+              rL.forEach(r => {
+                r._fbSchuetzeKey = fbKey;
+              });
+              resultatBatch = rL;
+              resultatBatchKeys = rL.map(r => r._fbKey);
+              self.batchResultat(resultatBatch, crudOp)
+            });
           }
         })
       }
@@ -177,6 +186,9 @@ export class FirebaseServiceProvider {
    * @returns {Promise<Schuetze|Error>}
    */
   public schuetzenfest(instance: Schuetzenfest|string, crudOp?: string): BehaviorSubject<Schuetzenfest> {
+    const bhs : BehaviorSubject<Schuetzenfest> = new BehaviorSubject<Schuetzenfest>(new Schuetzenfest(true));
+    let cobs : ConnectableObservable<Schuetzenfest>;
+
     const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
     const self = this;
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
@@ -201,7 +213,7 @@ export class FirebaseServiceProvider {
         }
       }
 
-      return BehaviorSubject.create(Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).then(exists => {
+      cobs = Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).then(exists => {
 
         instance = new Schuetzenfest(instance);
         instance.stiche = null;
@@ -220,17 +232,19 @@ export class FirebaseServiceProvider {
         } else {
           return Promise.reject(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
         }
-      })).first().flatMap(o => { return o.first().map(s => s); }));
+      })).flatMap(o => { return o.first().map(s => s); }).publish();
     } else {
       if (crudOp === undefined || crudOp === CRUD.GET) {
         return self.getSchuetzenfestByKey(fbKey);
       } else if (crudOp === CRUD.DELETE) {
-        return BehaviorSubject.create(Promise.resolve(this.getSchuetzenfestByKey(fbKey)).then(sf => {
+        cobs = this.getSchuetzenfestByKey(fbKey).first().map(sf => {
           self._fbRefSchuetzenfeste.remove(fbKey);
           return sf;
-        })).first().flatMap(o => { return o.first().map(s => s); });
+        }).publish();
       } else {
-        return Observable.create(new Error(`Tried to call FireBaseProvider#schuetzenfest with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
+        console.error(new Error(`Tried to call FireBaseProvider#schuetzenfest with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
+        cobs = Observable.create(null).publish();
+
       }
     }
   }
@@ -269,11 +283,15 @@ export class FirebaseServiceProvider {
   }
 
   public stich(instance: Stich|string, crudOp?: string): BehaviorSubject<Stich> {
+    const bhs : BehaviorSubject<Stich> = new BehaviorSubject<Stich>(new Stich(true));
+    let cobs : ConnectableObservable<Stich>;
+
     const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
     const self = this;
+
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
 
-      return BehaviorSubject.create(Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_STICHE, fbKey).then(exists => {
+      cobs = Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_STICHE, fbKey).then(exists => {
 
         instance = new Stich(instance);
 
@@ -288,52 +306,62 @@ export class FirebaseServiceProvider {
           });
 
         } else {
-          return BehaviorSubject.create(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
+          console.error(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
+          return null;
         }
-      })).first().flatMap(o => o.first().map(s => s)));
+      })).flatMap(o => o.map(st => new Stich(st))).publish();
 
     } else {
       if (crudOp === undefined || crudOp === CRUD.GET) {
-        return self.getStichByKey(fbKey);
+        cobs = self.getStichByKey(fbKey).publish();
       } else if (crudOp === CRUD.DELETE) {
-        return BehaviorSubject.create(Promise.resolve(this.getStichByKey(fbKey)).then(st => {
-          return self._fbRefStiche.remove(fbKey).then(() => st );
-        })).first().flatMap(o => o.first().map(st => st));
+        cobs = this.getStichByKey(fbKey).first().map(st => {
+          self._fbRefStiche.remove(fbKey);
+          return st;
+        }).publish();
       } else {
-        return Observable.create(new Error(`Tried to call FireBaseProvider#stich with instance set to ${(typeof instance)} but expected \Object\<\Stich\>, undefined or null and/or crud`));
+        console.error(new Error(`Tried to call FireBaseProvider#stich with instance set to ${(typeof instance)} but expected \Object\<\Stich\>, undefined or null and/or crud`));
+        cobs = Observable.create(null).publish();
       }
     }
+
+    cobs.subscribe(v => bhs.next(v));
+    cobs.connect();
+
+    return bhs;
   }
 
 
   public batchResultat(instances: Resultat[]|string[], crudOp:string): BehaviorSubject<Resultat[]> {
-    let result:BehaviorSubject<Resultat[]> = new BehaviorSubject<Resultat[]>([]);
+    let bhs:BehaviorSubject<Resultat[]> = new BehaviorSubject<Resultat[]>([]);
+
     if (isString(instances[0])) {
       (instances as string[]).forEach(i => {
         if (isString(i)) {
           const cobs : ConnectableObservable<Resultat> = this.resultat(i, crudOp).publish();
           cobs.subscribe(r => {
-            const val = result.value;
+            const val = bhs.value;
             val.push(r);
-            result.next(val);
+            bhs.next(val);
           });
           cobs.connect();
         }
       });
+
     } else {
       (instances as Resultat[]).forEach(i => {
         if (isObject(i)) {
           const cobs : ConnectableObservable<Resultat> = this.resultat(i, crudOp).publish();
           cobs.subscribe(r => {
-            const val = result.value;
+            const val = bhs.value;
             val.push(r);
-            result.next(val);
+            bhs.next(val);
           });
           cobs.connect();
         }
       });
     }
-    return result;
+    return bhs;
   }
 
   /**
@@ -349,11 +377,11 @@ export class FirebaseServiceProvider {
     const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
     const self = this;
 
-    let obs : ConnectableObservable<Resultat>;
+    let cobs : ConnectableObservable<Resultat>;
 
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
 
-      obs = Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_RESULTATE, fbKey).then(exists => {
+      cobs = Observable.fromPromise(this.checkIfItemExists(FBREF_PATH_RESULTATE, fbKey).then(exists => {
         instance = (instance as Resultat).clone;
         if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
           return self._fbRefResultate.update(fbKey, instance).then(_ => {
@@ -367,23 +395,26 @@ export class FirebaseServiceProvider {
 
         } else {
           console.error(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
+          return null;
         }
       })).flatMap(o => o.map(r => new Resultat(r))).publish();
+
     } else {
       if (crudOp === undefined || crudOp === CRUD.GET) {
-        obs = self.getResultatByKey(fbKey).publish();
+        cobs = self.getResultatByKey(fbKey).publish();
       } else if (crudOp === CRUD.DELETE) {
-        obs = Observable.fromPromise(Promise.resolve(this.getResultatByKey(fbKey)).then(r => {
+        cobs = this.getResultatByKey(fbKey).first().map(r => {
           self._fbRefResultate.remove(fbKey);
           return r;
-        })).flatMap(o => { return o.map(r => r); }).publish();
+        }).publish();
       } else {
         console.error(new Error(`Tried to call FireBaseProvider#resultat with instance set to ${(typeof instance)} but expected \Object\<\Resultat\>, undefined or null and/or crud`));
+        cobs = Observable.create(null).publish();
       }
     }
 
-    obs.subscribe((r) => bhs.next(new Resultat(r)));
-    obs.connect();
+    cobs.subscribe((r) => bhs.next(new Resultat(r)));
+    cobs.connect();
 
     return bhs;
   }
