@@ -15,6 +15,8 @@ import { StichPage } from "../pages/stich/stich";
 import { HttpModule } from "@angular/http";
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireModule } from 'angularfire2';
+import {CreateSchuetzenfestPage} from "../pages/create-schuetzenfest/create-schuetzenfest";
+import {CreateSchuetzePage} from "../pages/create-schuetze/create-schuetze";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCkW_Qob61IQRreDHnDtqw3nhAPwZ7dywM",
@@ -29,7 +31,9 @@ const firebaseConfig = {
   declarations: [
     MyApp,
     SchuetzenfestPage,
+    CreateSchuetzenfestPage,
     SchuetzePage,
+    CreateSchuetzePage,
     ResultatPage,
     StichPage
   ],
@@ -44,7 +48,9 @@ const firebaseConfig = {
   entryComponents: [
     MyApp,
     SchuetzenfestPage,
+    CreateSchuetzenfestPage,
     SchuetzePage,
+    CreateSchuetzePage,
     ResultatPage,
     StichPage
   ],

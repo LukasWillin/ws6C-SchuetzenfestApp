@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {StichPage} from "../stich/stich";
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
+import {CreateSchuetzenfestPage} from "../create-schuetzenfest/create-schuetzenfest";
 
 /**
  * Generated class for the SchuetzenfestPage page.
@@ -23,6 +25,8 @@ export class SchuetzenfestPage {
     console.log('ionViewDidLoad SchuetzenfestPage');
   }
 
+  //let bhsSchuetzenfest  : BehaviorChange<Schuetzenfest[]> = new BehaviorChange<Schuetzenfest[]>(this.schuetzenfeste);
+
   schuetzenfeste = [
     'Vindonissa 2018',
     'Volksschiessen 2018'
@@ -33,6 +37,11 @@ export class SchuetzenfestPage {
     this.navCtrl.push(StichPage, {
       schuetzenfest: schuetzenfest
     });
+  }
+
+  addSchuetzenfest() {
+    console.log("creating new schuetzenfest");
+    this.navCtrl.push(CreateSchuetzenfestPage);
   }
 
 }
