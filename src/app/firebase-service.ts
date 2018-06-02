@@ -107,6 +107,7 @@ export class FirebaseServiceProvider {
       this._online_resultate.next(val);
     });
 
+    this._local_schuetzenfeste = new BehaviorSubject<Schuetzenfest[]>([]);
     this._online_schuetzenfeste = new BehaviorSubject<Schuetzenfest[]>([]);
     this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
       return changes.map(self.mapSchuetzenfestPayload);
@@ -116,6 +117,7 @@ export class FirebaseServiceProvider {
       this._online_schuetzenfeste.next(val);
     });
 
+    this._local_schuetzen = new BehaviorSubject<Schuetze[]>([]);
     this._online_schuetzen = new BehaviorSubject<Schuetze[]>([]);
     this._fbRefSchuetzen.snapshotChanges().map(changes => {
       return changes.map(self.mapSchuetzePayload);
