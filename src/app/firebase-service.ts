@@ -55,8 +55,9 @@ export class FirebaseServiceProvider {
   get schuetzenfeste(): Observable<Schuetzenfest[]> {
     return this._schuetzenfeste;
   }
-  private _schuetzen: Observable<Schuetze[]>;
-  get schuetzen(): Observable<Schuetze[]> {
+  // TODO private field oldList : Schuetze[]
+  private _schuetzen: BehaviorSubject<Schuetze[]>;
+  get schuetzen(): BehaviorSubject<Schuetze[]> {
     return this._schuetzen;
   }
   private _resultate: Observable<Resultat[]>;
@@ -85,8 +86,13 @@ export class FirebaseServiceProvider {
     this._schuetzenfeste = this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
       return changes.map(self.mapSchuetzenfestPayload);
     });
-    this._schuetzen = this._fbRefSchuetzen.snapshotChanges().map(changes => {
+    this._schuetzen = new BehaviorSubject<Schuetze[]>([]);
+    this._fbRefSchuetzen.snapshotChanges().map(changes => {
       return changes.map(self.mapSchuetzePayload);
+    }).do(s => {
+      const val = this._schuetzen.value;
+      val.push.apply(val, s);
+      this._schuetzen.next(val);
     });
 
     // this.batchResultat = this.batchResultat.bind(this);
