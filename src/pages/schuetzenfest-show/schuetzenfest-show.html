@@ -1,0 +1,50 @@
+<!--
+  Generated template for the SchuetzenfestShowPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <button ion-button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+
+  <ion-navbar>
+    <ion-title>{{schuetzenfest}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div padding>
+    <ion-segment [(ngModel)]="schuetzenfest">
+      <ion-segment-button value="stich">
+        Stiche
+      </ion-segment-button>
+      <ion-segment-button value="schuetze">
+        Schützen
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <div [ngSwitch]="schuetzenfest">
+    <ion-list *ngSwitchCase="'stich'">
+      <button ion-item *ngFor="let stich of stiche" (click)="stichSelected(stich)">
+        {{ stich }}
+      </button>
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'schuetze'">
+      <button ion-item *ngFor="let schuetze of schuetzen" (click)="schuetzeSelected(schuetze)">
+        {{ schuetze }}
+      </button>
+    </ion-list>
+  </div>
+
+  <ion-fab right bottom>
+    <button ion-fab (tap)="addSchuetze()"><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
+
+</ion-content>

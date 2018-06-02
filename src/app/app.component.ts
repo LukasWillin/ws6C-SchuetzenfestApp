@@ -2,13 +2,10 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-
-import { SchuetzenfestPage } from "../pages/schuetzenfest/schuetzenfest";
-import { SchuetzePage } from "../pages/schuetze/schuetze";
-
 import {FirebaseServiceProvider} from "./firebase-service";
 import {Schuetze} from "./entities/Schuetze";
 import {Schuetzenfest} from "./entities/Schuetzenfest";
+import {SchuetzenfestListPage} from "../pages/schuetzenfest-list/schuetzenfest-list";
 
 @Component({
   templateUrl: 'app.html'
@@ -16,7 +13,7 @@ import {Schuetzenfest} from "./entities/Schuetzenfest";
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = SchuetzenfestPage;
+  rootPage: any = SchuetzenfestListPage;
 
   pages: Array<{title: string, component: any}>;
 
@@ -25,8 +22,7 @@ export class MyApp {
 
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Schützenfest', component: SchuetzenfestPage },
-      { title: 'Schützen', component: SchuetzePage},
+      { title: 'Schützenfest', component: SchuetzenfestListPage },
     ];
 
     (<any>window).gFb = fb;
