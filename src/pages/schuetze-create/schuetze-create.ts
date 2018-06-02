@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import {FirebaseServiceProvider} from "../../app/firebase-service";
 import {Schuetze} from "../../app/entities/Schuetze";
+import {FirebaseServiceProvider} from "../../app/firebase-service";
 
 /**
- * Generated class for the CreateSchuetzePage page.
+ * Generated class for the SchuetzeCreatePage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -12,10 +12,10 @@ import {Schuetze} from "../../app/entities/Schuetze";
 
 @IonicPage()
 @Component({
-  selector: 'page-create-schuetze',
-  templateUrl: 'create-schuetze.html',
+  selector: 'page-schuetze-create',
+  templateUrl: 'schuetze-create.html',
 })
-export class CreateSchuetzePage {
+export class SchuetzeCreatePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
   }

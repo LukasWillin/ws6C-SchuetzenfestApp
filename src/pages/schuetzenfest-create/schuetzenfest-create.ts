@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 /**
- * Generated class for the CreateSchuetzenfestPage page.
+ * Generated class for the SchuetzenfestCreatePage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -10,16 +10,16 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 @IonicPage()
 @Component({
-  selector: 'page-create-schuetzenfest',
-  templateUrl: 'create-schuetzenfest.html',
+  selector: 'page-schuetzenfest-create',
+  templateUrl: 'schuetzenfest-create.html',
 })
-export class CreateSchuetzenfestPage {
+export class SchuetzenfestCreatePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad CreateSchuetzenfestPage');
+    console.log('ionViewDidLoad SchuetzenfestCreatePage');
   }
 
 }

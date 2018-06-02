@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import {StichPage} from "../stich/stich";
-import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
-import {CreateSchuetzenfestPage} from "../create-schuetzenfest/create-schuetzenfest";
+import {SchuetzenfestCreatePage} from "../schuetzenfest-create/schuetzenfest-create";
+import {SchuetzenfestShowPage} from "../schuetzenfest-show/schuetzenfest-show";
 
 /**
- * Generated class for the SchuetzenfestPage page.
+ * Generated class for the SchuetzenfestListPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -13,16 +12,16 @@ import {CreateSchuetzenfestPage} from "../create-schuetzenfest/create-schuetzenf
 
 @IonicPage()
 @Component({
-  selector: 'page-schuetzenfest',
-  templateUrl: 'schuetzenfest.html',
+  selector: 'page-schuetzenfest-list',
+  templateUrl: 'schuetzenfest-list.html',
 })
-export class SchuetzenfestPage {
+export class SchuetzenfestListPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SchuetzenfestPage');
+    console.log('ionViewDidLoad SchuetzenfestListPage');
   }
 
   //let bhsSchuetzenfest  : BehaviorChange<Schuetzenfest[]> = new BehaviorChange<Schuetzenfest[]>(this.schuetzenfeste);
@@ -30,18 +29,18 @@ export class SchuetzenfestPage {
   schuetzenfeste = [
     'Vindonissa 2018',
     'Volksschiessen 2018'
-  ]
+  ];
 
   schuetzenfestSelected(schuetzenfest: string) {
     console.log("selected schuetzenfest ", schuetzenfest);
-    this.navCtrl.push(StichPage, {
+    this.navCtrl.push(SchuetzenfestShowPage, {
       schuetzenfest: schuetzenfest
     });
   }
 
   addSchuetzenfest() {
     console.log("creating new schuetzenfest");
-    this.navCtrl.push(CreateSchuetzenfestPage);
+    this.navCtrl.push(SchuetzenfestCreatePage);
   }
 
 }

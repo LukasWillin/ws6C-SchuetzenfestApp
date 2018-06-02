@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { SchuetzePage } from './schuetze';
+import { StichShowPage } from './stich-show';
 
 @NgModule({
   declarations: [
-    SchuetzePage,
+    StichShowPage,
   ],
   imports: [
-    IonicPageModule.forChild(SchuetzePage),
+    IonicPageModule.forChild(StichShowPage),
   ],
 })
-export class SchuetzePageModule {}
+export class StichShowPageModule {}
