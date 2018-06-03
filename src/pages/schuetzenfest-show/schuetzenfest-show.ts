@@ -25,8 +25,16 @@ export class SchuetzenfestShowPage {
   tab_selection = "stiche";
 
   schuetzen = [
-    'François Martin',
-    'Roger Iten'
+    {
+      vorname: "François",
+      nachname: "Martin",
+      lizenzNr: "520921"
+    },
+    {
+      vorname: "Roger",
+      nachname: "Iten",
+      lizenzNr: "666666"
+    }
   ];
 
   // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
@@ -55,7 +63,7 @@ export class SchuetzenfestShowPage {
     console.log('ionViewDidLoad StichPage');
   }
 
-  schuetzeSelected(schuetze: string) {
+  schuetzeSelected(schuetze) {
     console.log("selected schuetze ", schuetze);
     this.navCtrl.push(SchuetzeResultatPage, {
       schuetze: schuetze,
