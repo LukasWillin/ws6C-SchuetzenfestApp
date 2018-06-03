@@ -27,12 +27,10 @@ export class StichCreatePage {
     console.log('ionViewDidLoad StichCreatePage');
   }
 
-  // TODO: #FIXME
   createStich() {
     console.log("Name: " + this.name);
     const newStich = new Stich();
-    // TODO: Uncomment when class is ready!
-    //newStich.name = this.name;
+    newStich.name = this.name;
 
     // Change view
     this.navCtrl.pop();

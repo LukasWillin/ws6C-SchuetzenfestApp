@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{schuetze}}</ion-title>
+    <ion-title>{{schuetze.vorname}} {{schuetze.nachname}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -26,7 +26,7 @@
       </ion-select>
 
       <!-- Case: Input TODO: add validation of having exactly one decimal point here (maybe with decimalpipe: https://stackoverflow.com/questions/42069234/force-2-decimal-places-precision-in-ion-input -->
-      <ion-input type="number" value="" *ngSwitchCase="false" min="0" max="{{resultatMax(stich)}}" step="0.1"></ion-input>
+      <ion-input type="number" value="" *ngSwitchCase="false" min="0" max="{{resultatMax(stich)}}" step="0.1" text-right></ion-input>
 
     </ion-item>
   </ion-list>

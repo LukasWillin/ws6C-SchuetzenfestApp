@@ -1,5 +1,5 @@
 <!--
-  Generated template for the SchuetzeCreatePage page.
+  Generated template for the SchuetzeEditPage page.
 
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
@@ -7,9 +7,9 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Schütze erfassen</ion-title>
+    <ion-title>Schütze bearbeiten</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only (tap)="createSchuetze()">
+      <button ion-button icon-only (tap)="updateSchuetze()">
         <ion-icon name="checkmark"></ion-icon>
       </button>
     </ion-buttons>
@@ -21,17 +21,17 @@
 <ion-content padding>
   <ion-item>
     <ion-label stacked>Vorname</ion-label>
-    <ion-input [(ngModel)]="vorname" type="text" value=""></ion-input>
+    <ion-input [(ngModel)]="vorname" type="text" value={{schuetze.vorname}}></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label stacked>Nachname</ion-label>
-    <ion-input [(ngModel)]="nachname" type="text" value=""></ion-input>
+    <ion-input [(ngModel)]="nachname" type="text" value={{schuetze.nachname}}></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label stacked>Lizenznummer</ion-label>
-    <ion-input [(ngModel)]="lizenzNr" type="text" value=""></ion-input>
+    <ion-input [(ngModel)]="lizenzNr" type="text" value={{schuetze.lizenzNr}}></ion-input>
   </ion-item>
 
 </ion-content>

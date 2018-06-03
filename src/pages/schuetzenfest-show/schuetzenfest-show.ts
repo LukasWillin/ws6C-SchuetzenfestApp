@@ -6,6 +6,8 @@ import {StichShowPage} from "../stich-show/stich-show";
 import {StichCreatePage} from "../stich-create/stich-create";
 import {Schuetze} from "../../app/entities/Schuetze";
 import {FirebaseServiceProvider} from "../../app/firebase-service";
+import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
+import {animate, style, transition, trigger} from "@angular/animations";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -18,16 +20,26 @@ import {FirebaseServiceProvider} from "../../app/firebase-service";
 @Component({
   selector: 'page-schuetzenfest-show',
   templateUrl: 'schuetzenfest-show.html',
+  animations: [
+    trigger(
+      'searchbarAnimation',
+      [
+        transition(':enter',
+          [style({ transform: 'translateY(-100%)', opacity: 0 }),
+            animate('100ms', style({ transform: 'translateY(0)', 'opacity': 1 }))]),
+        transition(':leave',
+          [style({ transform: 'translateY(0)', 'opacity': 1 }),
+            animate('100ms', style({ transform: 'translateY(-100%)', 'opacity': 0 }))])
+      ])]
 })
 export class SchuetzenfestShowPage {
+
+  searchbarShowing: boolean;
 
   // Defines which tab gets displayed in the view
   tab_selection = "stiche";
 
-  schuetzen = [
-    'François Martin',
-    'Roger Iten'
-  ];
+  schuetzen;
 
   // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
 
@@ -48,19 +60,29 @@ export class SchuetzenfestShowPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetzenfest = navParams.get('schuetzenfest');
+    this.searchbarShowing = false; // hide search bar by default
     console.log(this.schuetzen);
+    this.initializeSchuetzen();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad StichPage');
   }
 
-  schuetzeSelected(schuetze: string) {
+  schuetzeSelected(schuetze) {
     console.log("selected schuetze ", schuetze);
     this.navCtrl.push(SchuetzeResultatPage, {
       schuetze: schuetze,
       stiche: this.stiche,
     });
+  }
+
+  editSchuetze(schuetze) {
+    console.log("I want to edit ", schuetze);
+    // TODO: move to new page.
+    this.navCtrl.push(SchuetzeEditPage, {
+      schuetze: schuetze
+    })
   }
 
   stichSelected(stich: string) {
@@ -80,4 +102,44 @@ export class SchuetzenfestShowPage {
     this.navCtrl.push(StichCreatePage);
   }
 
+  initializeSchuetzen() {
+    this.schuetzen = [
+      {
+        vorname: "François",
+        nachname: "Martin",
+        lizenzNr: "520921"
+      },
+      {
+        vorname: "Roger",
+        nachname: "Iten",
+        lizenzNr: "666666"
+      }
+    ];
+  }
+
+  getSchuetzen(event: any) {
+    // Reset schuetzen back to all of the schuetzen
+    this.initializeSchuetzen();
+
+    // set searchText to the value of the searchbar
+    const searchText = event.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (searchText && searchText.trim() != '') {
+      this.schuetzen = this.schuetzen.filter((schuetze) => {
+        let matchVorname = this.containsIgnoreCase(schuetze.vorname, searchText);
+        let matchNachname = this.containsIgnoreCase(schuetze.nachname, searchText);
+        let matchLizenzNr = this.containsIgnoreCase(schuetze.lizenzNr, searchText);
+        return (matchVorname || matchNachname || matchLizenzNr);
+      })
+    }
+  }
+
+  containsIgnoreCase(s1, s2) {
+    return s1.toLowerCase().indexOf(s2.toLowerCase()) > -1
+  }
+
+  toggleSearchbarVisibility() {
+    this.searchbarShowing = !this.searchbarShowing;
+  }
 }
