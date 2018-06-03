@@ -17,6 +17,10 @@ import {FirebaseServiceProvider} from "../../app/firebase-service";
 })
 export class SchuetzeCreatePage {
 
+  vorname: string;
+  nachname: string;
+  lizenzNr: string;
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
   }
 
@@ -24,12 +28,13 @@ export class SchuetzeCreatePage {
     console.log('ionViewDidLoad CreateSchuetzePage');
   }
 
-  createSchuetze(vorname: string, nachname: string, lizenzNr: string ) {
+  createSchuetze() {
+    console.log("Vorname: " + this.vorname + ", Nachname: " + this.nachname + ", Lizenznr: " + this.lizenzNr);
     const val : Schuetze[] = this.fbSvc.schuetzen.value;
     const newSchuetze = new Schuetze();
-    newSchuetze.nachname = nachname;
-    newSchuetze.vorname = vorname;
-    newSchuetze.lizenzNr = lizenzNr;
+    newSchuetze.nachname = this.nachname;
+    newSchuetze.vorname = this.vorname;
+    newSchuetze.lizenzNr = this.lizenzNr;
     val.push(newSchuetze);
     this.fbSvc.schuetzen.next(val);
   }
