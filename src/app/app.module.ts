@@ -19,6 +19,7 @@ import {SchuetzenfestShowPage} from "../pages/schuetzenfest-show/schuetzenfest-s
 import {StichShowPage} from "../pages/stich-show/stich-show";
 import {StichCreatePage} from "../pages/stich-create/stich-create";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {SchuetzeEditPage} from "../pages/schuetze-edit/schuetze-edit";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCkW_Qob61IQRreDHnDtqw3nhAPwZ7dywM",
@@ -33,6 +34,7 @@ const firebaseConfig = {
   declarations: [
     MyApp,
     SchuetzeCreatePage,
+    SchuetzeEditPage,
     SchuetzeResultatPage,
     SchuetzenfestCreatePage,
     SchuetzenfestListPage,
@@ -52,6 +54,7 @@ const firebaseConfig = {
   entryComponents: [
     MyApp,
     SchuetzeCreatePage,
+    SchuetzeEditPage,
     SchuetzeResultatPage,
     SchuetzenfestCreatePage,
     SchuetzenfestListPage,
