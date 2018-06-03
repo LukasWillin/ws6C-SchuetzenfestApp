@@ -18,6 +18,7 @@ import {SchuetzenfestListPage} from "../pages/schuetzenfest-list/schuetzenfest-l
 import {SchuetzenfestShowPage} from "../pages/schuetzenfest-show/schuetzenfest-show";
 import {StichShowPage} from "../pages/stich-show/stich-show";
 import {StichCreatePage} from "../pages/stich-create/stich-create";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCkW_Qob61IQRreDHnDtqw3nhAPwZ7dywM",
@@ -45,6 +46,7 @@ const firebaseConfig = {
     AngularFireModule.initializeApp(firebaseConfig),
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    BrowserAnimationsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
