@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isBoolean from "lodash/isBoolean";
 import isDate from "lodash/isDate";
+import isNumber from 'lodash/isNumber';
 
 export class Stich {
 
@@ -64,7 +65,7 @@ export class Stich {
 
     if (isObject(obj)) {
       if (isInteger(obj.anzahlschuss)) this.anzahlschuss =  obj.anzahlschuss;
-      if (isInteger(obj.scheibe)) this.scheibe = obj.scheibe;
+      if (isNumber(obj.scheibe)) this.scheibe = obj.scheibe;
 
       if (isString(obj._fbKey)) this._fbKey = obj._fbKey;
       if (isString(obj._fbSchuetzenfestKey)) this._fbSchuetzenfestKey = obj._fbSchuetzenfestKey;
