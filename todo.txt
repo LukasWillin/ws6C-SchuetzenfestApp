@@ -1,0 +1,5 @@
+- Stich-Show view fehlt
+- Validierung bei Schuetze-resultat mit Zahlenfeldern (nur möglich eine Zahl einzugeben, die eine Nachkommastelle hat)
+- Bei Zurück klicken bei Schuetze-resultat, sollte ein Resultat eingegeben worden sein, nachfragen mit Dialog: "wirklich sicher?"
+- Barcode scannen bei schuetzenfest-show mit icon
+- (Beleg scannen und Resultat auslesen)
