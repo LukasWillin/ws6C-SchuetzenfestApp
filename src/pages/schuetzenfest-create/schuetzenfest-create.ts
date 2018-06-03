@@ -29,12 +29,8 @@ export class SchuetzenfestCreatePage {
 
   createSchuetzenfest() {
     console.log("Name: " + this.name);
-    const val : Schuetzenfest[] = this.fbSvc.schuetzenfeste.value;
     const newSchuetzenfest = new Schuetzenfest();
     newSchuetzenfest.name = this.name;
-    val.push(newSchuetzenfest);
-    // TODO: Uncomment when service is ready!
-    //this.fbSvc.schuetzenfest.next(val);
 
     // Change view
     this.navCtrl.pop();

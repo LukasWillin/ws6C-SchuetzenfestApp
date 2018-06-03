@@ -30,12 +30,9 @@ export class StichCreatePage {
   // TODO: #FIXME
   createStich() {
     console.log("Name: " + this.name);
-    const val : Stich[] = this.fbSvc.stiche.value;
     const newStich = new Stich();
     // TODO: Uncomment when class is ready!
     //newStich.name = this.name;
-    val.push(newStich);
-    this.fbSvc.stiche.next(val);
 
     // Change view
     this.navCtrl.pop();

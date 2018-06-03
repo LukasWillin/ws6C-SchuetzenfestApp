@@ -30,13 +30,10 @@ export class SchuetzeCreatePage {
 
   createSchuetze() {
     console.log("Vorname: " + this.vorname + ", Nachname: " + this.nachname + ", Lizenznr: " + this.lizenzNr);
-    const val : Schuetze[] = this.fbSvc.schuetzen.value;
     const newSchuetze = new Schuetze();
     newSchuetze.nachname = this.nachname;
     newSchuetze.vorname = this.vorname;
     newSchuetze.lizenzNr = this.lizenzNr;
-    val.push(newSchuetze);
-    this.fbSvc.schuetzen.next(val);
 
     // Change view
     this.navCtrl.pop();
