@@ -18,5 +18,13 @@
 
 
 <ion-content padding>
+  <ion-list> <!-- Stiche -->
 
+    <ion-item> <!-- Stich -->
+      <ion-label>Kranzstich</ion-label> <!-- TODO: parametrize -->
+      <ion-select [(ngModel)]="gaming">
+        <ion-option *ngFor="let resultat of getResultat()" value="{{ resultat }}">{{ resultat }}</ion-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
 </ion-content>
