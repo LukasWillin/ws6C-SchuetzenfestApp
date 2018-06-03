@@ -16,7 +16,7 @@ import {Stich} from "../../app/entities/Stich";
 })
 export class SchuetzeResultatPage {
 
-  schuetze: string;
+  schuetze: any; // TODO: change this when switching to DB implementation
   stiche: any; // TODO: change this when switching to DB implementation
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {

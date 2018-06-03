@@ -37,7 +37,8 @@
 
     <ion-list *ngSwitchCase="'schuetzen'">
       <button ion-item *ngFor="let schuetze of schuetzen" (click)="schuetzeSelected(schuetze)">
-        {{ schuetze }}
+        <span class="schuetze-name" float-left>{{ schuetze.vorname }} {{ schuetze.nachname }}</span>
+        <span class="schuetze-lizenz" float-right>{{ schuetze.lizenzNr }}</span>
       </button>
 
       <ion-fab right bottom>
