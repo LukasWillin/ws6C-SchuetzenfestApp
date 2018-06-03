@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {FirebaseServiceProvider} from "../../app/firebase-service";
+import {Schuetze} from "../../app/entities/Schuetze";
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 
 /**
  * Generated class for the SchuetzenfestCreatePage page.
@@ -15,11 +18,26 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SchuetzenfestCreatePage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  name: string;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SchuetzenfestCreatePage');
   }
+
+  createSchuetzenfest() {
+    console.log("Name: " + this.name);
+    const val : Schuetzenfest[] = this.fbSvc.schuetzenfeste.value;
+    const newSchuetzenfest = new Schuetzenfest();
+    newSchuetzenfest.name = this.name;
+    val.push(newSchuetzenfest);
+    //this.fbSvc.schuetzenfest.next(val);
+
+    // Change view
+    this.navCtrl.pop();
+  }
+
 
 }

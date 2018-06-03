@@ -37,6 +37,9 @@ export class SchuetzeCreatePage {
     newSchuetze.lizenzNr = this.lizenzNr;
     val.push(newSchuetze);
     this.fbSvc.schuetzen.next(val);
+
+    // Change view
+    this.navCtrl.pop();
   }
 
 }
