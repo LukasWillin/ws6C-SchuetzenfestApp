@@ -16,7 +16,10 @@ export class Resultat {
   }
 
   set stich(value: BehaviorSubject<Stich>) {
+    this._fb_lastChanged = new Date();
+    this.stichSubscription.unsubscribe();
     this._fb_field_stich = value;
+    this.stichSubscription = this._fb_field_stich.subscribe(stL => this.stichChangedHandler());
   }
 
   get punktzahl(): number {
@@ -24,6 +27,7 @@ export class Resultat {
   }
 
   set punktzahl(value: number) {
+    this._fb_lastChanged = new Date();
     this._fb_field_punktzahl = value;
   }
 
@@ -84,4 +88,10 @@ export class Resultat {
 
   public _fb_field_stich : BehaviorSubject<Stich> = new BehaviorSubject<Stich>(null);
   public _fb_field_punktzahl : number = 0;
+
+  private stichSubscription = this._fb_field_stich.subscribe(st => this.stichChangedHandler());
+
+  private stichChangedHandler() {
+    this._fb_lastChanged = new Date();
+  }
 }

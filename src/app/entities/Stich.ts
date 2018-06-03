@@ -7,17 +7,29 @@ import isBoolean from "lodash/isBoolean";
 import isDate from "lodash/isDate";
 
 export class Stich {
+
+  set name(value:string) {
+    this._fb_lastChanged = new Date();
+    this._fb_field_name = value;
+  }
+
+  get name() : string {
+    return this._fb_field_name;
+  }
+
   get scheibe(): number {
     return this._fb_field_scheibe;
   }
 
   set scheibe(value: number) {
+    this._fb_lastChanged = new Date();
     this._fb_field_scheibe = value;
   }
   get anzahlschuss(): number {
     return this._fb_field_anzahlschuss;
   }
   set anzahlschuss(value: number) {
+    this._fb_lastChanged = new Date();
     this._fb_field_anzahlschuss = value;
   }
 
@@ -73,4 +85,5 @@ export class Stich {
 
   public _fb_field_anzahlschuss : number = 0;
   public _fb_field_scheibe : number = -1;
+  public _fb_field_name : string = "";
 }

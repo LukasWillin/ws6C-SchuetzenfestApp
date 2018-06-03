@@ -17,6 +17,7 @@ export class Schuetze {
   }
 
   set vorname(value: string) {
+    this._fb_lastChanged = new Date();
     this._fb_field_vorname = value;
   }
 
@@ -25,6 +26,7 @@ export class Schuetze {
   }
 
   set nachname(value: string) {
+    this._fb_lastChanged = new Date();
     this._fb_field_nachname = value;
   }
 
@@ -33,7 +35,10 @@ export class Schuetze {
   }
 
   set resultate(value: BehaviorSubject<Resultat[]>) {
+    this._fb_lastChanged = new Date();
+    this.resultateSubscription.unsubscribe();
     this._fb_field_resultate = value;
+    this.resultateSubscription = this._fb_field_resultate.subscribe(stL => this.resultateChangedHandler());
   }
 
   get lizenzNr(): string {
@@ -41,6 +46,7 @@ export class Schuetze {
   }
 
   set lizenzNr(value: string) {
+    this._fb_lastChanged = new Date();
     this._fb_field_lizenzNr = value;
   }
   public get key() : string {
@@ -74,10 +80,10 @@ export class Schuetze {
       setPlaceholder = obj;
 
     if (isObject(obj)) {
-      if (isString(obj.vorname) && !isEmpty(obj.vorname)) this.vorname = obj.vorname;
-      if (isString(obj.nachname) && !isEmpty(obj.nachname)) this.nachname = obj.nachname;
+      if (isString(obj.vorname) && !isEmpty(obj.vorname)) this._fb_field_vorname = obj.vorname;
+      if (isString(obj.nachname) && !isEmpty(obj.nachname)) this._fb_field_nachname = obj.nachname;
       if (obj.resultate) this.resultate = obj.resultate;
-      if (obj.lizenzNr) this.lizenzNr = obj.lizenzNr;
+      if (obj.lizenzNr) this._fb_field_lizenzNr = obj.lizenzNr;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
 
@@ -94,8 +100,14 @@ export class Schuetze {
   public _fb_lastChanged : Date = new Date();
   public _fb_isPlaceholder : boolean = false;
 
-  private _fb_field_vorname : string = "";
-  private _fb_field_nachname : string = "";
-  private _fb_field_resultate : BehaviorSubject<Resultat[]> = new BehaviorSubject<Resultat[]>([]);
-  private _fb_field_lizenzNr : string = "";
+  public _fb_field_vorname : string = "";
+  public _fb_field_nachname : string = "";
+  public _fb_field_resultate : BehaviorSubject<Resultat[]> = new BehaviorSubject<Resultat[]>([]);
+  public _fb_field_lizenzNr : string = "";
+
+  private resultateSubscription = this._fb_field_resultate.subscribe(stL => this.resultateChangedHandler());
+
+  private resultateChangedHandler() {
+    this._fb_lastChanged = new Date();
+  }
 }
