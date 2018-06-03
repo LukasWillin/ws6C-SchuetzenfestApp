@@ -17,6 +17,7 @@ import {SchuetzenfestCreatePage} from "../pages/schuetzenfest-create/schuetzenfe
 import {SchuetzenfestListPage} from "../pages/schuetzenfest-list/schuetzenfest-list";
 import {SchuetzenfestShowPage} from "../pages/schuetzenfest-show/schuetzenfest-show";
 import {StichShowPage} from "../pages/stich-show/stich-show";
+import {StichCreatePage} from "../pages/stich-create/stich-create";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCkW_Qob61IQRreDHnDtqw3nhAPwZ7dywM",
@@ -35,7 +36,8 @@ const firebaseConfig = {
     SchuetzenfestCreatePage,
     SchuetzenfestListPage,
     SchuetzenfestShowPage,
-    StichShowPage
+    StichShowPage,
+    StichCreatePage
   ],
   imports: [
     HttpModule,
@@ -52,7 +54,8 @@ const firebaseConfig = {
     SchuetzenfestCreatePage,
     SchuetzenfestListPage,
     SchuetzenfestShowPage,
-    StichShowPage
+    StichShowPage,
+    StichCreatePage
   ],
   providers: [
     StatusBar,

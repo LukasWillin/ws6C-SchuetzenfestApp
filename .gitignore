@@ -767,3 +767,5 @@ freeline_project_description.json
 /package-lock.json
 /.sourcemaps/
 /node_modules/
+/platforms/
+/plugins/

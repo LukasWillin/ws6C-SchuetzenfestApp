@@ -5,11 +5,6 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
-  <button ion-button menuToggle>
-    <ion-icon name="menu"></ion-icon>
-  </button>
-
   <ion-navbar>
     <ion-title>{{schuetzenfest}}</ion-title>
   </ion-navbar>
@@ -19,32 +14,38 @@
 
 <ion-content padding>
   <div padding>
-    <ion-segment [(ngModel)]="schuetzenfest">
-      <ion-segment-button value="stich">
+    <ion-segment [(ngModel)]="tab_selection">
+      <ion-segment-button value="stiche">
         Stiche
       </ion-segment-button>
-      <ion-segment-button value="schuetze">
+      <ion-segment-button value="schuetzen">
         Schützen
       </ion-segment-button>
     </ion-segment>
   </div>
 
-  <div [ngSwitch]="schuetzenfest">
-    <ion-list *ngSwitchCase="'stich'">
+  <div [ngSwitch]="tab_selection">
+    <ion-list *ngSwitchCase="'stiche'">
       <button ion-item *ngFor="let stich of stiche" (click)="stichSelected(stich)">
-        {{ stich }}
+        {{ stich.name }}
       </button>
+
+      <ion-fab right bottom>
+        <button ion-fab (tap)="addStich()"><ion-icon name="add"></ion-icon></button>
+      </ion-fab>
     </ion-list>
 
-    <ion-list *ngSwitchCase="'schuetze'">
+    <ion-list *ngSwitchCase="'schuetzen'">
       <button ion-item *ngFor="let schuetze of schuetzen" (click)="schuetzeSelected(schuetze)">
         {{ schuetze }}
       </button>
+
+      <ion-fab right bottom>
+        <button ion-fab (tap)="addSchuetze()"><ion-icon name="add"></ion-icon></button>
+      </ion-fab>
     </ion-list>
   </div>
 
-  <ion-fab right bottom>
-    <button ion-fab (tap)="addSchuetze()"><ion-icon name="add"></ion-icon></button>
-  </ion-fab>
+
 
 </ion-content>
