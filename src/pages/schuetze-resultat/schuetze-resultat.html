@@ -20,11 +20,18 @@
 <ion-content padding>
   <ion-list> <!-- Stiche -->
 
-    <ion-item *ngFor="let stich of stiche"> <!-- Stich -->
+    <!-- If result is in whole integers, show select, else show regular input for entry -->
+    <ion-item *ngFor="let stich of stiche" [ngSwitch]="resultatIsDecimal(stich)"> <!-- Stich -->
       <ion-label>{{ stich.name }}</ion-label>
-      <ion-select [(ngModel)]="TODO">
-        <ion-option *ngFor="let resultat of getResultate(stich)" value="{{ resultat }}">{{ resultat }}</ion-option>
+
+      <!-- Case: Select -->
+      <ion-select [(ngModel)]="TODO" *ngSwitchCase="true">
+        <ion-option *ngFor="let resultat of getResultatOptions(stich)" value="{{ resultat }}">{{ resultat }}</ion-option>
       </ion-select>
+
+      <!-- Case: Input -->
+      <ion-input type="text" value="" *ngSwitchCase="false"></ion-input>
+
     </ion-item>
   </ion-list>
 </ion-content>

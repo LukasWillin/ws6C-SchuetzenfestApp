@@ -39,7 +39,7 @@ export class SchuetzeResultatPage {
     console.log('ionViewDidLoad ResultatPage');
   }
 
-  getResultate(stich) {
+  getResultatOptions(stich) {
     let resultatMax = stich.scheibe*stich.anzahlSchuss;
     if (resultatMax % 10 == 0) {
       // schüsse sind jeweils ganzzahlig
@@ -48,6 +48,10 @@ export class SchuetzeResultatPage {
       // schüsse jeweils mit komma
       return 0; // TODO: fix
     }
+  }
+
+  resultatIsDecimal(stich) {
+    return stich.scheibe % 10 == 0;
   }
 
 }
