@@ -20,10 +20,10 @@
 <ion-content padding>
   <ion-list> <!-- Stiche -->
 
-    <ion-item> <!-- Stich -->
-      <ion-label>Kranzstich</ion-label> <!-- TODO: parametrize -->
-      <ion-select [(ngModel)]="gaming">
-        <ion-option *ngFor="let resultat of getResultat()" value="{{ resultat }}">{{ resultat }}</ion-option>
+    <ion-item *ngFor="let stich of stiche"> <!-- Stich -->
+      <ion-label>{{ stich.name }}</ion-label>
+      <ion-select [(ngModel)]="TODO">
+        <ion-option *ngFor="let resultat of getResultate(stich)" value="{{ resultat }}">{{ resultat }}</ion-option>
       </ion-select>
     </ion-item>
   </ion-list>
