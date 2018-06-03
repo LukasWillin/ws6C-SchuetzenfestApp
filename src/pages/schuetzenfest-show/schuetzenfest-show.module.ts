@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { SchuetzenfestShowPage } from './schuetzenfest-show';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -9,7 +8,6 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
   ],
   imports: [
     IonicPageModule.forChild(SchuetzenfestShowPage),
-    BrowserAnimationsModule
   ],
 })
 export class SchuetzenfestShowPageModule {}
