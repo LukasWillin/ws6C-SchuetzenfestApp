@@ -26,7 +26,7 @@
 
   <div [ngSwitch]="tab_selection">
     <ion-list *ngSwitchCase="'stiche'">
-      <button ion-item *ngFor="let stich of stiche" (click)="stichSelected(stich)">
+      <button ion-item *ngFor="let stich of stiche" (tap)="stichSelected(stich)">
         {{ stich.name }}
       </button>
 
@@ -36,7 +36,7 @@
     </ion-list>
 
     <ion-list *ngSwitchCase="'schuetzen'">
-      <button ion-item *ngFor="let schuetze of schuetzen" (click)="schuetzeSelected(schuetze)">
+      <button ion-item *ngFor="let schuetze of schuetzen" (tap)="schuetzeSelected(schuetze)" (press)="editSchuetze(schuetze)">
         <span class="schuetze-name" float-left>{{ schuetze.vorname }} {{ schuetze.nachname }}</span>
         <span class="schuetze-lizenz" float-right>{{ schuetze.lizenzNr }}</span>
       </button>

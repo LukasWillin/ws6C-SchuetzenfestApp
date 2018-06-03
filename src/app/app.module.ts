@@ -18,6 +18,7 @@ import {SchuetzenfestListPage} from "../pages/schuetzenfest-list/schuetzenfest-l
 import {SchuetzenfestShowPage} from "../pages/schuetzenfest-show/schuetzenfest-show";
 import {StichShowPage} from "../pages/stich-show/stich-show";
 import {StichCreatePage} from "../pages/stich-create/stich-create";
+import {SchuetzeEditPage} from "../pages/schuetze-edit/schuetze-edit";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCkW_Qob61IQRreDHnDtqw3nhAPwZ7dywM",
@@ -32,6 +33,7 @@ const firebaseConfig = {
   declarations: [
     MyApp,
     SchuetzeCreatePage,
+    SchuetzeEditPage,
     SchuetzeResultatPage,
     SchuetzenfestCreatePage,
     SchuetzenfestListPage,
@@ -50,6 +52,7 @@ const firebaseConfig = {
   entryComponents: [
     MyApp,
     SchuetzeCreatePage,
+    SchuetzeEditPage,
     SchuetzeResultatPage,
     SchuetzenfestCreatePage,
     SchuetzenfestListPage,

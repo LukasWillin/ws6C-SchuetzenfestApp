@@ -14,7 +14,7 @@
 
 <ion-content padding>
   <ion-list>
-    <button ion-item *ngFor="let schuetzenfest of schuetzenfeste" (click)="schuetzenfestSelected(schuetzenfest)">
+    <button ion-item *ngFor="let schuetzenfest of schuetzenfeste" (tap)="schuetzenfestSelected(schuetzenfest)">
       {{ schuetzenfest }}
     </button>
   </ion-list>

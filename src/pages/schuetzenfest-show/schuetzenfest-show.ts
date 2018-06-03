@@ -6,6 +6,7 @@ import {StichShowPage} from "../stich-show/stich-show";
 import {StichCreatePage} from "../stich-create/stich-create";
 import {Schuetze} from "../../app/entities/Schuetze";
 import {FirebaseServiceProvider} from "../../app/firebase-service";
+import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -69,6 +70,14 @@ export class SchuetzenfestShowPage {
       schuetze: schuetze,
       stiche: this.stiche,
     });
+  }
+
+  editSchuetze(schuetze) {
+    console.log("I want to edit ", schuetze);
+    // TODO: move to new page.
+    this.navCtrl.push(SchuetzeEditPage, {
+      schuetze: schuetze
+    })
   }
 
   stichSelected(stich: string) {
