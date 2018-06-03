@@ -118,7 +118,7 @@ export class SchuetzenfestShowPage {
   }
 
   getSchuetzen(event: any) {
-    // Reset items back to all of the items
+    // Reset schuetzen back to all of the schuetzen
     this.initializeSchuetzen();
 
     // set searchText to the value of the searchbar
