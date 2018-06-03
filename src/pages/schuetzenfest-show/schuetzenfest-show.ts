@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {SchuetzeResultatPage} from "../schuetze-resultat/schuetze-resultat";
 import {SchuetzeCreatePage} from "../schuetze-create/schuetze-create";
 import {StichShowPage} from "../stich-show/stich-show";
+import {StichCreatePage} from "../stich-create/stich-create";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -50,6 +51,11 @@ export class SchuetzenfestShowPage {
   addSchuetze() {
     console.log("creating new schuetze");
     this.navCtrl.push(SchuetzeCreatePage);
+  }
+
+  addStich() {
+    console.log("creating new stich");
+    this.navCtrl.push(StichCreatePage);
   }
 
 }

@@ -34,17 +34,23 @@
       <button ion-item *ngFor="let stich of stiche" (click)="stichSelected(stich)">
         {{ stich }}
       </button>
+
+      <ion-fab right bottom>
+        <button ion-fab (tap)="addStich()"><ion-icon name="add"></ion-icon></button>
+      </ion-fab>
     </ion-list>
 
     <ion-list *ngSwitchCase="'schuetze'">
       <button ion-item *ngFor="let schuetze of schuetzen" (click)="schuetzeSelected(schuetze)">
         {{ schuetze }}
       </button>
+
+      <ion-fab right bottom>
+        <button ion-fab (tap)="addSchuetze()"><ion-icon name="add"></ion-icon></button>
+      </ion-fab>
     </ion-list>
   </div>
 
-  <ion-fab right bottom>
-    <button ion-fab (tap)="addSchuetze()"><ion-icon name="add"></ion-icon></button>
-  </ion-fab>
+
 
 </ion-content>
