@@ -22,7 +22,20 @@ export class SchuetzenfestShowPage {
   schuetzen = [
     'François Martin',
     'Roger Iten'
-  ]
+  ];
+
+  stiche = [
+    {
+      name: "Kranzstich",
+      anzahlSchuss: 10,
+      scheibe: 10
+    },
+    {
+      name: "Vindonissastich",
+      anzahlSchuss: 10,
+      scheibe: 10.9
+    }
+  ];
 
   schuetzenfest: string;
 
@@ -37,7 +50,8 @@ export class SchuetzenfestShowPage {
   schuetzeSelected(schuetze: string) {
     console.log("selected schuetze ", schuetze);
     this.navCtrl.push(SchuetzeResultatPage, {
-      schuetze: schuetze
+      schuetze: schuetze,
+      stiche: this.stiche,
     });
   }
 

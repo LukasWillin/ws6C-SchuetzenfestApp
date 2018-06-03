@@ -17,22 +17,11 @@ import {Stich} from "../../app/entities/Stich";
 export class SchuetzeResultatPage {
 
   schuetze: string;
-  stiche = [
-    {
-      name: "Kranzstich",
-      anzahlSchuss: 10,
-      scheibe: 10
-    },
-    {
-      name: "Vindonissastich",
-      anzahlSchuss: 10,
-      scheibe: 10.9
-    }
-  ];
+  stiche: any; // TODO: change this when switching to DB implementation
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     this.schuetze = navParams.get('schuetze');
-
+    this.stiche = navParams.get('stiche');
   }
 
   ionViewDidLoad() {
@@ -40,14 +29,9 @@ export class SchuetzeResultatPage {
   }
 
   getResultatOptions(stich) {
-    let resultatMax = stich.scheibe*stich.anzahlSchuss;
-    if (resultatMax % 10 == 0) {
-      // schüsse sind jeweils ganzzahlig
-      return Array(resultatMax+1).fill(resultatMax+1).map((x,i)=>i).reverse();
-    } else {
-      // schüsse jeweils mit komma
-      return 0; // TODO: fix
-    }
+    let resultatMax = stich.scheibe*stich.anzahlSchuss; // maximal erreichbares resultat
+    // build array with numbers from 0 to resultatMax inclusive, with reverse order (highest number comes first)
+    return Array(resultatMax+1).fill(resultatMax+1).map((x,i)=>i).reverse();
   }
 
   resultatIsDecimal(stich) {
