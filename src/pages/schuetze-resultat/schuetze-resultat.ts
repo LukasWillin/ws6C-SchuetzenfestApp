@@ -28,8 +28,12 @@ export class SchuetzeResultatPage {
     console.log('ionViewDidLoad ResultatPage');
   }
 
+  resultatMax(stich) {
+    return stich.scheibe*stich.anzahlSchuss; // maximal erreichbares resultat
+  }
+
   getResultatOptions(stich) {
-    let resultatMax = stich.scheibe*stich.anzahlSchuss; // maximal erreichbares resultat
+    let resultatMax = this.resultatMax(stich); // maximal erreichbares resultat
     // build array with numbers from 0 to resultatMax inclusive, with reverse order (highest number comes first)
     return Array(resultatMax+1).fill(resultatMax+1).map((x,i)=>i).reverse();
   }
