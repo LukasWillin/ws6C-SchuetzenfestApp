@@ -32,7 +32,7 @@
   <div [ngSwitch]="tab_selection">
     <ion-list *ngSwitchCase="'stich'">
       <button ion-item *ngFor="let stich of stiche" (click)="stichSelected(stich)">
-        {{ stich }}
+        {{ stich.name }}
       </button>
 
       <ion-fab right bottom>
