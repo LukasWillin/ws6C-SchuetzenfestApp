@@ -29,7 +29,7 @@
         <ion-option *ngFor="let resultat of getResultatOptions(stich)" value="{{ resultat }}">{{ resultat }}</ion-option>
       </ion-select>
 
-      <!-- Case: Input -->
+      <!-- Case: Input TODO: add validation of this field to be < scheibe*anzahlSchuss-->
       <ion-input type="text" value="" *ngSwitchCase="false"></ion-input>
 
     </ion-item>
