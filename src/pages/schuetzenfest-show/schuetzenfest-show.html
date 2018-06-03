@@ -19,7 +19,7 @@
 
 <ion-content padding>
   <div padding>
-    <ion-segment [(ngModel)]="schuetzenfest">
+    <ion-segment [(ngModel)]="tab_selection">
       <ion-segment-button value="stich">
         Stiche
       </ion-segment-button>
@@ -29,7 +29,7 @@
     </ion-segment>
   </div>
 
-  <div [ngSwitch]="schuetzenfest">
+  <div [ngSwitch]="tab_selection">
     <ion-list *ngSwitchCase="'stich'">
       <button ion-item *ngFor="let stich of stiche" (click)="stichSelected(stich)">
         {{ stich }}
