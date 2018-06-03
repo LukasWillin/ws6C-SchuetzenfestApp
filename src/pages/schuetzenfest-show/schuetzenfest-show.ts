@@ -19,6 +19,9 @@ import {StichCreatePage} from "../stich-create/stich-create";
 })
 export class SchuetzenfestShowPage {
 
+  // Defines which tab gets displayed in the view
+  tab_selection = "stiche";
+
   schuetzen = [
     'François Martin',
     'Roger Iten'

@@ -20,17 +20,17 @@
 <ion-content padding>
   <div padding>
     <ion-segment [(ngModel)]="tab_selection">
-      <ion-segment-button value="stich">
+      <ion-segment-button value="stiche">
         Stiche
       </ion-segment-button>
-      <ion-segment-button value="schuetze">
+      <ion-segment-button value="schuetzen">
         Schützen
       </ion-segment-button>
     </ion-segment>
   </div>
 
   <div [ngSwitch]="tab_selection">
-    <ion-list *ngSwitchCase="'stich'">
+    <ion-list *ngSwitchCase="'stiche'">
       <button ion-item *ngFor="let stich of stiche" (click)="stichSelected(stich)">
         {{ stich.name }}
       </button>
@@ -40,7 +40,7 @@
       </ion-fab>
     </ion-list>
 
-    <ion-list *ngSwitchCase="'schuetze'">
+    <ion-list *ngSwitchCase="'schuetzen'">
       <button ion-item *ngFor="let schuetze of schuetzen" (click)="schuetzeSelected(schuetze)">
         {{ schuetze }}
       </button>
