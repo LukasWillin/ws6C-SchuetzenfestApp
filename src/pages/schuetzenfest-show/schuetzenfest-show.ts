@@ -4,6 +4,8 @@ import {SchuetzeResultatPage} from "../schuetze-resultat/schuetze-resultat";
 import {SchuetzeCreatePage} from "../schuetze-create/schuetze-create";
 import {StichShowPage} from "../stich-show/stich-show";
 import {StichCreatePage} from "../stich-create/stich-create";
+import {Schuetze} from "../../app/entities/Schuetze";
+import {FirebaseServiceProvider} from "../../app/firebase-service";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -35,6 +37,8 @@ export class SchuetzenfestShowPage {
     }
   ];
 
+  // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
+
   stiche = [
     {
       name: "Kranzstich",
@@ -50,8 +54,9 @@ export class SchuetzenfestShowPage {
 
   schuetzenfest: string;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetzenfest = navParams.get('schuetzenfest');
+    console.log(this.schuetzen);
   }
 
   ionViewDidLoad() {

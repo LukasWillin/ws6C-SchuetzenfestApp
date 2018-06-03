@@ -9,8 +9,7 @@
   <ion-navbar>
     <ion-title>Schützenfest erfassen</ion-title>
     <ion-buttons end>
-      <!--TODO: define "click" method" and proper form-->
-      <button ion-button icon-only> <!--(click)="" [disabled]="!form.valid"-->
+      <button ion-button icon-only (click)="createSchuetzenfest()">
         <ion-icon name="checkmark"></ion-icon>
       </button>
     </ion-buttons>
@@ -22,7 +21,7 @@
 <ion-content padding>
   <ion-item>
     <ion-label stacked>Name</ion-label>
-    <ion-input type="text" value="name"></ion-input>
+    <ion-input [(ngModel)]="name" type="text" value=""></ion-input>
   </ion-item>
 
 </ion-content>

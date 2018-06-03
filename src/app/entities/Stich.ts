@@ -5,19 +5,32 @@ import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isBoolean from "lodash/isBoolean";
 import isDate from "lodash/isDate";
+import isNumber from 'lodash/isNumber';
 
 export class Stich {
+
+  set name(value:string) {
+    this._fb_lastChanged = new Date();
+    this._fb_field_name = value;
+  }
+
+  get name() : string {
+    return this._fb_field_name;
+  }
+
   get scheibe(): number {
     return this._fb_field_scheibe;
   }
 
   set scheibe(value: number) {
+    this._fb_lastChanged = new Date();
     this._fb_field_scheibe = value;
   }
   get anzahlschuss(): number {
     return this._fb_field_anzahlschuss;
   }
   set anzahlschuss(value: number) {
+    this._fb_lastChanged = new Date();
     this._fb_field_anzahlschuss = value;
   }
 
@@ -52,7 +65,7 @@ export class Stich {
 
     if (isObject(obj)) {
       if (isInteger(obj.anzahlschuss)) this.anzahlschuss =  obj.anzahlschuss;
-      if (isInteger(obj.scheibe)) this.scheibe = obj.scheibe;
+      if (isNumber(obj.scheibe)) this.scheibe = obj.scheibe;
 
       if (isString(obj._fbKey)) this._fbKey = obj._fbKey;
       if (isString(obj._fbSchuetzenfestKey)) this._fbSchuetzenfestKey = obj._fbSchuetzenfestKey;
@@ -73,4 +86,5 @@ export class Stich {
 
   public _fb_field_anzahlschuss : number = 0;
   public _fb_field_scheibe : number = -1;
+  public _fb_field_name : string = "";
 }

@@ -17,6 +17,7 @@ export class Schuetzenfest {
     return this._fb_field_name;
   }
   public set name(value:string) {
+    this._fb_lastChanged = new Date();
     this._fb_field_name = value;
   }
 
@@ -24,7 +25,10 @@ export class Schuetzenfest {
     return this._fb_field_stiche;
   }
   public set stiche(value: BehaviorSubject<Stich[]>) {
+    this._fb_lastChanged = new Date();
+    this.sticheSubscription.unsubscribe();
     this._fb_field_stiche = value;
+    this.sticheSubscription = this._fb_field_stiche.subscribe(stL => this.sticheChangedHandler());
   }
 
   public get key() : string {
@@ -78,4 +82,10 @@ export class Schuetzenfest {
 
   public _fb_field_name : string = "";
   public _fb_field_stiche : BehaviorSubject<Stich[]> = new BehaviorSubject<Stich[]>([]);
+
+  private sticheSubscription = this._fb_field_stiche.subscribe(stL => this.sticheChangedHandler());
+
+  private sticheChangedHandler() {
+    this._fb_lastChanged = new Date();
+  }
 }

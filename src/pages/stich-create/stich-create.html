@@ -8,11 +8,20 @@
 
   <ion-navbar>
     <ion-title>Stich erstellen</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="createStich()">
+        <ion-icon name="checkmark"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <ion-item>
+    <ion-label stacked>Name</ion-label>
+    <ion-input [(ngModel)]="name" type="text" value=""></ion-input>
+  </ion-item>
 
 </ion-content>
