@@ -9,9 +9,7 @@ import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {StichEditPage} from "../stich-edit/stich-edit";
-import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {Stich} from "../../app/entities/Stich";
-import {Resultat} from "../../app/entities/Resultat";
 import {Subscription} from "rxjs/Subscription";
 
 /**
@@ -65,7 +63,7 @@ export class SchuetzenfestShowPage {
   //   }
   // ];
 
-  schuetzenfest: string;
+  schuetzenfest;
   // schuetzenfestKey;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController) {
@@ -77,8 +75,11 @@ export class SchuetzenfestShowPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad StichPage');
-    this.schuetzenSubscription = this.fbSvc.schuetzen.subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
-    this.sticheSubscription = this.fbSvc.stiche.subscribe(sticheListe => this.stiche = sticheListe);
+    console.log("key für das Schuetzenfest " + this.schuetzenfest.key);
+    this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key)
+      .subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
+    this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key)
+      .subscribe(sticheListe => this.stiche = sticheListe);
   }
 
   ionViewWillUnload() {
@@ -136,6 +137,7 @@ export class SchuetzenfestShowPage {
     this.navCtrl.push(StichCreatePage);
   }
 
+  // TODO: Do we need it... I guess not?
   initializeSchuetzen() {
     this.schuetzen = [
       {
