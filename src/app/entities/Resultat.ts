@@ -55,11 +55,11 @@ export class Resultat {
       setPlaceholder = obj;
 
     if (isObject(obj)) {
-      if (isObject(obj._field_stich)) this._field_stich = obj._field_stich;
-      if (isInteger(obj._fb_field_punktzahl)) this._fb_field_punktzahl = obj._fb_field_punktzahl;
-
       if (isObject(obj.stich)) this._field_stich = obj.stich;
       if (isInteger(obj.punktzahl)) this._fb_field_punktzahl = obj.punktzahl;
+
+      if (isObject(obj._field_stich)) this._field_stich = obj._field_stich;
+      if (isInteger(obj._fb_field_punktzahl)) this._fb_field_punktzahl = obj._fb_field_punktzahl;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
       if (isString(obj._fbStichKey) && !isEmpty(obj._fbStichKey)) this._fbStichKey = obj._fbStichKey;
