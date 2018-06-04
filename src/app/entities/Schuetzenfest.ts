@@ -1,15 +1,11 @@
 
 import isObject from 'lodash/isObject';
-import isInteger from 'lodash/isInteger';
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isBoolean from 'lodash/isBoolean';
 import isDate from 'lodash/isBoolean';
 
-import { Stich } from './Stich'
-import {Resultat} from "./Resultat";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import set = Reflect.set;
+import { Stich } from './Stich';
 
 export class Schuetzenfest {
 
@@ -76,5 +72,4 @@ export class Schuetzenfest {
 
   public _fb_field_name : string = "";
   public _field_stiche : Stich[] = [];
-
 }

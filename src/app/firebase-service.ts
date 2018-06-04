@@ -129,8 +129,10 @@ export class FirebaseServiceProvider {
 
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
       return this.checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).then( exists => {
+
         instance = new Schuetze(instance);
         instance.resultate = null;
+
         if (exists && crudOp === undefined || crudOp === CRUD.UPDATE) {
           return self._fbRefSchuetzen.update(fbKey, instance).then(_ => {
             return self.getSchuetzeByKey(fbKey);
@@ -147,8 +149,11 @@ export class FirebaseServiceProvider {
       });
     } else {
       if (crudOp === undefined || crudOp === CRUD.GET) {
+
         return self.getSchuetzeByKey(fbKey);
+
       } else if (crudOp === CRUD.DELETE) {
+
         return this.checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).then( exists => {
           if (exists) {
             return self.getSchuetzeByKey(fbKey).then(s => {
@@ -251,7 +256,7 @@ export class FirebaseServiceProvider {
 
       console.log("2 Push " + instance + " to db ");
 
-      return this.checkIfItemExists(FBREF_PATH_STICHE, fbKey).then(exists => {
+      return Promise.resolve(this.checkIfItemExists(FBREF_PATH_STICHE, fbKey).then(exists => {
 
         instance = new Stich(instance);
         instance._field_schuetzenfest = null;
@@ -260,25 +265,26 @@ export class FirebaseServiceProvider {
 
         if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
           return self._fbRefStiche.update(fbKey, instance).then(_ => {
-            return Promise.resolve(self.getStichByKey(fbKey));
+            return self.getStichByKey(fbKey);
           });
 
         } else if (!exists || !exists && crudOp === CRUD.PUSH) {
-          return Promise.resolve(self._fbRefStiche.push(instance).once('value'))
+          return self._fbRefStiche.push(instance).once('value')
             .then(p => {
-              return Promise.resolve(this.getStichByKey(p.key));
-            });/*
-            .then(st => {
-              return Promise.resolve(this.getSchuetzenfestByKey(st._fbSchuetzenfestKey).then(sf => {
-                st._field_schuetzenfest = sf;
-                return Promise.resolve(st);
-              }));
-            });*/
+              return Promise.resolve(this.getStichByKey(p.key)).then(st => {
+                return this.getSchuetzenfestByKey(st._fbSchuetzenfestKey)
+                  .then(sf => {
+                    console.log(sf);
+                    st._field_schuetzenfest = sf;
+                    return Promise.resolve(st);
+                  });
+              });
+            });
 
         } else {
           return Promise.reject(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
         }
-      });
+      }));
 
     } else {
       if (crudOp === undefined || crudOp === CRUD.GET) {
@@ -315,7 +321,10 @@ export class FirebaseServiceProvider {
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
 
       return this.checkIfItemExists(FBREF_PATH_RESULTATE, fbKey).then(exists => {
-        instance = (instance as Resultat).clone;
+
+        instance = new Resultat(instance);
+        instance._field_stich = null;
+
         if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
           return self._fbRefResultate.update(fbKey, instance).then(_ => {
             return self.getResultatByKey(fbKey);
@@ -398,7 +407,13 @@ export class FirebaseServiceProvider {
       return this.afd.object<Schuetze>(`${FBREF_PATH_SCHUETZEN}/${key}`)
         .snapshotChanges()
         .map(c => this.mapSchuetzePayload(c.payload))
-        .toPromise();
+        .toPromise()
+        .then(s => {
+          return Promise.resolve(this.getResultateBySchuetzeKey(s.key).then(rL => {
+            s._field_resultate = rL;
+            return Promise.resolve(s);
+          }));
+        });
     } else {
       console.warn("Faulty key in #getSchuetzeByKey");
       return Promise.resolve(null);
@@ -407,7 +422,7 @@ export class FirebaseServiceProvider {
 
   public getStichByKey(key:string): Promise<Stich> {
     if (!_.isEmpty(key)) {
-      return this.afd.object(`${FBREF_PATH_STICHE}/${key}`)
+      return Promise.resolve(this.afd.object(`${FBREF_PATH_STICHE}/${key}`)
         .snapshotChanges()
         .map(c => this.mapStichPayload(c.payload))
         .toPromise()
@@ -418,15 +433,15 @@ export class FirebaseServiceProvider {
               const index = _.findIndex(sf.stiche, stSf => stSf.key === st.key);
               if (index < 0) {
                 sf.stiche.push(st);
-                //this.crudSchuetzenfest(sf);
+                this.crudSchuetzenfest(sf);
               }
               st._field_schuetzenfest = sf;
-              return Promise.resolve(st);
+              return st;
             }));
           } else {
             return Promise.resolve(st);
           }
-        });
+        }));
     } else {
       console.warn("Faulty key in #getStichByKey");
       return Promise.resolve(null);
@@ -438,7 +453,13 @@ export class FirebaseServiceProvider {
       return this.afd.object(`${FBREF_PATH_RESULTATE}/${key}`)
         .snapshotChanges()
         .map(c => this.mapResultatPayload(c.payload))
-        .toPromise();
+        .toPromise()
+        .then(r => {
+          return Promise.resolve(this.getStichByKey(r._fbStichKey).then(st => {
+            r._field_stich = st;
+            return Promise.resolve(r);
+          }))
+        });
     } else {
       console.warn("Faulty key in #getResultatByKey");
       return Promise.resolve(null);

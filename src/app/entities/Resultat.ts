@@ -7,17 +7,16 @@ import isBoolean from 'lodash/isBoolean';
 import isDate from 'lodash/isDate';
 
 import { Stich } from './Stich';
-import { Observable } from "rxjs/Observable";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 export class Resultat {
   get stich(): Stich {
-    return this._fb_field_stich;
+    return this._field_stich;
   }
 
   set stich(value: Stich) {
     this._fb_lastChanged = new Date();
-    this._fb_field_stich = value;
+    this._fbStichKey = (!isEmpty(value)) ? value.key : "";
+    this._field_stich = value;
   }
 
   get punktzahl(): number {
@@ -46,7 +45,7 @@ export class Resultat {
   }
   public toString() : string {
     const jsonify = new Resultat(this);
-    jsonify._fb_field_stich = null;
+    jsonify._field_stich = null;
     return JSON.stringify(jsonify);
   }
 
@@ -56,7 +55,7 @@ export class Resultat {
       setPlaceholder = obj;
 
     if (isObject(obj)) {
-      if (isObject(obj._fb_field_stich)) this._fb_field_stich = obj._fb_field_stich;
+      if (isObject(obj._field_stich)) this._field_stich = obj._field_stich;
       if (isInteger(obj._fb_field_punktzahl)) this._fb_field_punktzahl = obj._fb_field_punktzahl;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
@@ -78,7 +77,7 @@ export class Resultat {
   public _fb_lastChanged : Date = new Date();
   public _fb_isPlaceholder : boolean = false;
 
-  public _fb_field_stich : Stich = null;
   public _fb_field_punktzahl : number = 0;
 
+  public _field_stich : Stich = null;
 }

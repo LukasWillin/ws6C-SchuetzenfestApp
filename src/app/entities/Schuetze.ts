@@ -1,9 +1,7 @@
 
 import {Resultat} from "./Resultat";
-import {Observable} from "rxjs/Observable";
 
 import isObject from 'lodash/isObject';
-import isInteger from 'lodash/isInteger';
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isBoolean from 'lodash/isBoolean';
@@ -31,12 +29,12 @@ export class Schuetze {
   }
 
   get resultate(): Resultat[] {
-    return this._fb_field_resultate;
+    return this._field_resultate;
   }
 
   set resultate(value: Resultat[]) {
     this._fb_lastChanged = new Date();
-    this._fb_field_resultate = value;
+    this._field_resultate = value;
   }
 
   get lizenzNr(): string {
@@ -74,7 +72,7 @@ export class Schuetze {
     if (isObject(obj)) {
       if (isString(obj._fb_field_vorname) && !isEmpty(obj._fb_field_vorname)) this._fb_field_vorname = obj._fb_field_vorname;
       if (isString(obj._fb_field_nachname) && !isEmpty(obj._fb_field_nachname)) this._fb_field_nachname = obj._fb_field_nachname;
-      if (obj._fb_field_resultate) this._fb_field_resultate = obj._fb_field_resultate;
+      if (obj._field_resultate) this._field_resultate = obj._field_resultate;
       if (obj._fb_field_lizenzNr) this._fb_field_lizenzNr = obj._fb_field_lizenzNr;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
@@ -94,6 +92,7 @@ export class Schuetze {
 
   public _fb_field_vorname : string = "";
   public _fb_field_nachname : string = "";
-  public _fb_field_resultate : Resultat[] = [];
   public _fb_field_lizenzNr : string = "";
+
+  public _field_resultate : Resultat[] = [];
 }

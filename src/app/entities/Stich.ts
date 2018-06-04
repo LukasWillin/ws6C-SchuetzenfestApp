@@ -2,7 +2,6 @@
 import isObject from 'lodash/isObject';
 import isInteger from 'lodash/isInteger';
 import isEmpty from 'lodash/isEmpty';
-import isString from 'lodash/isString';
 import isBoolean from "lodash/isBoolean";
 import isDate from "lodash/isDate";
 import isNumber from 'lodash/isNumber';
@@ -37,6 +36,7 @@ export class Stich {
 
   set schuetzenfest(value:Schuetzenfest) {
     this._fb_lastChanged = new Date();
+    this._fbSchuetzenfestKey = isEmpty(value) ? value.key : "";
     this._field_schuetzenfest = value;
   }
   get schuetzenfest() : Schuetzenfest {
