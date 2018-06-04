@@ -23,7 +23,7 @@ const STR_UPDATE = 'update';
 const STR_PUSH = 'push';
 const STR_GET = 'get';
 
-class CRUD {
+export class CRUD {
   public static get DELETE(): string {
     return STR_DELETE;
   }

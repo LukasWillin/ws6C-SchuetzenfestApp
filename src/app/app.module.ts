@@ -20,6 +20,8 @@ import {StichShowPage} from "../pages/stich-show/stich-show";
 import {StichCreatePage} from "../pages/stich-create/stich-create";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {SchuetzeEditPage} from "../pages/schuetze-edit/schuetze-edit";
+import {StichEditPage} from "../pages/stich-edit/stich-edit";
+import {SchuetzenfestEditPage} from "../pages/schuetzenfest-edit/schuetzenfest-edit";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCkW_Qob61IQRreDHnDtqw3nhAPwZ7dywM",
@@ -38,9 +40,11 @@ const firebaseConfig = {
     SchuetzeResultatPage,
     SchuetzenfestCreatePage,
     SchuetzenfestListPage,
+    SchuetzenfestEditPage,
     SchuetzenfestShowPage,
     StichShowPage,
-    StichCreatePage
+    StichCreatePage,
+    StichEditPage
   ],
   imports: [
     HttpModule,
@@ -58,9 +62,11 @@ const firebaseConfig = {
     SchuetzeResultatPage,
     SchuetzenfestCreatePage,
     SchuetzenfestListPage,
+    SchuetzenfestEditPage,
     SchuetzenfestShowPage,
     StichShowPage,
-    StichCreatePage
+    StichCreatePage,
+    StichEditPage
   ],
   providers: [
     StatusBar,
