@@ -67,6 +67,7 @@ export class SchuetzenfestListPage {
           icon: !this.platform.is('ios') ? 'md-create' : null,
           handler: () => {
             console.log('Bearbeiten clicked');
+            this.schuetzenfestEdit(schuetzenfest);
           }
         },
         {
