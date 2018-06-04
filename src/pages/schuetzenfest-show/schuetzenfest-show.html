@@ -34,7 +34,7 @@
 
   <div [ngSwitch]="tab_selection">
     <ion-list *ngSwitchCase="'stiche'" (ionFocus)="searchbarShowing = false">
-      <button ion-item *ngFor="let stich of stiche" (tap)="stichSelected(stich)">
+      <button ion-item *ngFor="let stich of stiche" (tap)="stichSelected(stich)" (press)="editStich(stich)">
         {{ stich.name }}
       </button>
 

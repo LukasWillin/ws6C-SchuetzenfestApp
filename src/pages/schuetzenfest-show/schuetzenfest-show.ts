@@ -8,6 +8,7 @@ import {Schuetze} from "../../app/entities/Schuetze";
 import {FirebaseServiceProvider} from "../../app/firebase-service";
 import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 import {animate, style, transition, trigger} from "@angular/animations";
+import {StichEditPage} from "../stich-edit/stich-edit";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -79,7 +80,6 @@ export class SchuetzenfestShowPage {
 
   editSchuetze(schuetze) {
     console.log("I want to edit ", schuetze);
-    // TODO: move to new page.
     this.navCtrl.push(SchuetzeEditPage, {
       schuetze: schuetze
     })
@@ -91,6 +91,14 @@ export class SchuetzenfestShowPage {
       stich: stich
     });
   }
+
+  editStich(stich) {
+    console.log("I want to edit ", stich);
+    this.navCtrl.push(StichEditPage, {
+      stich: stich
+    })
+  }
+
 
   addSchuetze() {
     console.log("creating new schuetze");
