@@ -11,6 +11,8 @@ import {animate, style, transition, trigger} from "@angular/animations";
 import {StichEditPage} from "../stich-edit/stich-edit";
 import {Stich} from "../../app/entities/Stich";
 import {Subscription} from "rxjs/Subscription";
+import {Resultat} from "../../app/entities/Resultat";
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -53,7 +55,7 @@ export class SchuetzenfestShowPage {
     1,2
   ];
 
-  schuetzenfest: string;
+  schuetzenfest: Schuetzenfest;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController) {
     this.schuetzenfest = navParams.get('schuetzenfest');
@@ -143,7 +145,7 @@ export class SchuetzenfestShowPage {
     this.navCtrl.push(StichCreatePage);
   }
 
-  // TODO: Do we need it... I guess not?
+  // TODO: Do we need it... I guess not? => We do need it because of the search!
   initializeSchuetzen() {
     let schuetze1: Schuetze = new Schuetze();
     schuetze1.vorname = "François";
