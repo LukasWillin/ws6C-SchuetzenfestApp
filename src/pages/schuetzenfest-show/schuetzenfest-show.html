@@ -19,7 +19,7 @@
 
 
 <ion-content padding>
-  <ion-searchbar (ionInput)="getSchuetzen($event)" *ngIf="searchbarShowing" [@searchbarAnimation]></ion-searchbar>
+  <ion-searchbar (ionInput)="getSchuetzen($event)" *ngIf="searchbarShowing && tab_selection == 'schuetzen'" [@searchbarAnimation]></ion-searchbar>
 
   <div padding>
     <ion-segment [(ngModel)]="tab_selection">
@@ -33,7 +33,7 @@
   </div>
 
   <div [ngSwitch]="tab_selection">
-    <ion-list *ngSwitchCase="'stiche'">
+    <ion-list *ngSwitchCase="'stiche'" (ionFocus)="searchbarShowing = false">
       <button ion-item *ngFor="let stich of stiche" (tap)="stichSelected(stich)">
         {{ stich.name }}
       </button>
