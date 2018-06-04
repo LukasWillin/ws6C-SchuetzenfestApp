@@ -20,8 +20,12 @@ export class SchuetzeCreatePage {
   vorname: string;
   nachname: string;
   lizenzNr: string;
+  stiche: any; // TODO: change to Stich[]
+  sticheGeloest: number[] = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
+    this.stiche = navParams.get('stiche');
+    console.log(this.stiche);
   }
 
   ionViewDidLoad() {

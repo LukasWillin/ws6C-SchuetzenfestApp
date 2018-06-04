@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Stich} from "../../app/entities/Stich";
+import {Schuetze} from "../../app/entities/Schuetze";
+import {Resultat} from "../../app/entities/Resultat";
 
 /**
  * Generated class for the SchuetzeResultatPage page.
@@ -16,12 +18,12 @@ import {Stich} from "../../app/entities/Stich";
 })
 export class SchuetzeResultatPage {
 
-  schuetze: any; // TODO: change this when switching to DB implementation
-  stiche: any; // TODO: change this when switching to DB implementation
+  schuetze: Schuetze;
+  resultate: Resultat[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     this.schuetze = navParams.get('schuetze');
-    this.stiche = navParams.get('stiche');
+    this.resultate = this.schuetze.resultate;
   }
 
   ionViewDidLoad() {
@@ -29,11 +31,12 @@ export class SchuetzeResultatPage {
   }
 
   resultatMax(stich) {
-    return stich.scheibe*stich.anzahlSchuss; // maximal erreichbares resultat
+    return stich.scheibe*stich.anzahlschuss; // maximal erreichbares resultat
   }
 
   getResultatOptions(stich) {
     let resultatMax = this.resultatMax(stich); // maximal erreichbares resultat
+    console.log("ResultatMax: ", resultatMax);
     // build array with numbers from 0 to resultatMax inclusive, with reverse order (highest number comes first)
     return Array(resultatMax+1).fill(resultatMax+1).map((x,i)=>i).reverse();
   }

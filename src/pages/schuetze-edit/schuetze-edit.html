@@ -34,4 +34,9 @@
     <ion-input [(ngModel)]="lizenzNr" type="text" value={{schuetze.lizenzNr}}></ion-input>
   </ion-item>
 
+  <ion-item *ngFor="let stich of stiche; let index = index;">
+    <ion-label stacked>{{stich.name}} gelöst</ion-label>
+    <ion-input [(ngModel)]="sticheGeloest[index]" type="number" step="1" min="0" value={{sticheGeloest[index]}}></ion-input>
+  </ion-item>
+
 </ion-content>

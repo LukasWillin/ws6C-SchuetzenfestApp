@@ -16,9 +16,13 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 export class SchuetzeEditPage {
 
   schuetze: any;
+  stiche: any; // TODO: change to Stich[]
+  sticheGeloest: number[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     this.schuetze = navParams.get('schuetze');
+    this.stiche = navParams.get('stiche');
+    this.sticheGeloest = navParams.get('sticheGeloest');
   }
 
   ionViewDidLoad() {

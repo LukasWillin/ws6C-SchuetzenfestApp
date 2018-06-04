@@ -17,16 +17,16 @@
   <ion-list> <!-- Stiche -->
 
     <!-- If result is in whole integers, show select, else show regular input for entry -->
-    <ion-item *ngFor="let stich of stiche" [ngSwitch]="resultatIsDecimal(stich)"> <!-- Stich -->
-      <ion-label>{{ stich.name }}</ion-label>
+    <ion-item *ngFor="let resultat of resultate" [ngSwitch]="resultatIsDecimal(resultat.stich)"> <!-- Stich -->
+      <ion-label>{{ resultat.stich.name }}</ion-label>
 
       <!-- Case: Select -->
-      <ion-select [(ngModel)]="TODO" *ngSwitchCase="true">
-        <ion-option *ngFor="let resultat of getResultatOptions(stich)" value="{{ resultat }}">{{ resultat }}</ion-option>
+      <ion-select [(ngModel)]="resultat.punktzahl" *ngSwitchCase="true">
+        <ion-option *ngFor="let resultatWert of getResultatOptions(resultat.stich)" value="{{resultatWert}}">{{resultatWert}}</ion-option>
       </ion-select>
 
       <!-- Case: Input TODO: add validation of having exactly one decimal point here (maybe with decimalpipe: https://stackoverflow.com/questions/42069234/force-2-decimal-places-precision-in-ion-input -->
-      <ion-input type="number" value="" *ngSwitchCase="false" min="0" max="{{resultatMax(stich)}}" step="0.1" text-right></ion-input>
+      <ion-input [(ngModel)]="resultat.punktzahl" type="number" value="{{resultat.punktzahl}}" *ngSwitchCase="false" min="0" max="{{resultatMax(resultat.stich)}}" step="0.1" text-right></ion-input>
 
     </ion-item>
   </ion-list>
