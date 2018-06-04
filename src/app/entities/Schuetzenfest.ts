@@ -12,8 +12,10 @@ export class Schuetzenfest {
   public get name() : string {
     return this._fb_field_name;
   }
+
   public set name(value:string) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fb_field_name = value;
   }
 
@@ -22,6 +24,7 @@ export class Schuetzenfest {
   }
   public set stiche(value:Stich[]) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._field_stiche = value;
   }
 

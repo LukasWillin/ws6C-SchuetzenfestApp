@@ -10,12 +10,24 @@ import isDate from 'lodash/isDate';
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 export class Schuetze {
+
+  get schuetzenfestKeyList() : string[] {
+    return this._fb_list_schuetzenfestKey;
+  }
+
+  set schuetzenfestKeyList(value:string[]) {
+    this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
+    this._fb_list_schuetzenfestKey = value;
+  }
+
   get vorname(): string {
     return this._fb_field_vorname;
   }
 
   set vorname(value: string) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fb_field_vorname = value;
   }
 
@@ -25,6 +37,7 @@ export class Schuetze {
 
   set nachname(value: string) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fb_field_nachname = value;
   }
 
@@ -34,6 +47,7 @@ export class Schuetze {
 
   set resultate(value: Resultat[]) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._field_resultate = value;
   }
 
@@ -43,6 +57,7 @@ export class Schuetze {
 
   set lizenzNr(value: string) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fb_field_lizenzNr = value;
   }
   public get key() : string {
@@ -74,13 +89,13 @@ export class Schuetze {
       if (isString(obj.nachname) && !isEmpty(obj.nachname)) this._fb_field_nachname = obj.nachname;
       if (obj.resultate) this._field_resultate = obj.resultate;
       if (obj.lizenzNr) this._fb_field_lizenzNr = obj.lizenzNr;
+      if (!isEmpty(obj.schuetzenfestKeyList)) this._fb_list_schuetzenfestKey = obj.schuetzenfestKeyList;
 
       if (isString(obj._fb_field_vorname) && !isEmpty(obj._fb_field_vorname)) this._fb_field_vorname = obj._fb_field_vorname;
       if (isString(obj._fb_field_nachname) && !isEmpty(obj._fb_field_nachname)) this._fb_field_nachname = obj._fb_field_nachname;
       if (obj._field_resultate) this._field_resultate = obj._field_resultate;
       if (obj._fb_field_lizenzNr) this._fb_field_lizenzNr = obj._fb_field_lizenzNr;
-
-
+      if (!isEmpty(obj._fb_list_schuetzenfestKey)) this._fb_list_schuetzenfestKey = obj._fb_list_schuetzenfestKey;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
 
@@ -100,6 +115,7 @@ export class Schuetze {
   public _fb_field_vorname : string = "";
   public _fb_field_nachname : string = "";
   public _fb_field_lizenzNr : string = "";
+  public _fb_list_schuetzenfestKey : string[] = [];
 
   public _field_resultate : Resultat[] = [];
 }
