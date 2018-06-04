@@ -80,11 +80,17 @@ export class SchuetzenfestShowPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SchuetzenfestShow');
-    console.log("key für das Schuetzenfest " + this.schuetzenfest.key);
+    console.log("Key für das Schuetzenfest " + this.schuetzenfest.key);
     // this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key)
     //   .subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
     // this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key)
     //   .subscribe(sticheListe => this.stiche = sticheListe);
+    // this.schuetzenSubscription = this.fbSvc.schuetzen.subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
+    this.sticheSubscription = this.fbSvc.stiche.subscribe(sticheListe => this.stiche = sticheListe);
+    // this.schuetzen.filter(value => {
+    //   value.schuetzenfestKeyList.forEach(value1 => console.log(value1));
+    // });
+    console.log(this.schuetzen);
   }
 
   ionViewWillUnload() {
@@ -136,7 +142,8 @@ export class SchuetzenfestShowPage {
   addSchuetze() {
     console.log("creating new schuetze");
     this.navCtrl.push(SchuetzeCreatePage, {
-      stiche: this.stiche
+      stiche: this.stiche,
+      schuetzenfest: this.schuetzenfest
     });
   }
 

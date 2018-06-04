@@ -3,6 +3,7 @@ import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Stich} from "../../app/entities/Stich";
 import {Schuetze} from "../../app/entities/Schuetze";
 import {Resultat} from "../../app/entities/Resultat";
+import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 
 /**
  * Generated class for the SchuetzeResultatPage page.
@@ -21,7 +22,7 @@ export class SchuetzeResultatPage {
   schuetze: Schuetze;
   resultate: Resultat[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetze = navParams.get('schuetze');
     this.resultate = this.schuetze.resultate;
   }
@@ -43,6 +44,14 @@ export class SchuetzeResultatPage {
 
   resultatIsDecimal(stich) {
     return stich.scheibe % 10 == 0;
+  }
+
+  updateResultat() {
+    console.log("Updating!");
+
+    this.fbSvc.crudBatchResultat(this.resultate, CRUD.UPDATE);
+
+    this.navCtrl.pop();
   }
 
 }

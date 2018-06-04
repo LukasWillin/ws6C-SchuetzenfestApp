@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {Schuetze} from "../../app/entities/Schuetze";
-import {FirebaseServiceProvider} from "../../app/firebase-service";
+import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 
 /**
  * Generated class for the SchuetzeCreatePage page.
@@ -22,10 +23,12 @@ export class SchuetzeCreatePage {
   lizenzNr: string;
   stiche: any; // TODO: change to Stich[]
   sticheGeloest: number[] = [];
+  schuetzenfest: Schuetzenfest;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.stiche = navParams.get('stiche');
     console.log(this.stiche);
+    this.schuetzenfest = navParams.get('schuetzenfest');
   }
 
   ionViewDidLoad() {
@@ -39,7 +42,11 @@ export class SchuetzeCreatePage {
     newSchuetze.vorname = this.vorname;
     newSchuetze.lizenzNr = this.lizenzNr;
 
-    //this.fbSvc.crudSchuetze(newSchuetze);
+    console.log(newSchuetze);
+    console.log(this.schuetzenfest.key);
+
+    this.fbSvc.crudSchuetze(newSchuetze, this.schuetzenfest.key);
+    // this.fbSvc.crudSchuetze("OKAY", this.schuetzenfest.key, CRUD.PUSH);
 
     // Change view
     this.navCtrl.pop();
