@@ -75,6 +75,12 @@ export class Schuetze {
       if (obj._field_resultate) this._field_resultate = obj._field_resultate;
       if (obj._fb_field_lizenzNr) this._fb_field_lizenzNr = obj._fb_field_lizenzNr;
 
+      if (isString(obj.vorname) && !isEmpty(obj.vorname)) this._fb_field_vorname = obj.vorname;
+      if (isString(obj.nachname) && !isEmpty(obj.nachname)) this._fb_field_nachname = obj.nachname;
+      if (obj.resultate) this._field_resultate = obj.resultate;
+      if (obj.lizenzNr) this._fb_field_lizenzNr = obj.lizenzNr;
+
+
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
 
       if (isDate(obj._fb_lastChanged)) this._fb_lastChanged = obj._fb_lastChanged;

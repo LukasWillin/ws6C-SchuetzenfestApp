@@ -73,6 +73,10 @@ export class Stich {
       if (!isEmpty(obj._fb_field_name)) this._fb_field_name = obj._fb_field_name;
       if (isNumber(obj._fb_field_scheibe) && obj._fb_field_scheibe !== -1) this._fb_field_scheibe = obj._fb_field_scheibe;
 
+      if (isInteger(obj.anzahlschuss) && obj._fb_field_anzahlschuss !== 0) this._fb_field_anzahlschuss =  obj.anzahlschuss;
+      if (!isEmpty(obj.name)) this._fb_field_name = obj.name;
+      if (isNumber(obj.scheibe) && obj.scheibe !== -1) this._fb_field_scheibe = obj.scheibe;
+
       if (!isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
       if (!isEmpty(obj._fbSchuetzenfestKey)) this._fbSchuetzenfestKey = obj._fbSchuetzenfestKey;
 
