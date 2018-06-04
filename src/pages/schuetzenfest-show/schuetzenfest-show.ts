@@ -1,14 +1,17 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {ActionSheetController, AlertController, IonicPage, NavController, NavParams, Platform} from 'ionic-angular';
 import {SchuetzeResultatPage} from "../schuetze-resultat/schuetze-resultat";
 import {SchuetzeCreatePage} from "../schuetze-create/schuetze-create";
 import {StichShowPage} from "../stich-show/stich-show";
 import {StichCreatePage} from "../stich-create/stich-create";
 import {Schuetze} from "../../app/entities/Schuetze";
-import {FirebaseServiceProvider} from "../../app/firebase-service";
+import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {StichEditPage} from "../stich-edit/stich-edit";
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
+import {Stich} from "../../app/entities/Stich";
+import {Resultat} from "../../app/entities/Resultat";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -59,7 +62,7 @@ export class SchuetzenfestShowPage {
 
   schuetzenfest: string;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController) {
     this.schuetzenfest = navParams.get('schuetzenfest');
     this.searchbarShowing = false; // hide search bar by default
     console.log(this.schuetzen);
@@ -70,7 +73,7 @@ export class SchuetzenfestShowPage {
     console.log('ionViewDidLoad StichPage');
   }
 
-  schuetzeSelected(schuetze) {
+  selectSchuetze(schuetze) {
     console.log("selected schuetze ", schuetze);
     this.navCtrl.push(SchuetzeResultatPage, {
       schuetze: schuetze,
@@ -85,7 +88,7 @@ export class SchuetzenfestShowPage {
     })
   }
 
-  stichSelected(stich: string) {
+  selectStich(stich: string) {
     console.log("selected stich ", stich);
     this.navCtrl.push(StichShowPage, {
       stich: stich
@@ -149,5 +152,72 @@ export class SchuetzenfestShowPage {
 
   toggleSearchbarVisibility() {
     this.searchbarShowing = !this.searchbarShowing;
+  }
+
+  presentActionSheet(object: Stich|Schuetze) {
+    let actionSheet = this.actionsheetCtrl.create({
+      title: 'Aktionen',
+      cssClass: 'action-sheets-basic-page',
+      buttons: [
+        {
+          text: 'Bearbeiten',
+          icon: !this.platform.is('ios') ? 'md-create' : null,
+          handler: () => {
+            console.log('Bearbeiten clicked');
+            if (object instanceof Schuetze) {
+              this.editSchuetze(object);
+            } else {
+              this.editStich(object);
+            }
+          }
+        },
+        {
+          text: 'Löschen',
+          role: 'destructive',
+          icon: !this.platform.is('ios') ? 'trash' : null,
+          handler: () => {
+            console.log('Löschen clicked');
+            this.confirmDelete(object);
+          }
+        },
+        {
+          text: 'Abbrechen',
+          role: 'cancel', // will always sort to be on the bottom
+          icon: !this.platform.is('ios') ? 'close' : null,
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+  }
+
+  confirmDelete(object: Schuetze|Stich) {
+    let alert = this.alertCtrl.create({
+      title: 'Löschen bestätigen',
+      message: 'Wirklich löschen?',
+      buttons: [
+        {
+          text: 'Abbrechen',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            console.log('OK clicked');
+            if (object instanceof Schuetze) {
+              this.fbSvc.crudSchuetze(object, CRUD.DELETE);
+            } else {
+              this.fbSvc.crudStich(object, CRUD.DELETE);
+            }
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 }
