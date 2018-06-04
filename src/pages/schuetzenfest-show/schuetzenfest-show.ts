@@ -79,12 +79,12 @@ export class SchuetzenfestShowPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad StichPage');
+    console.log('ionViewDidLoad SchuetzenfestShow');
     console.log("key für das Schuetzenfest " + this.schuetzenfest.key);
-    this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key)
-      .subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
-    this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key)
-      .subscribe(sticheListe => this.stiche = sticheListe);
+    // this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key)
+    //   .subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
+    // this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key)
+    //   .subscribe(sticheListe => this.stiche = sticheListe);
   }
 
   ionViewWillUnload() {
