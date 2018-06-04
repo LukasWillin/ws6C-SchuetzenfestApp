@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import {AngularFireDatabase, DatabaseSnapshot} from 'angularfire2/database';
 import { AngularFireList } from 'angularfire2/database';
-import { AngularFireAction } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 
 import isObject from 'lodash/isObject';
-import filter from 'lodash/filter';
 import _ from 'lodash';
 
 import { Schuetze } from "./entities/Schuetze";
@@ -174,47 +172,36 @@ export class FirebaseServiceProvider {
    * @returns {Promise<Schuetze|Error>}
    */
   public crudSchuetzenfest(instance: Schuetzenfest|string, crudOp?: string): Observable<Schuetzenfest> {
+
     const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
     const self = this;
 
+    console.log(`crud schuetzenfest ${instance} and op ${crudOp}`);
+
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
 
-      let stichBatch: Stich[];
-      let stichBatchKeys: string[];
-      let schuetzenfest:Schuetzenfest;
-
-      /*if (crudOp !== CRUD.GET) {
-        if (typeof instance === 'object') schuetzenfest = instance;
-        else this.getSchuetzenfestByKey(fbKey).then(s => schuetzenfest = s).unsubscribe();
-        if(!schuetzenfest.stiche.isEmpty()) {
-          schuetzenfest.stiche.subscribe(stL => {
-            stL.forEach(r => {
-              r._fbSchuetzenfestKey = fbKey;
-            });
-            stichBatch = stL;
-            stichBatchKeys = stL.map(r => r._fbKey);
-            // this.batchStich(stichBatch, crudOp).then(_ => {});
-          })
-            .unsubscribe();
-        }
-      }*/
-
       return this.checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).map(exists => {
+
+        console.debug("Checked instance exists schuetzenfeste");
+
         instance = new Schuetzenfest(instance);
         instance.stiche = null;
 
         if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
-
+          console.debug("instance exists schuetzenfeste");
           return Observable.create(self._fbRefSchuetzenfeste.update(fbKey, instance).then(_ => {
-            return self.getSchuetzenfestByKey(fbKey);
+            return Observable.create(self.getSchuetzenfestByKey(fbKey));
           }));
 
         } else if (!exists || !exists && crudOp === CRUD.PUSH) {
-          return Observable.create(self._fbRefSchuetzenfeste.push(instance).once('value'))
+          console.debug("instance not exists schuetzenfeste");
+          return Observable.create(self._fbRefSchuetzenfeste.push(instance).once('value')
             .then(item => {
-              return self.getSchuetzenfestByKey(item.key);});
+              return self.getSchuetzenfestByKey(item.key);
+            }));
 
         } else {
+          console.debug("Error instance schuetzenfeste");
           return Observable.create(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
         }
       });
@@ -390,7 +377,7 @@ export class FirebaseServiceProvider {
 
   public getSchuetzenBySchuetzenfestKey(key:string) {
     if (!_.isEmpty(key)) {
-      this.schuetzen.map(sL => sL.filter(s => _.includes(s.schuetzenfestKeyList, key)))
+      return this.schuetzen.map(sL => sL.filter(s => _.includes(s.schuetzenfestKeyList, key)));
       // Alle stiche nach schuetzenfest
       // Alle resultate dieser Stiche
       // Alle alle schuetzenkeys zu diesen resultaten
@@ -479,7 +466,7 @@ export class FirebaseServiceProvider {
     }
   }
 
-  getResultateBySchuetzeAndSchuetzenfestKey(schuetzenfestKey:string, schuetzeKey:string) {
+  public getResultateBySchuetzeAndSchuetzenfestKey(schuetzenfestKey:string, schuetzeKey:string) {
     if (!_.isEmpty(schuetzeKey) && !_.isEmpty(schuetzenfestKey)) {
       return this.getResultateBySchuetzeKey(schuetzeKey).map(rL => rL.filter(r => {
         r.stich._fbSchuetzenfestKey === schuetzenfestKey;
@@ -535,16 +522,23 @@ export class FirebaseServiceProvider {
   }
 
   private checkIfItemExists(path:string, id:string) : Observable<boolean> {
-    if (!path) {
+
+    console.debug(`Check 1 ${path}/${id} exists`);
+
+    if (_.isEmpty(path)) {
       let err = new Error(`[IllegalArgumentException] path must be a string to check for existence of '${id}' but was '${path}'`);
       console.error(err);
       throw err;
     }
 
-    if (!id) return Observable.create(false);
+    console.debug(`Check 2 ${path}/${id} exists`);
 
-    return this.afd.object(`${path}/${id}`)
+    if (_.isEmpty(id)) return Observable.create(() => Observable.create(false));
+
+    console.debug(`Check 3 ${path}/${id} exists`);
+
+    return Observable.create(this.afd.object(`${path}/${id}`)
       .snapshotChanges()
-      .map(c => c.payload.val() !== null);
+      .map(c => c.payload.val() !== null));
   }
 }
