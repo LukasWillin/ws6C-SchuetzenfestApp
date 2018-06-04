@@ -73,35 +73,44 @@ export class SchuetzenfestShowPage {
     console.log('ionViewDidLoad StichPage');
   }
 
-  selectSchuetze(schuetze) {
-    console.log("selected schuetze ", schuetze);
-    this.navCtrl.push(SchuetzeResultatPage, {
-      schuetze: schuetze,
-      stiche: this.stiche,
-    });
+  show(object: Schuetze | Stich) {
+    if (object instanceof Schuetze) {
+      console.log("show schuetze ", object);
+      this.navCtrl.push(SchuetzeResultatPage, {
+        schuetze: object,
+        stiche: this.stiche,
+      });
+    } else {
+      console.log("show stich ", object);
+      this.navCtrl.push(StichShowPage, {
+        stich: object
+      });
+    }
   }
 
-  editSchuetze(schuetze) {
-    console.log("I want to edit ", schuetze);
-    this.navCtrl.push(SchuetzeEditPage, {
-      schuetze: schuetze
-    })
+  edit(object: Schuetze | Stich) {
+    if (object instanceof Schuetze) {
+      console.log("edit schuetze ", object);
+      this.navCtrl.push(SchuetzeEditPage, {
+        schuetze: object
+      })
+    } else {
+      console.log("edit stich ", object);
+      this.navCtrl.push(StichEditPage, {
+        stich: object
+      });
+    }
   }
 
-  selectStich(stich: string) {
-    console.log("selected stich ", stich);
-    this.navCtrl.push(StichShowPage, {
-      stich: stich
-    });
+  delete(object: Schuetze | Stich) {
+    if (object instanceof Schuetze) {
+      console.log("delete schuetze ", object);
+      this.fbSvc.crudSchuetze(object, CRUD.DELETE);
+    } else {
+      console.log("delete stich ", object);
+      this.fbSvc.crudStich(object, CRUD.DELETE);
+    }
   }
-
-  editStich(stich) {
-    console.log("I want to edit ", stich);
-    this.navCtrl.push(StichEditPage, {
-      stich: stich
-    })
-  }
-
 
   addSchuetze() {
     console.log("creating new schuetze");
@@ -164,11 +173,7 @@ export class SchuetzenfestShowPage {
           icon: !this.platform.is('ios') ? 'md-create' : null,
           handler: () => {
             console.log('Bearbeiten clicked');
-            if (object instanceof Schuetze) {
-              this.editSchuetze(object);
-            } else {
-              this.editStich(object);
-            }
+            this.edit(object);
           }
         },
         {
@@ -209,11 +214,7 @@ export class SchuetzenfestShowPage {
           text: 'OK',
           handler: () => {
             console.log('OK clicked');
-            if (object instanceof Schuetze) {
-              this.fbSvc.crudSchuetze(object, CRUD.DELETE);
-            } else {
-              this.fbSvc.crudStich(object, CRUD.DELETE);
-            }
+            this.delete(object);
           }
         }
       ]
