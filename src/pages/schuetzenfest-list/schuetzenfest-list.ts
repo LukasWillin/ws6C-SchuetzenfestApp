@@ -32,9 +32,15 @@ export class SchuetzenfestListPage {
     console.log('ionViewDidLoad SchuetzenfestListPage');
     this.schuetzenfesteSubscription = this.fbSvc.schuetzenfeste.subscribe(schuetzenfestListe => {
       this.schuetzenfeste = schuetzenfestListe;
-      this.schuetzenfesteSubscription.unsubscribe();
+      // this.schuetzenfesteSubscription.unsubscribe();
     })
   }
+
+  // FIXME: Not needed - according to François.
+  // ionViewWillUnload() {
+  //   console.log('ionViewWillUnload SchuetzenfestListPage');
+  //   this.schuetzenfesteSubscription.unsubscribe();
+  // }
   // TODO: ionViewDestory --> unsubscribble
 
   //let bhsSchuetzenfest  : BehaviorChange<Schuetzenfest[]> = new BehaviorChange<Schuetzenfest[]>(this.schuetzenfeste);

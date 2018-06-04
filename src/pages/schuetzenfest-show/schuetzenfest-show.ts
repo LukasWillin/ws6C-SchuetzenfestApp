@@ -12,6 +12,7 @@ import {StichEditPage} from "../stich-edit/stich-edit";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {Stich} from "../../app/entities/Stich";
 import {Resultat} from "../../app/entities/Resultat";
+import {Subscription} from "rxjs/Subscription";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -43,24 +44,29 @@ export class SchuetzenfestShowPage {
   // Defines which tab gets displayed in the view
   tab_selection = "stiche";
 
-  schuetzen;
-
+  // schuetzen;
   // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
+  private schuetzen;
+  private schuetzenSubscription: Subscription;
 
-  stiche = [
-    {
-      name: "Kranzstich",
-      anzahlSchuss: 10,
-      scheibe: 10
-    },
-    {
-      name: "Vindonissastich",
-      anzahlSchuss: 10,
-      scheibe: 10.9
-    }
-  ];
+  private stiche;
+  private sticheSubscription: Subscription;
+
+  // stiche = [
+  //   {
+  //     name: "Kranzstich",
+  //     anzahlSchuss: 10,
+  //     scheibe: 10
+  //   },
+  //   {
+  //     name: "Vindonissastich",
+  //     anzahlSchuss: 10,
+  //     scheibe: 10.9
+  //   }
+  // ];
 
   schuetzenfest: string;
+  // schuetzenfestKey;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController) {
     this.schuetzenfest = navParams.get('schuetzenfest');
@@ -71,6 +77,14 @@ export class SchuetzenfestShowPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad StichPage');
+    this.schuetzenSubscription = this.fbSvc.schuetzen.subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
+    this.sticheSubscription = this.fbSvc.stiche.subscribe(sticheListe => this.stiche = sticheListe);
+  }
+
+  ionViewWillUnload() {
+    console.log("ionViewWillUnload SchuetzenfestShow");
+    this.schuetzenSubscription.unsubscribe();
+    this.sticheSubscription.unsubscribe();
   }
 
   selectSchuetze(schuetze) {
