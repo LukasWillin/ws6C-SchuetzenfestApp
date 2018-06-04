@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {SchuetzenfestCreatePage} from "../schuetzenfest-create/schuetzenfest-create";
 import {SchuetzenfestShowPage} from "../schuetzenfest-show/schuetzenfest-show";
+import {SchuetzenfestEditPage} from "../schuetzenfest-edit/schuetzenfest-edit";
 
 /**
  * Generated class for the SchuetzenfestListPage page.
@@ -27,8 +28,12 @@ export class SchuetzenfestListPage {
   //let bhsSchuetzenfest  : BehaviorChange<Schuetzenfest[]> = new BehaviorChange<Schuetzenfest[]>(this.schuetzenfeste);
 
   schuetzenfeste = [
-    'Vindonissa 2018',
-    'Volksschiessen 2018'
+    {
+      name: 'Vindonissa 2018'
+    },
+    {
+      name: 'Volksschiessen 2018'
+    }
   ];
 
   schuetzenfestSelected(schuetzenfest: string) {
@@ -36,6 +41,13 @@ export class SchuetzenfestListPage {
     this.navCtrl.push(SchuetzenfestShowPage, {
       schuetzenfest: schuetzenfest
     });
+  }
+
+  schuetzenfestEdit(schuetzenfest) {
+    console.log("I want to edit ", schuetzenfest);
+    this.navCtrl.push(SchuetzenfestEditPage, {
+      schuetzenfest: schuetzenfest
+    })
   }
 
   addSchuetzenfest() {
