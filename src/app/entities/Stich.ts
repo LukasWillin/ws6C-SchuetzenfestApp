@@ -6,6 +6,7 @@ import isString from 'lodash/isString';
 import isBoolean from "lodash/isBoolean";
 import isDate from "lodash/isDate";
 import isNumber from 'lodash/isNumber';
+import {Schuetzenfest} from "./Schuetzenfest";
 
 export class Stich {
 
@@ -34,7 +35,15 @@ export class Stich {
     this._fb_field_anzahlschuss = value;
   }
 
-  public get key() : string {
+  set schuetzenfest(value:Schuetzenfest) {
+    this._fb_lastChanged = new Date();
+    this._field_schuetzenfest = value;
+  }
+  get schuetzenfest() : Schuetzenfest {
+    return this._field_schuetzenfest;
+  }
+
+  get key() : string {
     return this._fbKey;
   }
 
@@ -44,19 +53,15 @@ export class Stich {
   public get lastChanged() : Date {
     return new Date(this._fb_lastChanged.getTime());
   }
-  public get clone() : Stich {
-    const stC = new Stich();
 
-    stC.anzahlschuss = this.anzahlschuss;
-    stC.scheibe = this.scheibe;
+  public toString() : string {
+    const jsonify = new Stich(this);
+    jsonify._field_schuetzenfest = null;
+    return JSON.stringify(jsonify);
+  }
 
-    stC._fbKey = this._fbKey;
-    stC._fbSchuetzenfestKey = this._fbSchuetzenfestKey;
-
-    stC._fb_lastChanged = this._fb_lastChanged;
-    stC._fb_isPlaceholder = this._fb_isPlaceholder;
-
-    return stC;
+  clone() : Stich {
+    return new Stich(this);
   }
 
   constructor(obj?:any, setPlaceholder?:boolean) {
@@ -64,11 +69,12 @@ export class Stich {
       setPlaceholder = obj;
 
     if (isObject(obj)) {
-      if (isInteger(obj.anzahlschuss)) this.anzahlschuss =  obj.anzahlschuss;
-      if (isNumber(obj.scheibe)) this.scheibe = obj.scheibe;
+      if (isInteger(obj._fb_field_anzahlschuss) && obj._fb_field_anzahlschuss !== 0) this._fb_field_anzahlschuss =  obj._fb_field_anzahlschuss;
+      if (!isEmpty(obj._fb_field_name)) this._fb_field_name = obj._fb_field_name;
+      if (isNumber(obj._fb_field_scheibe) && obj._fb_field_scheibe !== -1) this._fb_field_scheibe = obj._fb_field_scheibe;
 
-      if (isString(obj._fbKey)) this._fbKey = obj._fbKey;
-      if (isString(obj._fbSchuetzenfestKey)) this._fbSchuetzenfestKey = obj._fbSchuetzenfestKey;
+      if (!isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
+      if (!isEmpty(obj._fbSchuetzenfestKey)) this._fbSchuetzenfestKey = obj._fbSchuetzenfestKey;
 
       if (isDate(obj._fb_lastChanged)) this._fb_lastChanged = obj._fb_lastChanged;
     }
@@ -78,8 +84,8 @@ export class Stich {
   }
 
   // --- Used by FirebaseServiceProvider : do only read
-  public _fbKey : string;
-  public _fbSchuetzenfestKey : string;
+  public _fbKey : string = "";
+  public _fbSchuetzenfestKey : string = "";
 
   public _fb_isPlaceholder : boolean = false;
   public _fb_lastChanged : Date = new Date();
@@ -87,4 +93,6 @@ export class Stich {
   public _fb_field_anzahlschuss : number = 0;
   public _fb_field_scheibe : number = -1;
   public _fb_field_name : string = "";
+
+  public _field_schuetzenfest : Schuetzenfest = null;
 }

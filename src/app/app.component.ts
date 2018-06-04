@@ -6,6 +6,8 @@ import {FirebaseServiceProvider} from "./firebase-service";
 import {Schuetze} from "./entities/Schuetze";
 import {Schuetzenfest} from "./entities/Schuetzenfest";
 import {SchuetzenfestListPage} from "../pages/schuetzenfest-list/schuetzenfest-list";
+import {Stich} from "./entities/Stich";
+import {Resultat} from "./entities/Resultat";
 
 @Component({
   templateUrl: 'app.html'
@@ -25,9 +27,11 @@ export class MyApp {
       { title: 'Schützenfest', component: SchuetzenfestListPage },
     ];
 
-    (<any>window).gFb = fb;
+    (<any>window).GlobalFBService = fb;
     (<any>window).GlobalSchuetze = Schuetze;
     (<any>window).GlobalSchuetzenfest = Schuetzenfest;
+    (<any>window).GlobalStich = Stich;
+    (<any>window).GlobalResultat = Resultat;
   }
 
   initializeApp() {

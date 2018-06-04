@@ -21,14 +21,12 @@ export class Schuetzenfest {
     this._fb_field_name = value;
   }
 
-  public get stiche() : BehaviorSubject<Stich[]> {
-    return this._fb_field_stiche;
+  public get stiche() : Stich[] {
+    return this._field_stiche;
   }
-  public set stiche(value: BehaviorSubject<Stich[]>) {
+  public set stiche(value:Stich[]) {
     this._fb_lastChanged = new Date();
-    this.sticheSubscription.unsubscribe();
-    this._fb_field_stiche = value;
-    this.sticheSubscription = this._fb_field_stiche.subscribe(stL => this.sticheChangedHandler());
+    this._field_stiche = value;
   }
 
   public get key() : string {
@@ -43,18 +41,14 @@ export class Schuetzenfest {
     return new Date(this._fb_lastChanged.getTime());
   }
 
-  public get clone() : Schuetzenfest {
-    let sfC = new Schuetzenfest();
+  public clone() : Schuetzenfest {
+    return new Schuetzenfest(this);
+  }
 
-    sfC.stiche = this.stiche;
-    sfC.name = this.name;
-
-    sfC._fbKey = this._fbKey;
-
-    sfC._fb_lastChanged = this._fb_lastChanged;
-    sfC._fb_isPlaceholder = this._fb_isPlaceholder;
-
-    return sfC;
+  public toString() : string {
+    const jsonify = new Schuetzenfest(this);
+    jsonify.stiche = [];
+    return JSON.stringify(jsonify);
   }
 
   constructor(obj?:any, setPlaceholder?:boolean) {
@@ -62,8 +56,8 @@ export class Schuetzenfest {
       setPlaceholder = obj;
 
     if(isObject(obj)) {
-      if (isString(obj.name) && !isEmpty(obj.name)) this.name = obj.name;
-      if (obj.stiche) this.stiche = obj.stiche;
+      if (isString(obj._fb_field_name) && !isEmpty(obj._fb_field_name)) this._fb_field_name = obj._fb_field_name;
+      if (obj._field_stiche) this._field_stiche = obj._field_stiche;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
 
@@ -81,11 +75,6 @@ export class Schuetzenfest {
   public _fb_isPlaceholder : boolean = false;
 
   public _fb_field_name : string = "";
-  public _fb_field_stiche : BehaviorSubject<Stich[]> = new BehaviorSubject<Stich[]>([]);
+  public _field_stiche : Stich[] = [];
 
-  private sticheSubscription = this._fb_field_stiche.subscribe(stL => this.sticheChangedHandler());
-
-  private sticheChangedHandler() {
-    this._fb_lastChanged = new Date();
-  }
 }

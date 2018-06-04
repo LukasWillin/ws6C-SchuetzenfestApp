@@ -30,15 +30,13 @@ export class Schuetze {
     this._fb_field_nachname = value;
   }
 
-  get resultate(): BehaviorSubject<Resultat[]> {
+  get resultate(): Resultat[] {
     return this._fb_field_resultate;
   }
 
-  set resultate(value: BehaviorSubject<Resultat[]>) {
+  set resultate(value: Resultat[]) {
     this._fb_lastChanged = new Date();
-    this.resultateSubscription.unsubscribe();
     this._fb_field_resultate = value;
-    this.resultateSubscription = this._fb_field_resultate.subscribe(stL => this.resultateChangedHandler());
   }
 
   get lizenzNr(): string {
@@ -60,19 +58,13 @@ export class Schuetze {
     return new Date(this._fb_lastChanged.getTime());
   }
   public get clone() : Schuetze {
-    const sC = new Schuetze();
+    return new Schuetze(this);
+  }
 
-    sC.vorname = this.vorname;
-    sC.nachname = this.nachname;
-    sC.resultate = this.resultate;
-    sC.lizenzNr = this.lizenzNr;
-
-    sC._fbKey = this._fbKey;
-
-    sC._fb_lastChanged = this._fb_lastChanged;
-    sC._fb_isPlaceholder = this._fb_isPlaceholder;
-
-    return sC;
+  public toString() : string {
+    const jsonify = new Schuetze(this);
+    jsonify.resultate = [];
+    return JSON.stringify(jsonify);
   }
 
   constructor(obj?:any, setPlaceholder?:boolean) {
@@ -80,10 +72,10 @@ export class Schuetze {
       setPlaceholder = obj;
 
     if (isObject(obj)) {
-      if (isString(obj.vorname) && !isEmpty(obj.vorname)) this._fb_field_vorname = obj.vorname;
-      if (isString(obj.nachname) && !isEmpty(obj.nachname)) this._fb_field_nachname = obj.nachname;
-      if (obj.resultate) this.resultate = obj.resultate;
-      if (obj.lizenzNr) this._fb_field_lizenzNr = obj.lizenzNr;
+      if (isString(obj._fb_field_vorname) && !isEmpty(obj._fb_field_vorname)) this._fb_field_vorname = obj._fb_field_vorname;
+      if (isString(obj._fb_field_nachname) && !isEmpty(obj._fb_field_nachname)) this._fb_field_nachname = obj._fb_field_nachname;
+      if (obj._fb_field_resultate) this._fb_field_resultate = obj._fb_field_resultate;
+      if (obj._fb_field_lizenzNr) this._fb_field_lizenzNr = obj._fb_field_lizenzNr;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
 
@@ -102,12 +94,6 @@ export class Schuetze {
 
   public _fb_field_vorname : string = "";
   public _fb_field_nachname : string = "";
-  public _fb_field_resultate : BehaviorSubject<Resultat[]> = new BehaviorSubject<Resultat[]>([]);
+  public _fb_field_resultate : Resultat[] = [];
   public _fb_field_lizenzNr : string = "";
-
-  private resultateSubscription = this._fb_field_resultate.subscribe(stL => this.resultateChangedHandler());
-
-  private resultateChangedHandler() {
-    this._fb_lastChanged = new Date();
-  }
 }

@@ -11,15 +11,13 @@ import { Observable } from "rxjs/Observable";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 export class Resultat {
-  get stich(): BehaviorSubject<Stich> {
+  get stich(): Stich {
     return this._fb_field_stich;
   }
 
-  set stich(value: BehaviorSubject<Stich>) {
+  set stich(value: Stich) {
     this._fb_lastChanged = new Date();
-    this.stichSubscription.unsubscribe();
     this._fb_field_stich = value;
-    this.stichSubscription = this._fb_field_stich.subscribe(stL => this.stichChangedHandler());
   }
 
   get punktzahl(): number {
@@ -44,28 +42,22 @@ export class Resultat {
   }
 
   public get clone() : Resultat {
-    const rC = new Resultat();
-
-    rC.stich = this.stich;
-    rC.punktzahl = this.punktzahl;
-
-    rC._fbSchuetzeKey = this._fbSchuetzeKey;
-    rC._fbKey = this._fbKey;
-    rC._fbStichKey = this._fbStichKey;
-
-    rC._fb_lastChanged = this._fb_lastChanged;
-    rC._fb_isPlaceholder = this._fb_isPlaceholder;
-
-    return rC
+    return new Resultat(this);
   }
+  public toString() : string {
+    const jsonify = new Resultat(this);
+    jsonify._fb_field_stich = null;
+    return JSON.stringify(jsonify);
+  }
+
 
   constructor(obj?:any, setPlaceholder?:boolean) {
     if (arguments.length === 1)
       setPlaceholder = obj;
 
     if (isObject(obj)) {
-      if (isObject(obj.stich)) this.stich = obj.stich;
-      if (isInteger(obj.punktzahl)) this.punktzahl = obj.punktzahl;
+      if (isObject(obj._fb_field_stich)) this._fb_field_stich = obj._fb_field_stich;
+      if (isInteger(obj._fb_field_punktzahl)) this._fb_field_punktzahl = obj._fb_field_punktzahl;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
       if (isString(obj._fbStichKey) && !isEmpty(obj._fbStichKey)) this._fbStichKey = obj._fbStichKey;
@@ -86,12 +78,7 @@ export class Resultat {
   public _fb_lastChanged : Date = new Date();
   public _fb_isPlaceholder : boolean = false;
 
-  public _fb_field_stich : BehaviorSubject<Stich> = new BehaviorSubject<Stich>(null);
+  public _fb_field_stich : Stich = null;
   public _fb_field_punktzahl : number = 0;
 
-  private stichSubscription = this._fb_field_stich.subscribe(st => this.stichChangedHandler());
-
-  private stichChangedHandler() {
-    this._fb_lastChanged = new Date();
-  }
 }
