@@ -15,7 +15,10 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class StichShowPage {
 
+  stich;
+
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+    this.stich = navParams.get('stich');
   }
 
   ionViewDidLoad() {
