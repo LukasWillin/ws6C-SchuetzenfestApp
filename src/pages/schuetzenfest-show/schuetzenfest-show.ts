@@ -9,9 +9,8 @@ import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {StichEditPage} from "../stich-edit/stich-edit";
-import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {Stich} from "../../app/entities/Stich";
-import {Resultat} from "../../app/entities/Resultat";
+import {Subscription} from "rxjs/Subscription";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -43,11 +42,12 @@ export class SchuetzenfestShowPage {
   // Defines which tab gets displayed in the view
   tab_selection = "stiche";
 
-  schuetzen: Schuetze[];
-
+  private schuetzen: Schuetze[];
+  private schuetzenSubscription: Subscription;
   // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
 
-  stiche: Stich[];
+  private stiche: Stich[];
+  private sticheSubscription: Subscription;
 
   sticheGeloest = [
     1,2
@@ -78,6 +78,17 @@ export class SchuetzenfestShowPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad StichPage');
+    console.log("key für das Schuetzenfest " + this.schuetzenfest.key);
+    this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key)
+      .subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
+    this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key)
+      .subscribe(sticheListe => this.stiche = sticheListe);
+  }
+
+  ionViewWillUnload() {
+    console.log("ionViewWillUnload SchuetzenfestShow");
+    this.schuetzenSubscription.unsubscribe();
+    this.sticheSubscription.unsubscribe();
   }
 
   show(object: Schuetze | Stich) {
@@ -132,6 +143,7 @@ export class SchuetzenfestShowPage {
     this.navCtrl.push(StichCreatePage);
   }
 
+  // TODO: Do we need it... I guess not?
   initializeSchuetzen() {
     let schuetze1: Schuetze = new Schuetze();
     schuetze1.vorname = "François";
