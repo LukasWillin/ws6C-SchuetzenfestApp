@@ -15,7 +15,7 @@
 <ion-content padding>
   <ion-list>
     <button ion-item *ngFor="let schuetzenfest of schuetzenfeste" (tap)="schuetzenfestSelected(schuetzenfest)"
-            (press)="schuetzenfestEdit(schuetzenfest)">
+            (press)="presentActionSheet()">
       {{ schuetzenfest.name }}
     </button>
   </ion-list>

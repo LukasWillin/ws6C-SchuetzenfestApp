@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {ActionSheetController, IonicPage, NavController, NavParams, Platform} from 'ionic-angular';
 import {SchuetzenfestCreatePage} from "../schuetzenfest-create/schuetzenfest-create";
 import {SchuetzenfestShowPage} from "../schuetzenfest-show/schuetzenfest-show";
 import {SchuetzenfestEditPage} from "../schuetzenfest-edit/schuetzenfest-edit";
@@ -18,7 +18,7 @@ import {SchuetzenfestEditPage} from "../schuetzenfest-edit/schuetzenfest-edit";
 })
 export class SchuetzenfestListPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public actionsheetCtrl: ActionSheetController) {
   }
 
   ionViewDidLoad() {
@@ -55,4 +55,36 @@ export class SchuetzenfestListPage {
     this.navCtrl.push(SchuetzenfestCreatePage);
   }
 
+  presentActionSheet() {
+    let actionSheet = this.actionsheetCtrl.create({
+      title: 'Schuetzenfest bearbeiten',
+      cssClass: 'action-sheets-basic-page',
+      buttons: [
+        {
+          text: 'Bearbeiten',
+          icon: !this.platform.is('ios') ? 'md-create' : null,
+          handler: () => {
+            console.log('Bearbeiten clicked');
+          }
+        },
+        {
+          text: 'Löschen',
+          role: 'destructive',
+          icon: !this.platform.is('ios') ? 'trash' : null,
+          handler: () => {
+            console.log('Löschen clicked');
+          }
+        },
+        {
+          text: 'Abbrechen',
+          role: 'cancel', // will always sort to be on the bottom
+          icon: !this.platform.is('ios') ? 'close' : null,
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+  }
 }
