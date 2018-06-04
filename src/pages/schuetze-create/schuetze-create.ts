@@ -28,7 +28,7 @@ export class SchuetzeCreatePage {
     console.log('ionViewDidLoad CreateSchuetzePage');
   }
 
-  createSchuetze() {
+  create() {
     console.log("Vorname: " + this.vorname + ", Nachname: " + this.nachname + ", Lizenznr: " + this.lizenzNr);
     const newSchuetze = new Schuetze();
     newSchuetze.nachname = this.nachname;
