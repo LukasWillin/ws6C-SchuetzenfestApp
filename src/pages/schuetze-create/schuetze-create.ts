@@ -35,6 +35,8 @@ export class SchuetzeCreatePage {
     newSchuetze.vorname = this.vorname;
     newSchuetze.lizenzNr = this.lizenzNr;
 
+    //this.fbSvc.crudSchuetze(newSchuetze);
+
     // Change view
     this.navCtrl.pop();
   }

@@ -32,6 +32,8 @@ export class StichCreatePage {
     const newStich = new Stich();
     newStich.name = this.name;
 
+    this.fbSvc.crudStich(newStich);
+
     // Change view
     this.navCtrl.pop();
   }

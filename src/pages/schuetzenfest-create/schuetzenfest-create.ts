@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {FirebaseServiceProvider} from "../../app/firebase-service";
-import {Schuetze} from "../../app/entities/Schuetze";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 
 /**
@@ -31,6 +30,7 @@ export class SchuetzenfestCreatePage {
     console.log("Name: " + this.name);
     const newSchuetzenfest = new Schuetzenfest();
     newSchuetzenfest.name = this.name;
+    this.fbSvc.crudSchuetzenfest(newSchuetzenfest);
 
     // Change view
     this.navCtrl.pop();
