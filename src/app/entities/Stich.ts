@@ -11,6 +11,7 @@ export class Stich {
 
   set name(value:string) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fb_field_name = value;
   }
 
@@ -24,18 +25,23 @@ export class Stich {
 
   set scheibe(value: number) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fb_field_scheibe = value;
   }
+
   get anzahlschuss(): number {
     return this._fb_field_anzahlschuss;
   }
+
   set anzahlschuss(value: number) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fb_field_anzahlschuss = value;
   }
 
   set schuetzenfest(value:Schuetzenfest) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fbSchuetzenfestKey = isEmpty(value) ? value.key : "";
     this._field_schuetzenfest = value;
   }

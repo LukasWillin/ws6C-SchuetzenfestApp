@@ -96,7 +96,7 @@ export class FirebaseServiceProvider {
   }
 
 
-  public crudSchuetze(instance: Schuetze|string, crudOp?: string): Observable<Schuetze> {
+  public crudSchuetze(instance: Schuetze|string, schuetzenfestKey:string, crudOp?: string): Observable<Schuetze> {
     const self = this;
 
     const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
@@ -126,6 +126,7 @@ export class FirebaseServiceProvider {
       return this.checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).map( exists => {
 
         instance = new Schuetze(instance);
+        if (_.indexOf(instance._fb_list_schuetzenfestKey, schuetzenfestKey) < 0) instance._fb_list_schuetzenfestKey.push(schuetzenfestKey);
         instance.resultate = null;
 
         if (exists && crudOp === undefined || crudOp === CRUD.UPDATE) {
@@ -350,6 +351,8 @@ export class FirebaseServiceProvider {
     }
   }
 
+
+
   public getResultateByStichKey(key:string) : Observable<Resultat[]> {
     if (!_.isEmpty(key)) {
       return this.resultate.map(rL => {
@@ -381,6 +384,20 @@ export class FirebaseServiceProvider {
         });
     } else {
       console.warn("Faulty key in #getSchuetzenfestByKey");
+      return Observable.create(null);
+    }
+  }
+
+  public getSchuetzenBySchuetzenfestKey(key:string) {
+    if (!_.isEmpty(key)) {
+      this.schuetzen.map(sL => sL.filter(s => _.includes(s.schuetzenfestKeyList, key)))
+      // Alle stiche nach schuetzenfest
+      // Alle resultate dieser Stiche
+      // Alle alle schuetzenkeys zu diesen resultaten
+      // Distinct schuetzenkeys
+      // Abfrage Schuetzen
+    } else {
+      console.warn("Faulty key in #getSchuetzenBySchuetzenfestKey");
       return Observable.create(null);
     }
   }
@@ -456,6 +473,17 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(schuetzeKey)) {
       return this._resultate
         .map(rL => rL.filter(r => r._fbSchuetzeKey === schuetzeKey));
+    } else {
+      console.warn("Faulty key in #getResultateBySchuetzeKey");
+      return Observable.create([]);
+    }
+  }
+
+  getResultateBySchuetzeAndSchuetzenfestKey(schuetzenfestKey:string, schuetzeKey:string) {
+    if (!_.isEmpty(schuetzeKey) && !_.isEmpty(schuetzenfestKey)) {
+      return this.getResultateBySchuetzeKey(schuetzeKey).map(rL => rL.filter(r => {
+        r.stich._fbSchuetzenfestKey === schuetzenfestKey;
+      }));
     } else {
       console.warn("Faulty key in #getResultateBySchuetzeKey");
       return Observable.create([]);

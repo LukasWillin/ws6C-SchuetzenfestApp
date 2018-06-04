@@ -15,6 +15,7 @@ export class Resultat {
 
   set stich(value: Stich) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fbStichKey = (!isEmpty(value)) ? value.key : "";
     this._field_stich = value;
   }
@@ -25,6 +26,7 @@ export class Resultat {
 
   set punktzahl(value: number) {
     this._fb_lastChanged = new Date();
+    this._fb_isPlaceholder = false;
     this._fb_field_punktzahl = value;
   }
 
