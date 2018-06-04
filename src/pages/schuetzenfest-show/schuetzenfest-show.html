@@ -6,7 +6,7 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>{{schuetzenfest}}</ion-title>
+    <ion-title>{{schuetzenfest.name}}</ion-title>
 
     <ion-buttons end>
       <button ion-button icon-only (click)="toggleSearchbarVisibility()" *ngIf="tab_selection == 'schuetzen'">
@@ -34,7 +34,7 @@
 
   <div [ngSwitch]="tab_selection">
     <ion-list *ngSwitchCase="'stiche'" (ionFocus)="searchbarShowing = false">
-      <button ion-item *ngFor="let stich of stiche" (tap)="stichSelected(stich)" (press)="editStich(stich)">
+      <button ion-item *ngFor="let stich of stiche" (tap)="show(stich)" (press)="presentActionSheet(stich)">
         {{ stich.name }}
       </button>
 
@@ -44,7 +44,7 @@
     </ion-list>
 
     <ion-list *ngSwitchCase="'schuetzen'">
-      <button ion-item *ngFor="let schuetze of schuetzen" (tap)="schuetzeSelected(schuetze)" (press)="editSchuetze(schuetze)">
+      <button ion-item *ngFor="let schuetze of schuetzen" (tap)="show(schuetze)" (press)="presentActionSheet(schuetze)">
         <span class="schuetze-name" float-left>{{ schuetze.vorname }} {{ schuetze.nachname }}</span>
         <span class="schuetze-lizenz" float-right>{{ schuetze.lizenzNr }}</span>
       </button>

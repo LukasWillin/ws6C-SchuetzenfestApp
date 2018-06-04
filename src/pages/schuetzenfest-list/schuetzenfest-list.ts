@@ -5,6 +5,8 @@ import {SchuetzenfestShowPage} from "../schuetzenfest-show/schuetzenfest-show";
 import {SchuetzenfestEditPage} from "../schuetzenfest-edit/schuetzenfest-edit";
 import {FirebaseServiceProvider, CRUD} from "../../app/firebase-service";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
+import {Observable} from "rxjs/Observable";
+import {Subscription} from "rxjs/Subscription";
 
 /**
  * Generated class for the SchuetzenfestListPage page.
@@ -20,41 +22,63 @@ import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 })
 export class SchuetzenfestListPage {
 
+  private schuetzenfeste;
+  private schuetzenfesteSubscription:Subscription;
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController, private fbSvc: FirebaseServiceProvider) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SchuetzenfestListPage');
+    this.schuetzenfesteSubscription = this.fbSvc.schuetzenfeste.subscribe(schuetzenfestListe => {
+      this.schuetzenfeste = schuetzenfestListe;
+      // this.schuetzenfesteSubscription.unsubscribe();
+    })
   }
+
+  // FIXME: Not needed - according to François.
+  // ionViewWillUnload() {
+  //   console.log('ionViewWillUnload SchuetzenfestListPage');
+  //   this.schuetzenfesteSubscription.unsubscribe();
+  // }
+  // TODO: ionViewDestory --> unsubscribble
 
   //let bhsSchuetzenfest  : BehaviorChange<Schuetzenfest[]> = new BehaviorChange<Schuetzenfest[]>(this.schuetzenfeste);
 
-  schuetzenfeste = [
-    {
-      name: 'Vindonissa 2018'
-    },
-    {
-      name: 'Volksschiessen 2018'
-    }
-  ];
+  // schuetzenfeste = [
+  //   {
+  //     name: 'Vindonissa 2018'
+  //   },
+  //   {
+  //     name: 'Volksschiessen 2018'
+  //   }
+  // ];
 
-  schuetzenfestSelected(schuetzenfest: string) {
+  // schuetzenfeste: Schuetzenfest[] = this.fbSvc.schuetzenfeste.value;
+
+
+
+  create() {
+    console.log("creating new schuetzenfest");
+    this.navCtrl.push(SchuetzenfestCreatePage);
+  }
+
+  show(schuetzenfest: Schuetzenfest) {
     console.log("selected schuetzenfest ", schuetzenfest);
     this.navCtrl.push(SchuetzenfestShowPage, {
       schuetzenfest: schuetzenfest
     });
   }
 
-  schuetzenfestEdit(schuetzenfest) {
+  edit(schuetzenfest: Schuetzenfest) {
     console.log("I want to edit ", schuetzenfest);
     this.navCtrl.push(SchuetzenfestEditPage, {
       schuetzenfest: schuetzenfest
     })
   }
 
-  addSchuetzenfest() {
-    console.log("creating new schuetzenfest");
-    this.navCtrl.push(SchuetzenfestCreatePage);
+  delete(schuetzenfest: Schuetzenfest) {
+    this.fbSvc.crudSchuetzenfest(schuetzenfest, CRUD.DELETE);
   }
 
   presentActionSheet(schuetzenfest: Schuetzenfest) {
@@ -67,6 +91,7 @@ export class SchuetzenfestListPage {
           icon: !this.platform.is('ios') ? 'md-create' : null,
           handler: () => {
             console.log('Bearbeiten clicked');
+            this.edit(schuetzenfest);
           }
         },
         {
@@ -107,7 +132,7 @@ export class SchuetzenfestListPage {
           text: 'OK',
           handler: () => {
             console.log('OK clicked');
-            this.fbSvc.crudSchuetzenfest(schuetzenfest, CRUD.DELETE);
+            this.delete(schuetzenfest);
           }
         }
       ]

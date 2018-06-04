@@ -1,14 +1,18 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {ActionSheetController, AlertController, IonicPage, NavController, NavParams, Platform} from 'ionic-angular';
 import {SchuetzeResultatPage} from "../schuetze-resultat/schuetze-resultat";
 import {SchuetzeCreatePage} from "../schuetze-create/schuetze-create";
 import {StichShowPage} from "../stich-show/stich-show";
 import {StichCreatePage} from "../stich-create/stich-create";
 import {Schuetze} from "../../app/entities/Schuetze";
-import {FirebaseServiceProvider} from "../../app/firebase-service";
+import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {StichEditPage} from "../stich-edit/stich-edit";
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
+import {Stich} from "../../app/entities/Stich";
+import {Resultat} from "../../app/entities/Resultat";
+import {Subscription} from "rxjs/Subscription";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -40,26 +44,31 @@ export class SchuetzenfestShowPage {
   // Defines which tab gets displayed in the view
   tab_selection = "stiche";
 
-  schuetzen;
-
+  // schuetzen;
   // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
+  private schuetzen;
+  private schuetzenSubscription: Subscription;
 
-  stiche = [
-    {
-      name: "Kranzstich",
-      anzahlSchuss: 10,
-      scheibe: 10
-    },
-    {
-      name: "Vindonissastich",
-      anzahlSchuss: 10,
-      scheibe: 10.9
-    }
-  ];
+  private stiche;
+  private sticheSubscription: Subscription;
+
+  // stiche = [
+  //   {
+  //     name: "Kranzstich",
+  //     anzahlSchuss: 10,
+  //     scheibe: 10
+  //   },
+  //   {
+  //     name: "Vindonissastich",
+  //     anzahlSchuss: 10,
+  //     scheibe: 10.9
+  //   }
+  // ];
 
   schuetzenfest: string;
+  // schuetzenfestKey;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController) {
     this.schuetzenfest = navParams.get('schuetzenfest');
     this.searchbarShowing = false; // hide search bar by default
     console.log(this.schuetzen);
@@ -68,37 +77,54 @@ export class SchuetzenfestShowPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad StichPage');
+    this.schuetzenSubscription = this.fbSvc.schuetzen.subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
+    this.sticheSubscription = this.fbSvc.stiche.subscribe(sticheListe => this.stiche = sticheListe);
   }
 
-  schuetzeSelected(schuetze) {
-    console.log("selected schuetze ", schuetze);
-    this.navCtrl.push(SchuetzeResultatPage, {
-      schuetze: schuetze,
-      stiche: this.stiche,
-    });
+  ionViewWillUnload() {
+    console.log("ionViewWillUnload SchuetzenfestShow");
+    this.schuetzenSubscription.unsubscribe();
+    this.sticheSubscription.unsubscribe();
   }
 
-  editSchuetze(schuetze) {
-    console.log("I want to edit ", schuetze);
-    this.navCtrl.push(SchuetzeEditPage, {
-      schuetze: schuetze
-    })
+  show(object: Schuetze | Stich) {
+    if (object instanceof Schuetze) {
+      console.log("show schuetze ", object);
+      this.navCtrl.push(SchuetzeResultatPage, {
+        schuetze: object,
+        stiche: this.stiche,
+      });
+    } else {
+      console.log("show stich ", object);
+      this.navCtrl.push(StichShowPage, {
+        stich: object
+      });
+    }
   }
 
-  stichSelected(stich: string) {
-    console.log("selected stich ", stich);
-    this.navCtrl.push(StichShowPage, {
-      stich: stich
-    });
+  edit(object: Schuetze | Stich) {
+    if (object instanceof Schuetze) {
+      console.log("edit schuetze ", object);
+      this.navCtrl.push(SchuetzeEditPage, {
+        schuetze: object
+      })
+    } else {
+      console.log("edit stich ", object);
+      this.navCtrl.push(StichEditPage, {
+        stich: object
+      });
+    }
   }
 
-  editStich(stich) {
-    console.log("I want to edit ", stich);
-    this.navCtrl.push(StichEditPage, {
-      stich: stich
-    })
+  delete(object: Schuetze | Stich) {
+    if (object instanceof Schuetze) {
+      console.log("delete schuetze ", object);
+      this.fbSvc.crudSchuetze(object, CRUD.DELETE);
+    } else {
+      console.log("delete stich ", object);
+      this.fbSvc.crudStich(object, CRUD.DELETE);
+    }
   }
-
 
   addSchuetze() {
     console.log("creating new schuetze");
@@ -149,5 +175,64 @@ export class SchuetzenfestShowPage {
 
   toggleSearchbarVisibility() {
     this.searchbarShowing = !this.searchbarShowing;
+  }
+
+  presentActionSheet(object: Stich|Schuetze) {
+    let actionSheet = this.actionsheetCtrl.create({
+      title: 'Aktionen',
+      cssClass: 'action-sheets-basic-page',
+      buttons: [
+        {
+          text: 'Bearbeiten',
+          icon: !this.platform.is('ios') ? 'md-create' : null,
+          handler: () => {
+            console.log('Bearbeiten clicked');
+            this.edit(object);
+          }
+        },
+        {
+          text: 'Löschen',
+          role: 'destructive',
+          icon: !this.platform.is('ios') ? 'trash' : null,
+          handler: () => {
+            console.log('Löschen clicked');
+            this.confirmDelete(object);
+          }
+        },
+        {
+          text: 'Abbrechen',
+          role: 'cancel', // will always sort to be on the bottom
+          icon: !this.platform.is('ios') ? 'close' : null,
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+  }
+
+  confirmDelete(object: Schuetze|Stich) {
+    let alert = this.alertCtrl.create({
+      title: 'Löschen bestätigen',
+      message: 'Wirklich löschen?',
+      buttons: [
+        {
+          text: 'Abbrechen',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            console.log('OK clicked');
+            this.delete(object);
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 }

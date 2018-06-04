@@ -28,12 +28,14 @@ export class SchuetzeCreatePage {
     console.log('ionViewDidLoad CreateSchuetzePage');
   }
 
-  createSchuetze() {
+  create() {
     console.log("Vorname: " + this.vorname + ", Nachname: " + this.nachname + ", Lizenznr: " + this.lizenzNr);
     const newSchuetze = new Schuetze();
     newSchuetze.nachname = this.nachname;
     newSchuetze.vorname = this.vorname;
     newSchuetze.lizenzNr = this.lizenzNr;
+
+    //this.fbSvc.crudSchuetze(newSchuetze);
 
     // Change view
     this.navCtrl.pop();

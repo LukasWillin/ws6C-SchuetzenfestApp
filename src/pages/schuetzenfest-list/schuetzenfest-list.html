@@ -14,14 +14,14 @@
 
 <ion-content padding>
   <ion-list>
-    <button ion-item *ngFor="let schuetzenfest of schuetzenfeste" (tap)="schuetzenfestSelected(schuetzenfest)"
+    <button ion-item *ngFor="let schuetzenfest of schuetzenfeste" (tap)="show(schuetzenfest)"
             (press)="presentActionSheet(schuetzenfest)">
       {{ schuetzenfest.name }}
     </button>
   </ion-list>
 
   <ion-fab right bottom>
-    <button ion-fab (tap)="addSchuetzenfest()"><ion-icon name="add"></ion-icon></button>
+    <button ion-fab (tap)="create()"><ion-icon name="add"></ion-icon></button>
   </ion-fab>
 
 </ion-content>
