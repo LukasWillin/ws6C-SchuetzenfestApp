@@ -73,7 +73,7 @@ export class SchuetzenfestShowPage {
     console.log('ionViewDidLoad StichPage');
   }
 
-  schuetzeSelected(schuetze) {
+  selectSchuetze(schuetze) {
     console.log("selected schuetze ", schuetze);
     this.navCtrl.push(SchuetzeResultatPage, {
       schuetze: schuetze,
@@ -88,7 +88,7 @@ export class SchuetzenfestShowPage {
     })
   }
 
-  stichSelected(stich: string) {
+  selectStich(stich: string) {
     console.log("selected stich ", stich);
     this.navCtrl.push(StichShowPage, {
       stich: stich

@@ -38,14 +38,14 @@ export class SchuetzenfestListPage {
     }
   ];
 
-  schuetzenfestSelected(schuetzenfest: string) {
+  selectSchuetzenfest(schuetzenfest: string) {
     console.log("selected schuetzenfest ", schuetzenfest);
     this.navCtrl.push(SchuetzenfestShowPage, {
       schuetzenfest: schuetzenfest
     });
   }
 
-  schuetzenfestEdit(schuetzenfest) {
+  editSchuetzenfest(schuetzenfest) {
     console.log("I want to edit ", schuetzenfest);
     this.navCtrl.push(SchuetzenfestEditPage, {
       schuetzenfest: schuetzenfest
@@ -67,7 +67,7 @@ export class SchuetzenfestListPage {
           icon: !this.platform.is('ios') ? 'md-create' : null,
           handler: () => {
             console.log('Bearbeiten clicked');
-            this.schuetzenfestEdit(schuetzenfest);
+            this.editSchuetzenfest(schuetzenfest);
           }
         },
         {
