@@ -70,10 +70,17 @@ export class Schuetze {
       setPlaceholder = obj;
 
     if (isObject(obj)) {
+      if (isString(obj.vorname) && !isEmpty(obj.vorname)) this._fb_field_vorname = obj.vorname;
+      if (isString(obj.nachname) && !isEmpty(obj.nachname)) this._fb_field_nachname = obj.nachname;
+      if (obj.resultate) this._field_resultate = obj.resultate;
+      if (obj.lizenzNr) this._fb_field_lizenzNr = obj.lizenzNr;
+
       if (isString(obj._fb_field_vorname) && !isEmpty(obj._fb_field_vorname)) this._fb_field_vorname = obj._fb_field_vorname;
       if (isString(obj._fb_field_nachname) && !isEmpty(obj._fb_field_nachname)) this._fb_field_nachname = obj._fb_field_nachname;
       if (obj._field_resultate) this._field_resultate = obj._field_resultate;
       if (obj._fb_field_lizenzNr) this._fb_field_lizenzNr = obj._fb_field_lizenzNr;
+
+
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
 

@@ -52,6 +52,9 @@ export class Schuetzenfest {
       setPlaceholder = obj;
 
     if(isObject(obj)) {
+      if (isString(obj.name) && !isEmpty(obj.name)) this._fb_field_name = obj.name;
+      if (obj.stiche) this._field_stiche = obj.stiche;
+
       if (isString(obj._fb_field_name) && !isEmpty(obj._fb_field_name)) this._fb_field_name = obj._fb_field_name;
       if (obj._field_stiche) this._field_stiche = obj._field_stiche;
 
