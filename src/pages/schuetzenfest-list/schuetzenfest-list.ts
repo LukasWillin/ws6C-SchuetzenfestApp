@@ -38,23 +38,27 @@ export class SchuetzenfestListPage {
     }
   ];
 
-  selectSchuetzenfest(schuetzenfest: string) {
+  create() {
+    console.log("creating new schuetzenfest");
+    this.navCtrl.push(SchuetzenfestCreatePage);
+  }
+
+  show(schuetzenfest: Schuetzenfest) {
     console.log("selected schuetzenfest ", schuetzenfest);
     this.navCtrl.push(SchuetzenfestShowPage, {
       schuetzenfest: schuetzenfest
     });
   }
 
-  editSchuetzenfest(schuetzenfest) {
+  edit(schuetzenfest: Schuetzenfest) {
     console.log("I want to edit ", schuetzenfest);
     this.navCtrl.push(SchuetzenfestEditPage, {
       schuetzenfest: schuetzenfest
     })
   }
 
-  addSchuetzenfest() {
-    console.log("creating new schuetzenfest");
-    this.navCtrl.push(SchuetzenfestCreatePage);
+  delete(schuetzenfest: Schuetzenfest) {
+    this.fbSvc.crudSchuetzenfest(schuetzenfest, CRUD.DELETE);
   }
 
   presentActionSheet(schuetzenfest: Schuetzenfest) {
@@ -67,7 +71,7 @@ export class SchuetzenfestListPage {
           icon: !this.platform.is('ios') ? 'md-create' : null,
           handler: () => {
             console.log('Bearbeiten clicked');
-            this.editSchuetzenfest(schuetzenfest);
+            this.edit(schuetzenfest);
           }
         },
         {
@@ -108,7 +112,7 @@ export class SchuetzenfestListPage {
           text: 'OK',
           handler: () => {
             console.log('OK clicked');
-            this.fbSvc.crudSchuetzenfest(schuetzenfest, CRUD.DELETE);
+            this.delete(schuetzenfest);
           }
         }
       ]
