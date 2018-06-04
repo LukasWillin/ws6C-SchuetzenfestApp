@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import {ActionSheetController, IonicPage, NavController, NavParams, Platform} from 'ionic-angular';
+import {ActionSheetController, AlertController, IonicPage, NavController, NavParams, Platform} from 'ionic-angular';
 import {SchuetzenfestCreatePage} from "../schuetzenfest-create/schuetzenfest-create";
 import {SchuetzenfestShowPage} from "../schuetzenfest-show/schuetzenfest-show";
 import {SchuetzenfestEditPage} from "../schuetzenfest-edit/schuetzenfest-edit";
+import {FirebaseServiceProvider, CRUD} from "../../app/firebase-service";
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 
 /**
  * Generated class for the SchuetzenfestListPage page.
@@ -18,7 +20,7 @@ import {SchuetzenfestEditPage} from "../schuetzenfest-edit/schuetzenfest-edit";
 })
 export class SchuetzenfestListPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public actionsheetCtrl: ActionSheetController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController, private fbSvc: FirebaseServiceProvider) {
   }
 
   ionViewDidLoad() {
@@ -55,9 +57,9 @@ export class SchuetzenfestListPage {
     this.navCtrl.push(SchuetzenfestCreatePage);
   }
 
-  presentActionSheet() {
+  presentActionSheet(schuetzenfest: Schuetzenfest) {
     let actionSheet = this.actionsheetCtrl.create({
-      title: 'Schuetzenfest bearbeiten',
+      title: 'Aktionen',
       cssClass: 'action-sheets-basic-page',
       buttons: [
         {
@@ -73,6 +75,7 @@ export class SchuetzenfestListPage {
           icon: !this.platform.is('ios') ? 'trash' : null,
           handler: () => {
             console.log('Löschen clicked');
+            this.confirmDelete(schuetzenfest);
           }
         },
         {
@@ -86,5 +89,29 @@ export class SchuetzenfestListPage {
       ]
     });
     actionSheet.present();
+  }
+
+  confirmDelete(schuetzenfest: Schuetzenfest) {
+    let alert = this.alertCtrl.create({
+      title: 'Löschen bestätigen',
+      message: 'Wirklich löschen?',
+      buttons: [
+        {
+          text: 'Abbrechen',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            console.log('OK clicked');
+            this.fbSvc.crudSchuetzenfest(schuetzenfest, CRUD.DELETE);
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 }
