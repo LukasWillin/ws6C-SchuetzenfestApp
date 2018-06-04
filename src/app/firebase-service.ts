@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import {AngularFireDatabase, DatabaseSnapshot} from 'angularfire2/database';
 import { AngularFireList } from 'angularfire2/database';
-import { DatabaseSnapshotDoesNotExist, DatabaseSnapshotExists } from "angularfire2/database/interfaces";
 import { AngularFireAction } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 
@@ -75,9 +74,8 @@ export class FirebaseServiceProvider {
 
     const self = this;
     this._stiche = this._fbRefStiche.snapshotChanges().map(changes => {
-      console.log("Pulled stiche from FBdb");
-      return changes.map(c => self.mapStichPayload(c.payload));
-    });
+        return changes.map(c => this.mapStichPayload(c.payload));
+      });
     this._resultate = this._fbRefResultate.snapshotChanges().map(changes => {
       return changes.map(c => self.mapResultatPayload(c.payload));
     });
@@ -247,12 +245,18 @@ export class FirebaseServiceProvider {
     const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
     const self = this;
 
+    console.log("1 Push " + instance + " to db ");
+
     if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
+
+      console.log("2 Push " + instance + " to db ");
 
       return this.checkIfItemExists(FBREF_PATH_STICHE, fbKey).then(exists => {
 
         instance = new Stich(instance);
         instance._field_schuetzenfest = null;
+
+        console.log("3 Push " + instance + " to db ");
 
         if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
           return self._fbRefStiche.update(fbKey, instance).then(_ => {
@@ -352,7 +356,7 @@ export class FirebaseServiceProvider {
 
   public getResultateByStichKey(key:string) : Promise<Resultat[]> {
     if (!_.isEmpty(key)) {
-      return this.resultate.first().map(rL => {
+      return this.resultate.map(rL => {
         return _.filter(rL, r => (r as Resultat)._fbStichKey === key);
       }).toPromise();
     } else {
@@ -365,14 +369,12 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.afd.object(`${FBREF_PATH_SCHUETZENFESTE}/${key}`)
         .snapshotChanges()
-        .first()
-        .map(c => this.mapSchuetzenfestPayload((c as AngularFireAction<DatabaseSnapshot<Schuetzenfest>>).payload))
+        .map(c => this.mapSchuetzenfestPayload(c.payload))
         .toPromise()
         .then(sf => {
           if (!_.isEmpty(sf)) {
             return Promise.resolve(
-              this.stiche.last()
-                .map(stL => {
+              this.stiche.map(stL => {
                   return _.filter(stL, st => (st as Stich)._fbSchuetzenfestKey === sf.key);
                 })
                 .toPromise()
@@ -395,7 +397,7 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.afd.object<Schuetze>(`${FBREF_PATH_SCHUETZEN}/${key}`)
         .snapshotChanges()
-        .map(c => this.mapSchuetzePayload((c as AngularFireAction<DatabaseSnapshot<Schuetze>>).payload))
+        .map(c => this.mapSchuetzePayload(c.payload))
         .toPromise();
     } else {
       console.warn("Faulty key in #getSchuetzeByKey");
@@ -407,8 +409,7 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.afd.object(`${FBREF_PATH_STICHE}/${key}`)
         .snapshotChanges()
-        .first()
-        .map(c => this.mapStichPayload((c as AngularFireAction<DatabaseSnapshot<Stich>>).payload))
+        .map(c => this.mapStichPayload(c.payload))
         .toPromise()
         .then(st => {
           // console.log("st was " + st);
@@ -436,8 +437,7 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.afd.object(`${FBREF_PATH_RESULTATE}/${key}`)
         .snapshotChanges()
-        .last()
-        .map(c => this.mapResultatPayload((c as AngularFireAction<DatabaseSnapshot<Resultat>>).payload))
+        .map(c => this.mapResultatPayload(c.payload))
         .toPromise();
     } else {
       console.warn("Faulty key in #getResultatByKey");
@@ -448,11 +448,9 @@ export class FirebaseServiceProvider {
   public getSticheBySchuetzenfestKey(schuetzenfestKey:string) : Promise<Stich[]> {
     if (_.isEmpty(schuetzenfestKey)) {
       return this.stiche
-        .last()
         .map(stL =>
           stL.filter(st =>
-            st._fbSchuetzenfestKey === schuetzenfestKey))
-        .toPromise();
+            st._fbSchuetzenfestKey === schuetzenfestKey)).toPromise();
     } else {
       console.warn("Faulty key in #getSticheBySchuetzenfestKey");
       return Promise.resolve([]);
@@ -462,7 +460,6 @@ export class FirebaseServiceProvider {
   public getResultateBySchuetzeKey(schuetzeKey:string): Promise<Resultat[]> {
     if (!_.isEmpty(schuetzeKey)) {
       return this._resultate
-        .last()
         .map(rL => rL.filter(r => r._fbSchuetzeKey === schuetzeKey))
         .toPromise();
     } else {
@@ -471,7 +468,7 @@ export class FirebaseServiceProvider {
     }
   }
 
-  private mapStichPayload(c:DatabaseSnapshot<Stich>|DatabaseSnapshotExists<Stich>|DatabaseSnapshotDoesNotExist<Stich>) : Stich {
+  private mapStichPayload(c:DatabaseSnapshot) : Stich {
     const st = c.val();
     if (isObject(st)) {
       st._fbKey = c.key;
@@ -482,7 +479,7 @@ export class FirebaseServiceProvider {
     }
   }
 
-  private mapResultatPayload(c:DatabaseSnapshot<Resultat>|DatabaseSnapshotExists<Resultat>|DatabaseSnapshotDoesNotExist<Resultat>) : Resultat {
+  private mapResultatPayload(c:DatabaseSnapshot) : Resultat {
     const r = c.val();
     if (isObject(r)) {
       r._fbKey = c.key;
@@ -493,7 +490,7 @@ export class FirebaseServiceProvider {
     }
   }
 
-  private mapSchuetzenfestPayload(c:DatabaseSnapshot<Schuetzenfest>|DatabaseSnapshotExists<Schuetzenfest>|DatabaseSnapshotDoesNotExist<Schuetzenfest>) : Schuetzenfest {
+  private mapSchuetzenfestPayload(c:DatabaseSnapshot) : Schuetzenfest {
     const sf = c.val();
     if (isObject(sf)) {
       sf._fbKey = c.key;
@@ -504,7 +501,7 @@ export class FirebaseServiceProvider {
     }
   }
 
-  private mapSchuetzePayload(c:DatabaseSnapshot<Schuetze>|DatabaseSnapshotExists<Schuetze>|DatabaseSnapshotDoesNotExist<Schuetze>) : Schuetze {
+  private mapSchuetzePayload(c:DatabaseSnapshot) : Schuetze {
     const s = c.val();
     if (isObject(s)) {
       s._fbKey = c.key;
@@ -526,7 +523,6 @@ export class FirebaseServiceProvider {
 
     return this.afd.object(`${path}/${id}`)
       .snapshotChanges()
-      .first()
       .map(c => c.payload.val() !== null)
       .toPromise();
   }
