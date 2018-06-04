@@ -1,6 +1,6 @@
 - Datenbank verknüpfen mit Views
-- Stich-edit (mit long press auf stich bei schuetzenfest-show) fehlt
-- Schuetzenfest-edit (mit long press auf schuetzenfest bei schuetzenfest-list) fehlt
+- Stich-edit (mit long press auf stich bei schuetzenfest-show) fehlt --> consider done.
+- Schuetzenfest-edit (mit long press auf schuetzenfest bei schuetzenfest-list) fehlt --> consider done.
 - Stich, Schütze, Schützenfest löschbar machen (eventuell über long press zuerst ein dialog anzeigen, dann optionen edit und delete)
 - Validierung bei Schuetze-resultat mit Zahlenfeldern (nur möglich eine Zahl einzugeben, die eine Nachkommastelle hat)
 - Bei Zurück klicken bei Schuetze-resultat, sollte ein Resultat eingegeben worden sein, nachfragen mit Dialog: "wirklich sicher?"
