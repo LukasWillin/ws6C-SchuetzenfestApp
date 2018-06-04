@@ -17,7 +17,7 @@
   <ion-list> <!-- Stiche -->
 
     <!-- If result is in whole integers, show select, else show regular input for entry -->
-    <ion-item *ngFor="let stich of stiche | async" [ngSwitch]="resultatIsDecimal(stich)"> <!-- Stich -->
+    <ion-item *ngFor="let stich of stiche" [ngSwitch]="resultatIsDecimal(stich)"> <!-- Stich -->
       <ion-label>{{ stich.name }}</ion-label>
 
       <!-- Case: Select -->
