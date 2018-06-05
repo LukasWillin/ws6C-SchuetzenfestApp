@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {Stich} from "../../app/entities/Stich";
+import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 
 /**
  * Generated class for the StichEditPage page.
@@ -18,7 +19,11 @@ export class StichEditPage {
 
   stich: Stich;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  name: string;
+  scheibe: number;
+  anzahlSchuss: number;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.stich = navParams.get('stich');
   }
 
@@ -27,7 +32,10 @@ export class StichEditPage {
   }
 
   updateStich() {
-    // TODO: Do something nice with the stich ^~^
+    this.stich.name = this.name;
+    this.stich.scheibe = this.scheibe;
+    this.stich.anzahlschuss = this.anzahlSchuss;
+    this.fbSvc.crudStich(this.stich, CRUD.UPDATE);
 
     // change view
     this.navCtrl.pop();
