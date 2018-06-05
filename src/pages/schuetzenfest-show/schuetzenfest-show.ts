@@ -63,12 +63,12 @@ export class SchuetzenfestShowPage {
     console.log(this.schuetzen);
 
     let stich1: Stich = new Stich();
-    stich1.name ="Kranzstich";
-    stich1.anzahlschuss = 10;
+    stich1.name ="DEMO Kranzstich";
+    stich1.anzahlschuss = 8;
 
     stich1.scheibe = 10;
     let stich2: Stich = new Stich();
-    stich2.name ="Vindonissastich";
+    stich2.name ="DEMO Vindonissastich";
     stich2.anzahlschuss = 10;
 
     stich2.scheibe = 10.9;
@@ -153,6 +153,7 @@ export class SchuetzenfestShowPage {
   }
 
   // TODO: Do we need it... I guess not? => We do need it because of the search!
+  // TODO: change over to database implementation: read in all schuetzen
   initializeSchuetzen() {
     let schuetze1: Schuetze = new Schuetze();
     schuetze1.vorname = "François";
@@ -166,25 +167,25 @@ export class SchuetzenfestShowPage {
 
     let resultat1: Resultat = new Resultat();
     resultat1.stich = this.stiche[0];
-    resultat1.punktzahl = -1;
+    resultat1.punktzahl = "";
 
     let resultat2: Resultat = new Resultat();
     resultat2.stich = this.stiche[1];
-    resultat2.punktzahl = -1;
+    resultat2.punktzahl = "";
 
     schuetze1.resultate = [resultat1, resultat2];
 
     let resultat3: Resultat = new Resultat();
     resultat3.stich = this.stiche[0];
-    resultat3.punktzahl = 50;
+    resultat3.punktzahl = "50";
 
     let resultat4: Resultat = new Resultat();
     resultat4.stich = this.stiche[1];
-    resultat4.punktzahl = 87.9;
+    resultat4.punktzahl = "87.9";
 
     let resultat5: Resultat = new Resultat();
     resultat5.stich = this.stiche[1];
-    resultat5.punktzahl = 99.2;
+    resultat5.punktzahl = "99.2";
 
     schuetze2.resultate = [resultat3, resultat4, resultat5];
 
