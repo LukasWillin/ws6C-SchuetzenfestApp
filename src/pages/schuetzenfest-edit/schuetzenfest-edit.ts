@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 
 /**
  * Generated class for the SchuetzenfestEditPage page.
@@ -15,7 +16,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SchuetzenfestEditPage {
 
-  schuetzenfest: any;
+  schuetzenfest: Schuetzenfest;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     this.schuetzenfest = navParams.get('schuetzenfest')

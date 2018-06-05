@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {Schuetze} from "../../app/entities/Schuetze";
 import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
+import {Stich} from "../../app/entities/Stich";
 
 /**
  * Generated class for the SchuetzeCreatePage page.
@@ -21,7 +22,7 @@ export class SchuetzeCreatePage {
   vorname: string;
   nachname: string;
   lizenzNr: string;
-  stiche: any; // TODO: change to Stich[]
+  stiche: Stich;
   sticheGeloest: number[] = [];
   schuetzenfest: Schuetzenfest;
 

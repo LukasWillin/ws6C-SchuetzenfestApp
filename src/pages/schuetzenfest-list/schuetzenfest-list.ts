@@ -22,7 +22,7 @@ import {Subscription} from "rxjs/Subscription";
 })
 export class SchuetzenfestListPage {
 
-  private schuetzenfeste;
+  private schuetzenfeste: Schuetzenfest[];
   private schuetzenfesteSubscription:Subscription;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController, private fbSvc: FirebaseServiceProvider) {
