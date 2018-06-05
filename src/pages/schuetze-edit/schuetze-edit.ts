@@ -19,8 +19,8 @@ import {Stich} from "../../app/entities/Stich";
 export class SchuetzeEditPage {
 
   schuetze: Schuetze;
-  stiche: Stich; // TODO: change to Stich[]
-  sticheGeloest: number[];
+  stiche: Stich;
+  sticheGeloest: number[]; // TODO: implement in Schütze and get from DB
 
   vorname: string;
   nachname: string;

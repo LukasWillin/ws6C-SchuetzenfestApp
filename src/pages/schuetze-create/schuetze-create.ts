@@ -23,7 +23,7 @@ export class SchuetzeCreatePage {
   nachname: string;
   lizenzNr: string;
   stiche: Stich;
-  sticheGeloest: number[] = [];
+  sticheGeloest: number[] = [];  // TODO: implement in Schütze and get from DB
   schuetzenfest: Schuetzenfest;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
