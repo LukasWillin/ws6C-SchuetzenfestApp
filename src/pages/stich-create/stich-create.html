@@ -19,9 +19,19 @@
 
 
 <ion-content padding>
-  <ion-item>
-    <ion-label stacked>Name</ion-label>
-    <ion-input [(ngModel)]="name" type="text" value=""></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-label stacked>Name</ion-label>
+      <ion-input [(ngModel)]="name" type="text" value={{stich.name}}></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Anzahl Schuss</ion-label>
+      <ion-input [(ngModel)]="anzahlSchuss" type="number" value={{stich.anzahlschuss}}></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Scheibe</ion-label>
+      <ion-input [(ngModel)]="scheibe" type="number" value={{stich.scheibe}}></ion-input>
+    </ion-item>
 
 </ion-content>

@@ -19,6 +19,8 @@ import {Stich} from "../../app/entities/Stich";
 export class StichCreatePage {
 
   name: string;
+  scheibe: number;
+  anzahlSchuss: number;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
   }
@@ -31,6 +33,8 @@ export class StichCreatePage {
     console.log("Name: " + this.name);
     const newStich = new Stich();
     newStich.name = this.name;
+    newStich.scheibe = this.scheibe;
+    newStich.anzahlschuss = this.anzahlSchuss;
 
     this.fbSvc.crudStich(newStich);
 
