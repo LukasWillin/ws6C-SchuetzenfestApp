@@ -156,12 +156,12 @@ export class SchuetzenfestShowPage {
   // TODO: change over to database implementation: read in all schuetzen
   initializeSchuetzen() {
     let schuetze1: Schuetze = new Schuetze();
-    schuetze1.vorname = "François";
+    schuetze1.vorname = "DEMO François";
     schuetze1.nachname = "Martin";
     schuetze1.lizenzNr = "520921";
 
     let schuetze2: Schuetze = new Schuetze();
-    schuetze2.vorname = "Roger";
+    schuetze2.vorname = "DEMO Roger";
     schuetze2.nachname = "Iten";
     schuetze2.lizenzNr = "666666";
 
