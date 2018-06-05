@@ -20,11 +20,10 @@ import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 export class SchuetzeResultatPage {
 
   schuetze: Schuetze;
-  resultate: Resultat[];
+  punktzahlen: string[] = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetze = navParams.get('schuetze');
-    this.resultate = this.schuetze.resultate;
   }
 
   ionViewDidLoad() {
@@ -48,8 +47,11 @@ export class SchuetzeResultatPage {
 
   updateResultat() {
     console.log("Updating!");
+    for (let i = 0; i < this.punktzahlen.length; i++) {
+      this.schuetze.resultate[i].punktzahl = this.punktzahlen[i];
+    }
 
-    this.fbSvc.crudBatchResultat(this.resultate, CRUD.UPDATE);
+    this.fbSvc.crudBatchResultat(this.schuetze.resultate, CRUD.UPDATE);
 
     this.navCtrl.pop();
   }
