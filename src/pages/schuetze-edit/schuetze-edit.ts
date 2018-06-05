@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
+import {Schuetze} from "../../app/entities/Schuetze";
+import {Stich} from "../../app/entities/Stich";
 
 /**
  * Generated class for the SchuetzeEditPage page.
@@ -15,11 +18,15 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SchuetzeEditPage {
 
-  schuetze: any;
-  stiche: any; // TODO: change to Stich[]
+  schuetze: Schuetze;
+  stiche: Stich; // TODO: change to Stich[]
   sticheGeloest: number[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  vorname: string;
+  nachname: string;
+  lizenzNr: string;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetze = navParams.get('schuetze');
     this.stiche = navParams.get('stiche');
     this.sticheGeloest = navParams.get('sticheGeloest');
@@ -30,7 +37,11 @@ export class SchuetzeEditPage {
   }
 
   updateSchuetze() {
-    // TODO: Do something great with the schuetze ^~^
+    this.schuetze.vorname = this.vorname;
+    this.schuetze.nachname = this.nachname;
+    this.schuetze.lizenzNr = this.lizenzNr;
+
+    this.fbSvc.crudSchuetze(this.schuetze, CRUD.UPDATE);
 
     // Change view
     this.navCtrl.pop();
