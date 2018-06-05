@@ -1,7 +1,7 @@
 - Make DB work!
 - Datenbank verknüpfen mit Views --> partially done, see todos
-- Splash Screen a.k.a. Loading Screen
-- ICON!
+X Splash Screen a.k.a. Loading Screen - done
+X ICON! - done
 X Add Save button to Resultat - done
 x Stich-edit (mit long press auf stich bei schuetzenfest-show) fehlt --> consider done.
 x Schuetzenfest-edit (mit long press auf schuetzenfest bei schuetzenfest-list) fehlt --> consider done.
