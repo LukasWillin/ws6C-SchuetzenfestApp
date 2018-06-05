@@ -1,5 +1,6 @@
 - Make DB work!
 - Datenbank verknüpfen mit Views --> partially done, see todos
+- Design
 X Splash Screen a.k.a. Loading Screen - done
 X ICON! - done
 X Add Save button to Resultat - done
