@@ -20,11 +20,11 @@ export class Resultat {
     this._field_stich = value;
   }
 
-  get punktzahl(): number {
+  get punktzahl(): string {
     return this._fb_field_punktzahl;
   }
 
-  set punktzahl(value: number) {
+  set punktzahl(value: string) {
     this._fb_lastChanged = new Date();
     this._fb_isPlaceholder = false;
     this._fb_field_punktzahl = value;
@@ -82,7 +82,7 @@ export class Resultat {
   public _fb_lastChanged : Date = new Date();
   public _fb_isPlaceholder : boolean = false;
 
-  public _fb_field_punktzahl : number = 0;
+  public _fb_field_punktzahl : string = "";
 
   public _field_stich : Stich = null;
 }
