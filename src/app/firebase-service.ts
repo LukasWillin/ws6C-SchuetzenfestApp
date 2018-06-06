@@ -153,10 +153,9 @@ export class FirebaseServiceProvider {
 
     instance._fbSchuetzenfestKey = schuetzenfestKey;
 
-    if (crudOp !== CRUD.PUSH) this.getResultateByStichKey(fbKey).forEach(rL => this.crudBatchResultat(rL, fbKey, "", crudOp));
-
     if (crudOp === CRUD.DELETE) {
       this._fbRefStiche.remove(fbKey);
+      this.getResultateByStichKey(fbKey).forEach(rL => this.crudBatchResultat(rL, fbKey, "", crudOp));
     } else {
       if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
         this._fbRefStiche.push(instance);
