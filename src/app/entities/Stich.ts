@@ -39,16 +39,6 @@ export class Stich {
     this._fb_field_anzahlschuss = value;
   }
 
-  set schuetzenfest(value:Schuetzenfest) {
-    this._fb_lastChanged = new Date();
-    this._fb_isPlaceholder = false;
-    this._fbSchuetzenfestKey = isEmpty(value) ? value.key : "";
-    this._field_schuetzenfest = value;
-  }
-  get schuetzenfest() : Schuetzenfest {
-    return this._field_schuetzenfest;
-  }
-
   get key() : string {
     return this._fbKey;
   }
@@ -62,7 +52,6 @@ export class Stich {
 
   public toString() : string {
     const jsonify = new Stich(this);
-    jsonify._field_schuetzenfest = null;
     return JSON.stringify(jsonify);
   }
 
@@ -103,6 +92,4 @@ export class Stich {
   public _fb_field_anzahlschuss : number = 0;
   public _fb_field_scheibe : number = -1;
   public _fb_field_name : string = "";
-
-  public _field_schuetzenfest : Schuetzenfest = null;
 }

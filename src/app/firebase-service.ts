@@ -138,8 +138,10 @@ export class FirebaseServiceProvider {
     (instances as Stich[]).forEach(i => this.crudStich(i, crudOp));
   }
 
-  public crudStich(instance: Stich, crudOp?: string) {
+  public crudStich(instance: Stich, schuetzenfestKey:string, crudOp?: string) {
     const fbKey:string = instance.key;
+
+    instance._fbSchuetzenfestKey = schuetzenfestKey;
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefStiche.remove(fbKey);
@@ -256,22 +258,7 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.afd.object(`${FBREF_PATH_STICHE}/${key}`)
         .snapshotChanges()
-        .map(c => this.mapStichPayload(c.payload))
-        .map(st => {
-          if (!_.isEmpty(st) && !_.isEmpty(st._fbSchuetzenfestKey)) {
-            return Observable.create(this.getSchuetzenfestByKey(st._fbSchuetzenfestKey).map(sf => {
-              const index = _.findIndex(sf.stiche, stSf => stSf.key === st.key);
-              if (index < 0) {
-                sf.stiche.push(st);
-                this.crudSchuetzenfest(sf, );
-              }
-              st._field_schuetzenfest = sf;
-              return st;
-            }));
-          } else {
-            return st;
-          }
-        });
+        .map(c => this.mapStichPayload(c.payload));
     } else {
       console.warn("Faulty key in #getStichByKey");
       return Observable.create(null);
