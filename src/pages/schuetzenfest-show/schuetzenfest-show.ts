@@ -110,7 +110,7 @@ export class SchuetzenfestShowPage {
       this.fbSvc.crudSchuetze(object, this.schuetzenfest.key, CRUD.DELETE);
     } else {
       console.log("delete stich ", object);
-      this.fbSvc.crudStich(object, CRUD.DELETE);
+      this.fbSvc.crudStich(object, this.schuetzenfest.key, CRUD.DELETE);
     }
   }
 
