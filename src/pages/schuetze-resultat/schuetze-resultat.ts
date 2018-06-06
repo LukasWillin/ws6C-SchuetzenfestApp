@@ -51,7 +51,8 @@ export class SchuetzeResultatPage {
       this.schuetze.resultate[i].punktzahl = this.punktzahlen[i];
     }
 
-    this.fbSvc.crudBatchResultat(this.schuetze.resultate, CRUD.UPDATE);
+    // FIXME: Stich is missing.
+    //this.fbSvc.crudBatchResultat(this.schuetze.resultate, CRUD.UPDATE);
 
     this.navCtrl.pop();
   }
