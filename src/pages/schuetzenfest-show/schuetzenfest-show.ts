@@ -47,13 +47,8 @@ export class SchuetzenfestShowPage {
   private schuetzen: Schuetze[] = [];
   private schuetzenSubscription: Subscription;
   private sticheSubscription: Subscription;
-  // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
 
   private stiche: Stich[] = [];
-
-  sticheGeloest = [
-    1,2
-  ];
 
   schuetzenfest: Schuetzenfest;
 
@@ -100,7 +95,7 @@ export class SchuetzenfestShowPage {
       this.navCtrl.push(SchuetzeEditPage, {
         schuetze: object,
         stiche: this.stiche,
-        sticheGeloest: this.sticheGeloest,
+        // sticheGeloest: object.sticheGeloest,
         schuetzenfestKey: this.schuetzenfest.key
       });
     } else {

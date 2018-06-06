@@ -22,8 +22,11 @@ export class SchuetzeResultatPage {
   schuetze: Schuetze;
   punktzahlen: string[] = [];
 
+  resultate : Resultat[] = [];
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetze = navParams.get('schuetze');
+    this.resultate = this.schuetze.resultate;
   }
 
   ionViewDidLoad() {
