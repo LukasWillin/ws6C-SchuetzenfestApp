@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {Stich} from "../../app/entities/Stich";
+import {SchuetzenfestShowPage} from "../schuetzenfest-show/schuetzenfest-show";
 
 /**
  * Generated class for the StichShowPage page.
@@ -17,13 +18,21 @@ import {Stich} from "../../app/entities/Stich";
 export class StichShowPage {
 
   stich: Stich;
+  handler: SchuetzenfestShowPage;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     this.stich = navParams.get('stich');
+    this.handler = navParams.get('handler');
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad StichShowPage');
+  }
+
+  delete(stich: Stich) {
+    if (this.handler.confirmDelete(stich)) {
+      this.navCtrl.pop();
+    }
   }
 
 }

@@ -8,7 +8,19 @@
 
   <ion-navbar>
     <ion-title>{{stich.name}}</ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (tap)="handler.edit(stich)">
+        <ion-icon name="md-create"></ion-icon>
+      </button>
+
+      <button ion-button icon-only (tap)="handler.confirmDelete(stich)">
+        <ion-icon name="trash"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
+
+
 
 </ion-header>
 
