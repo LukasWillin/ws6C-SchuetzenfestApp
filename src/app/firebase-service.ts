@@ -84,8 +84,8 @@ export class FirebaseServiceProvider {
       return changes.map(c => self.mapSchuetzePayload(c.payload));
     });
 
-    // this.batchResultat = this.batchResultat.bind(this);
-    // this.crudResultat = this.crudResultat.bind(this);
+    this.crudBatchResultat = this.crudBatchResultat.bind(this);
+    this.crudResultat = this.crudResultat.bind(this);
     this.mapSchuetzePayload = this.mapSchuetzePayload.bind(this);
     this.mapSchuetzenfestPayload = this.mapSchuetzenfestPayload.bind(this);
     this.getResultateBySchuetzeKey = this.getResultateBySchuetzeKey.bind(this);
@@ -94,73 +94,19 @@ export class FirebaseServiceProvider {
   }
 
 
-  public crudSchuetze(instance: Schuetze|string, schuetzenfestKey:string, crudOp?: string): Observable<Schuetze> {
-    const self = this;
+  public crudSchuetze(instance: Schuetze, schuetzenfestKey:string, crudOp?: string) {
+    const fbKey:string = instance.key;
 
-    const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
-
-    let schuetze:Schuetze;
-    let resultatBatch: Resultat[];
-    let resultatBatchKeys: string[];
-
-    if (crudOp !== CRUD.GET) {
-
-      let asyncBatch:Promise<Schuetze>;
-      if (typeof instance === 'object') asyncBatch = Promise.resolve(instance);
-      else asyncBatch = this.getSchuetzeByKey(fbKey).toPromise();
-      if(asyncBatch) {
-        asyncBatch.then(s => {
-          if (s.resultate && !_.isEmpty(s.resultate)) {
-            schuetze.resultate.forEach(r => {
-              r._fbSchuetzeKey = fbKey;
-            });
-            this.crudBatchResultat(schuetze.resultate);
-          }
-        })
-      }
+    if (crudOp === CRUD.DELETE) {
+      this._fbRefSchuetzen.remove(fbKey);
     }
 
-    if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
-      return this.checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).map( exists => {
+    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+      this._fbRefSchuetzen.push(instance);
+    }
 
-        instance = new Schuetze(instance);
-        if (_.indexOf(instance._fb_list_schuetzenfestKey, schuetzenfestKey) < 0) instance._fb_list_schuetzenfestKey.push(schuetzenfestKey);
-        instance.resultate = null;
-
-        if (exists && crudOp === undefined || crudOp === CRUD.UPDATE) {
-          return Observable.create(self._fbRefSchuetzen.update(fbKey, instance).then(_ => {
-            return self.getSchuetzeByKey(fbKey);
-          }));
-
-        } else if (!exists || !exists && crudOp === CRUD.PUSH) {
-          return Observable.create(self._fbRefSchuetzen.push(instance).once('value').then(item => {
-            return Observable.create(self.getSchuetzeByKey(item.key));
-          }));
-
-        } else {
-          return Observable.create(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
-        }
-      });
-    } else {
-      if (crudOp === undefined || crudOp === CRUD.GET) {
-
-        return self.getSchuetzeByKey(fbKey);
-
-      } else if (crudOp === CRUD.DELETE) {
-
-        return Observable.create(this.checkIfItemExists(FBREF_PATH_SCHUETZEN, fbKey).map( exists => {
-          if (exists) {
-            return self.getSchuetzeByKey(fbKey).map(s => {
-                self._fbRefSchuetzen.remove(fbKey);
-                return new Schuetze(s);
-              });
-          } else {
-            return null;
-          }
-        }));
-      } else {
-        return Observable.create(new Error(`Tried to call FireBaseProvider#schuetzen with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
-      }
+    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+      this._fbRefSchuetzen.update(fbKey, instance);
     }
   }
 
@@ -171,116 +117,45 @@ export class FirebaseServiceProvider {
    * @param crudOp optional - One of delete, update, push, get
    * @returns {Promise<Schuetze|Error>}
    */
-  public crudSchuetzenfest(instance: Schuetzenfest|string, crudOp?: string): Observable<Schuetzenfest> {
+  public crudSchuetzenfest(instance: Schuetzenfest, crudOp?: string) {
 
-    const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
-    const self = this;
+    const fbKey:string = instance.key;
 
-    console.log(`crud schuetzenfest ${instance} and op ${crudOp}`);
+    if (crudOp === CRUD.DELETE) {
+      this._fbRefSchuetzenfeste.remove(fbKey);
+    }
 
-    if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
+    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+      this._fbRefSchuetzenfeste.push(instance);
+    }
 
-      return this.checkIfItemExists(FBREF_PATH_SCHUETZENFESTE, fbKey).map(exists => {
-
-        console.debug("Checked instance exists schuetzenfeste");
-
-        instance = new Schuetzenfest(instance);
-        instance.stiche = null;
-
-        if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
-          console.debug("instance exists schuetzenfeste");
-          return Observable.create(self._fbRefSchuetzenfeste.update(fbKey, instance).then(_ => {
-            return Observable.create(self.getSchuetzenfestByKey(fbKey));
-          }));
-
-        } else if (!exists || !exists && crudOp === CRUD.PUSH) {
-          console.debug("instance not exists schuetzenfeste");
-          return Observable.create(self._fbRefSchuetzenfeste.push(instance).once('value')
-            .then(item => {
-              return self.getSchuetzenfestByKey(item.key);
-            }));
-
-        } else {
-          console.debug("Error instance schuetzenfeste");
-          return Observable.create(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
-        }
-      });
-    } else {
-      if (crudOp === undefined || crudOp === CRUD.GET) {
-        return self.getSchuetzenfestByKey(fbKey);
-      } else if (crudOp === CRUD.DELETE) {
-        return this.getSchuetzenfestByKey(fbKey).map(sf => {
-          self._fbRefSchuetzenfeste.remove(fbKey);
-          return sf;
-        });
-      } else {
-        return Observable.create(new Error(`Tried to call FireBaseProvider#schuetzenfest with instance set to ${(typeof instance)} but expected \Object\<\Schuetzenfest\>, undefined or null and/or crud`));
-      }
+    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+      this._fbRefSchuetzenfeste.update(fbKey, instance);
     }
   }
 
   public crudBatchStich(instances: Stich[]|string[], crudOp?:string) {
-    const self = this;
-    if (typeof instances[0] === 'string') {
-      (instances as string[]).map(() => {})
-    } else {
-      (instances as Stich[]).forEach(i => this.crudStich(i, crudOp));
+    (instances as Stich[]).forEach(i => this.crudStich(i, crudOp));
+  }
+
+  public crudStich(instance: Stich, crudOp?: string) {
+    const fbKey:string = instance.key;
+
+    if (crudOp === CRUD.DELETE) {
+      this._fbRefStiche.remove(fbKey);
+    }
+
+    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+      this._fbRefStiche.push(instance);
+    }
+
+    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+      this._fbRefStiche.update(fbKey, instance);
     }
   }
 
-  public crudStich(instance: Stich|string, crudOp?: string): Observable<Stich> {
-    const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
-    const self = this;
-
-    if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
-
-      return this.checkIfItemExists(FBREF_PATH_STICHE, fbKey).map(exists => {
-
-        instance = new Stich(instance);
-        instance._field_schuetzenfest = null;
-
-        if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
-          return Observable.create(self._fbRefStiche.update(fbKey, instance).then(_ => {
-            return self.getStichByKey(fbKey);
-          }));
-
-        } else if (!exists || !exists && crudOp === CRUD.PUSH) {
-          return Observable.create(self._fbRefStiche.push(instance)
-            .then(p => {
-              return this.getStichByKey(p.key).map(st => {
-                return this.getSchuetzenfestByKey(st._fbSchuetzenfestKey)
-                  .map(sf => {
-                    st._field_schuetzenfest = sf;
-                    return st;
-                  });
-              });
-            }));
-
-        } else {
-          return Observable.create(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
-        }
-      });
-
-    } else {
-      if (crudOp === undefined || crudOp === CRUD.GET) {
-        return self.getStichByKey(fbKey);
-      } else if (crudOp === CRUD.DELETE) {
-        return this.getStichByKey(fbKey).map(st => {
-          return Observable.create(self._fbRefStiche.remove(fbKey).then(() => st ));
-        });
-      } else {
-        return Observable.create(new Error(`Tried to call FireBaseProvider#stich with instance set to ${(typeof instance)} but expected \Object\<\Stich\>, undefined or null and/or crud`));
-      }
-    }
-  }
-
-  public crudBatchResultat(instances: Resultat[]|string[], crudOp?:string) {
-    const self = this;
-    if (isObject(instances)) {
-      (instances as Resultat[]).forEach(i => this.crudResultat(i, crudOp));
-    } else {
-      (instances as string[]).forEach(i => this.crudResultat(i, crudOp));
-    }
+  public crudBatchResultat(instances: Resultat[], crudOp?:string) {
+    instances.forEach(i => this.crudResultat(i, crudOp));
   }
 
   /**
@@ -290,40 +165,20 @@ export class FirebaseServiceProvider {
    * @param {string} crudOp
    * @returns {Promise<Observable<Resultat>>}
    */
-  public crudResultat(instance: Resultat|string, crudOp?: string): Observable<Resultat> {
-    const fbKey:string = (typeof instance === 'object') ? instance._fbKey : instance;
-    const self = this;
-    if(typeof instance === 'object' && crudOp === undefined || crudOp === CRUD.UPDATE || crudOp === CRUD.PUSH) {
+  public crudResultat(instance: Resultat, crudOp?: string) {
 
-      return this.checkIfItemExists(FBREF_PATH_RESULTATE, fbKey).map(exists => {
+    const fbKey:string = instance.key;
 
-        instance = new Resultat(instance);
-        instance._field_stich = null;
+    if (crudOp === CRUD.DELETE) {
+      this._fbRefResultate.remove(fbKey);
+    }
 
-        if(exists && crudOp === undefined || exists && crudOp === CRUD.UPDATE) {
-          return Observable.create(self._fbRefResultate.update(fbKey, instance).then(_ => {
-            return self.getResultatByKey(fbKey);
-          }));
+    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+      this._fbRefResultate.push(instance);
+    }
 
-        } else if (!exists || !exists && crudOp === CRUD.PUSH) {
-          return Observable.create(self._fbRefResultate.push(instance).once('value').then(item => {
-            return self.getResultatByKey(item.key);
-          }));
-
-        } else {
-          return Observable.create(new Error(`Internal state error. Failed with CRUD ${crudOp} on ${exists ? 'existing ' : 'missing'} instance ${fbKey}`));
-        }
-      });
-    } else {
-      if (crudOp === undefined || crudOp === CRUD.GET) {
-        return self.getResultatByKey(fbKey);
-      } else if (crudOp === CRUD.DELETE) {
-        return this.getResultatByKey(fbKey).map(st => {
-          return Observable.create(self._fbRefResultate.remove(fbKey).then(() => Observable.create(st) ));
-        });
-      } else {
-        return Observable.create(new Error(`Tried to call FireBaseProvider#resultat with instance set to ${(typeof instance)} but expected \Object\<\Resultat\>, undefined or null and/or crud`));
-      }
+    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+      this._fbRefResultate.update(fbKey, instance);
     }
   }
 
@@ -378,11 +233,6 @@ export class FirebaseServiceProvider {
   public getSchuetzenBySchuetzenfestKey(key:string) {
     if (!_.isEmpty(key)) {
       return this.schuetzen.map(sL => sL.filter(s => _.includes(s.schuetzenfestKeyList, key)));
-      // Alle stiche nach schuetzenfest
-      // Alle resultate dieser Stiche
-      // Alle alle schuetzenkeys zu diesen resultaten
-      // Distinct schuetzenkeys
-      // Abfrage Schuetzen
     } else {
       console.warn("Faulty key in #getSchuetzenBySchuetzenfestKey");
       return Observable.create(null);
@@ -393,7 +243,8 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.schuetzen
         .map(sL => {
-          return sL.find(s => s.key === key);
+          console.log(`get by key schuetze ${sL} ${key}`);
+          return Observable.create(sL.find(s => s.key === key));
         });
     } else {
       console.warn("Faulty key in #getSchuetzeByKey");
@@ -412,7 +263,7 @@ export class FirebaseServiceProvider {
               const index = _.findIndex(sf.stiche, stSf => stSf.key === st.key);
               if (index < 0) {
                 sf.stiche.push(st);
-                this.crudSchuetzenfest(sf);
+                this.crudSchuetzenfest(sf, );
               }
               st._field_schuetzenfest = sf;
               return st;
@@ -533,7 +384,9 @@ export class FirebaseServiceProvider {
 
     console.debug(`Check 2 ${path}/${id} exists`);
 
-    if (_.isEmpty(id)) return Observable.create(() => Observable.create(false));
+    if (_.isEmpty(id)) {
+      return Observable.create(false);
+    }
 
     console.debug(`Check 3 ${path}/${id} exists`);
 
