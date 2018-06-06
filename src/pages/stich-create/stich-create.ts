@@ -30,6 +30,7 @@ export class StichCreatePage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad StichCreatePage');
+
   }
 
   createStich() {
@@ -40,8 +41,6 @@ export class StichCreatePage {
     newStich.anzahlschuss = this.anzahlSchuss;
 
     this.fbSvc.crudStich(newStich, this.schuetzenfestKey, CRUD.PUSH);
-
-    CRUD.PUSH;
 
     // Change view
     this.navCtrl.pop();

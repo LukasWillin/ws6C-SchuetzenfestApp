@@ -19,7 +19,6 @@ const FBREF_PATH_STICHE = '/stiche';
 const STR_DELETE = 'delete';
 const STR_UPDATE = 'update';
 const STR_PUSH = 'push';
-const STR_GET = 'get';
 
 export class CRUD {
   public static get DELETE(): string {
@@ -32,10 +31,6 @@ export class CRUD {
 
   public static get PUSH(): string {
     return STR_PUSH;
-  }
-
-  public static get GET(): string {
-    return STR_GET;
   }
 }
 
@@ -101,6 +96,8 @@ export class FirebaseServiceProvider {
       instance._fb_list_schuetzenfestKey.push(schuetzenfestKey);
     }
 
+    if (_.isUndefined(instance.resultate))
+      throw new Error(`Property Resultate on Schuetze is required`);
     this.crudBatchResultat(instance.resultate, "", fbKey, crudOp);
     instance._field_resultate = null;
 
@@ -128,6 +125,10 @@ export class FirebaseServiceProvider {
 
     const fbKey:string = instance.key;
 
+    if (crudOp != CRUD.PUSH) {
+      this.crudBatchStich(instance._field_stiche, fbKey, crudOp);
+    }
+    instance._field_stiche = null;
     // push and then remove property _field_stiche
 
     if (crudOp === CRUD.DELETE) {
@@ -143,8 +144,8 @@ export class FirebaseServiceProvider {
     }
   }
 
-  public crudBatchStich(instances: Stich[]|string[], crudOp?:string) {
-    (instances as Stich[]).forEach(i => this.crudStich(i, crudOp));
+  public crudBatchStich(instances: Stich[], schuetzenfestKey:string, crudOp?:string) {
+    (instances as Stich[]).forEach(i => this.crudStich(i, schuetzenfestKey, crudOp));
   }
 
   public crudStich(instance: Stich, schuetzenfestKey:string, crudOp?: string) {
@@ -152,7 +153,7 @@ export class FirebaseServiceProvider {
 
     instance._fbSchuetzenfestKey = schuetzenfestKey;
 
-    this.getResultateByStichKey(fbKey).forEach(rL => this.crudBatchResultat(rL, fbKey, "", crudOp));
+    if (crudOp !== CRUD.PUSH) this.getResultateByStichKey(fbKey).forEach(rL => this.crudBatchResultat(rL, fbKey, "", crudOp));
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefStiche.remove(fbKey);
@@ -220,7 +221,7 @@ export class FirebaseServiceProvider {
         return _.filter(rL, r => (r as Resultat)._fbStichKey === key);
       });
     } else {
-      console.error("Faulty key in #getResultateByStichKey");
+      console.error(`Faulty key(${key}) in #getResultateByStichKey`);
     }
   }
 
