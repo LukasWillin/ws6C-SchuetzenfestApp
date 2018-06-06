@@ -7,6 +7,8 @@ import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {Component} from "@angular/core";
 import {Subscription} from "rxjs/Subscription";
 import {ActionSheetController, AlertController, IonicPage, NavController, NavParams, Platform} from "ionic-angular";
+import take from 'lodash/take';
+import orderBy from 'lodash/orderBy';
 
 /**
  * Generated class for the SchuetzenfestListPage page.
@@ -30,9 +32,10 @@ export class SchuetzenfestListPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SchuetzenfestListPage');
-    this.schuetzenfesteSubscription = this.fbSvc.schuetzenfeste.subscribe(schuetzenfestListe => {
+    this.schuetzenfesteSubscription = this.fbSvc.schuetzenfeste.map(sfL => take(orderBy(sfL, "lastChanged", "descending"), 10))
+      .subscribe(schuetzenfestListe => {
       this.schuetzenfeste = schuetzenfestListe;
-    })
+    });
   }
 
   // FIXME: Not needed - according to François.
