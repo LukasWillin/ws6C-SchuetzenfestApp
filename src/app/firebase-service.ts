@@ -75,14 +75,14 @@ export class FirebaseServiceProvider {
         return changes.map(c => this.mapStichPayload(c.payload));
       });
     this._resultate = this._fbRefResultate.snapshotChanges().map(changes => {
-      return changes.map(c => self.mapResultatPayload(c.payload));
-    });
+        return changes.map(c => self.mapResultatPayload(c.payload));
+      });
     this._schuetzenfeste = this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
-      return changes.map(c => self.mapSchuetzenfestPayload(c.payload));
-    });
+        return changes.map(c => self.mapSchuetzenfestPayload(c.payload));
+      });
     this._schuetzen = this._fbRefSchuetzen.snapshotChanges().map(changes => {
-      return changes.map(c => self.mapSchuetzePayload(c.payload));
-    });
+        return changes.map(c => self.mapSchuetzePayload(c.payload));
+      });
 
     this.crudBatchResultat = this.crudBatchResultat.bind(this);
     this.crudResultat = this.crudResultat.bind(this);
@@ -255,7 +255,7 @@ export class FirebaseServiceProvider {
       return this.schuetzen.map(sL => sL.filter(s => _.includes(s.schuetzenfestKeyList, key)));
     } else {
       console.warn("Faulty key in #getSchuetzenBySchuetzenfestKey");
-      return Observable.create(null);
+      return Observable.create([]);
     }
   }
 
@@ -301,7 +301,7 @@ export class FirebaseServiceProvider {
   }
 
   public getSticheBySchuetzenfestKey(schuetzenfestKey:string) : Observable<Stich[]> {
-    if (_.isEmpty(schuetzenfestKey)) {
+    if (!_.isEmpty(schuetzenfestKey)) {
       return this.stiche
         .map(stL => stL.filter(st => st._fbSchuetzenfestKey === schuetzenfestKey));
     } else {
