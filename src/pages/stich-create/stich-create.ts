@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
-import {FirebaseServiceProvider} from "../../app/firebase-service";
+import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {Stich} from "../../app/entities/Stich";
 
 /**
@@ -37,6 +37,8 @@ export class StichCreatePage {
     newStich.anzahlschuss = this.anzahlSchuss;
 
     this.fbSvc.crudStich(newStich);
+
+    CRUD.PUSH;
 
     // Change view
     this.navCtrl.pop();

@@ -47,6 +47,7 @@ export class SchuetzeCreatePage {
     console.log(this.schuetzenfest.key);
 
     this.fbSvc.crudSchuetze(newSchuetze, this.schuetzenfest.key);
+    CRUD.PUSH;
     // this.fbSvc.crudSchuetze("OKAY", this.schuetzenfest.key, CRUD.PUSH);
 
     // Change view
