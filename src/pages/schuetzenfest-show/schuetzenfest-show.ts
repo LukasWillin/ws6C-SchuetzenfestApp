@@ -107,7 +107,7 @@ export class SchuetzenfestShowPage {
   delete(object: Schuetze | Stich) {
     if (object instanceof Schuetze) {
       console.log("delete schuetze ", object);
-      this.fbSvc.crudSchuetze(object, CRUD.DELETE);
+      this.fbSvc.crudSchuetze(object, this.schuetzenfest.key, CRUD.DELETE);
     } else {
       console.log("delete stich ", object);
       this.fbSvc.crudStich(object, CRUD.DELETE);
