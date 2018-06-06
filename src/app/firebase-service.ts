@@ -97,7 +97,12 @@ export class FirebaseServiceProvider {
   public crudSchuetze(instance: Schuetze, schuetzenfestKey:string, crudOp?: string) {
     const fbKey:string = instance.key;
 
+    if (!_.includes(instance._fb_list_schuetzenfestKey, schuetzenfestKey)) {
+      instance._fb_list_schuetzenfestKey.push(schuetzenfestKey);
+    }
+
     this.crudBatchResultat(instance.resultate, "", fbKey, crudOp);
+    instance._field_resultate = null;
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefSchuetzen.remove(fbKey);
@@ -161,7 +166,7 @@ export class FirebaseServiceProvider {
   }
 
   public crudBatchResultat(instances: Resultat[], stichKey:string, schuetzeKey, crudOp?:string) {
-    instances.forEach(i => this.crudResultat(i, schuetzeKey, crudOp));
+    instances.forEach(i => this.crudResultat(i, stichKey, schuetzeKey, crudOp));
   }
 
   /**
@@ -175,12 +180,15 @@ export class FirebaseServiceProvider {
 
     const fbKey:string = instance.key;
 
-    if(!_.isEmpty(schuetzeKey)) instance._fbSchuetzeKey = schuetzeKey;
+    if (!_.isEmpty(schuetzeKey)) instance._fbSchuetzeKey = schuetzeKey;
 
-    if(!_.isEmpty(stichKey)) instance._fbStichKey = stichKey;
+    if (_.isEmpty(stichKey) && isObject(instance._field_stich)) stichKey = instance._field_stich.key;
+    if (!_.isEmpty(stichKey)) instance._fbStichKey = stichKey;
+    instance._field_stich = null;
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefResultate.remove(fbKey);
+
     } else {
       if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
         this._fbRefResultate.push(instance);
