@@ -88,11 +88,20 @@ export class FirebaseServiceProvider {
     this.getSticheBySchuetzenfestKey = this.getSticheBySchuetzenfestKey.bind(this);
   }
 
+  /**
+   * CRUD method to update, delete, push.
+   * The `crudOp` parameter might only be necessary upon deletion.
+   * @param {Schuetzenfest} instance - A Schuetzenfest instance object.
 
+   * @param {Schuetze} instance - A Schuetze instance object.
+   * @param {string} schuetzenfestKey - Key of another associated Schuetzenfest.
+   *    If you don't want to add any association pass an empty string("").
+   * @param {string} crudOp (optional) - The CRUD operation.
+   */
   public crudSchuetze(instance: Schuetze, schuetzenfestKey:string, crudOp?: string) {
     const fbKey:string = instance.key;
 
-    if (!_.includes(instance._fb_list_schuetzenfestKey, schuetzenfestKey)) {
+    if (!_.isEmpty(schuetzenfestKey) && !_.includes(instance._fb_list_schuetzenfestKey, schuetzenfestKey)) {
       instance._fb_list_schuetzenfestKey.push(schuetzenfestKey);
     }
 
@@ -115,11 +124,10 @@ export class FirebaseServiceProvider {
   }
 
   /**
-   *
-   * @param lizenzNr required - LizenzNummer of Schuetze.
-   * @param instance optional, default:undefined - Ommit to #get. Pass object to #push or #update. Set null to #delete.
-   * @param crudOp optional - One of delete, update, push, get
-   * @returns {Promise<Schuetze|Error>}
+   * CRUD method to update, delete, push.
+   * The `crudOp` parameter might only be necessary upon deletion.
+   * @param {Schuetzenfest} instance - A Schuetzenfest instance object.
+   * @param {string} crudOp (optional) - The CRUD operation.
    */
   public crudSchuetzenfest(instance: Schuetzenfest, crudOp?: string) {
 
@@ -148,6 +156,14 @@ export class FirebaseServiceProvider {
     (instances as Stich[]).forEach(i => this.crudStich(i, schuetzenfestKey, crudOp));
   }
 
+  /**
+   * CRUD method to update, delete, push.
+   * The `crudOp` parameter might only be necessary upon deletion.
+   * @param {Stich} instance - A Stich instance object.
+   * @param {string} schuetzenfestKey - Key of associated Schuetzenfest.
+   *    If you dont want to alter Schuetzenfest pass an empty string("").
+   * @param {string} crudOp (optional) - The CRUD operation.
+   */
   public crudStich(instance: Stich, schuetzenfestKey:string, crudOp?: string) {
     const fbKey:string = instance.key;
 
@@ -167,38 +183,58 @@ export class FirebaseServiceProvider {
     }
   }
 
+  /**
+   * CRUD method to update, delete, push.
+   * The `crudOp` parameter might only be necessary upon deletion.
+   * @param {Resultat[]} instance - One or more Resultat instances.
+   * @param {string} stichKey - Key of associated Stich.
+   *    If you dont want to alter the Stich pass an empty string("").
+   * @param {string} schuetzeKey - Key of owning Schuetze.
+   *    If you dont want to alter Schuetze pass an empty string("").
+   * @param {string} crudOp (optional) - The CRUD operation.
+   */
   public crudBatchResultat(instances: Resultat[], stichKey:string, schuetzeKey, crudOp?:string) {
     instances.forEach(i => this.crudResultat(i, stichKey, schuetzeKey, crudOp));
   }
 
   /**
-   * CRUD method to update, delete, get, push.
+   * CRUD method to update, delete, push.
    * The `crudOp` parameter might only be necessary upon deletion.
-   * @param {Resultat | string} instance - Either instance object or reference key.
-   * @param {string} crudOp
-   * @returns {Promise<Observable<Resultat>>}
+   * Make sure there is at least an existing association to a Schuetze.
+   * Otherwise this Resultat will be deleted.
+   * @param {Resultat} instance - A Resultat instance object.
+   * @param {string} stichKey - Key of associated Stich.
+   *    If you dont want to alter associated Stich pass an empty string("").
+   * @param {string} schuetzeKey - Key of Schuetze.
+   *    If you dont want to alter associated Schuetze pass an empty string("").
+   * @param {string} crudOp optional - The CRUD operation.
    */
   public crudResultat(instance: Resultat, stichKey:string, schuetzeKey:string, crudOp?: string) {
 
     const fbKey:string = instance.key;
 
+    // Try to find an association to a Schuetze
+    // IF you cant find any switch to DELETE.
     if (!_.isEmpty(schuetzeKey)) instance._fbSchuetzeKey = schuetzeKey;
+    const crudWas = crudOp;
+    if (_.isEmpty(schuetzeKey)) crudOp = CRUD.DELETE;
+
+    if (crudOp === CRUD.DELETE) {
+      console.error(new Error(`The Resultat(${instance}) could not be associated to a Schuetze and will be removed. schuetzeKey was ${schuetzeKey}@CRUD.${crudWas}`));
+      this._fbRefResultate.remove(fbKey);
+      return;
+    }
 
     if (_.isEmpty(stichKey) && isObject(instance._field_stich)) stichKey = instance._field_stich.key;
     if (!_.isEmpty(stichKey)) instance._fbStichKey = stichKey;
     instance._field_stich = null;
 
-    if (crudOp === CRUD.DELETE) {
-      this._fbRefResultate.remove(fbKey);
 
-    } else {
-      if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
-        this._fbRefResultate.push(instance);
-      }
-
-      if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
-        this._fbRefResultate.update(fbKey, instance);
-      }
+    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+      this._fbRefResultate.push(instance);
+    }
+    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+      this._fbRefResultate.update(fbKey, instance);
     }
   }
 
@@ -208,11 +244,9 @@ export class FirebaseServiceProvider {
         return _.map(rL, r => (r as Resultat).stich);
       });
     } else {
-      console.error("Faulty key in #getSticheBySchuetzeKey");
+      console.error(new Error(`Faulty key(${key}) in #getSticheBySchuetzeKey`));
     }
   }
-
-
 
   public getResultateByStichKey(key:string) : Observable<Resultat[]> {
     if (!_.isEmpty(key)) {
@@ -220,7 +254,7 @@ export class FirebaseServiceProvider {
         return _.filter(rL, r => (r as Resultat)._fbStichKey === key);
       });
     } else {
-      console.error(`Faulty key(${key}) in #getResultateByStichKey`);
+      console.error(new Error(`Faulty key(${key}) in #getResultateByStichKey`));
     }
   }
 
@@ -243,7 +277,7 @@ export class FirebaseServiceProvider {
           }
         });
     } else {
-      console.error("Faulty key in #getSchuetzenfestByKey");
+      console.error(new Error(`Faulty key(${key}) in #getSchuetzenfestByKey`));
     }
   }
 
@@ -251,7 +285,7 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.schuetzen.map(sL => sL.filter(s => _.includes(s.schuetzenfestKeyList, key)));
     } else {
-      console.warn("Faulty key in #getSchuetzenBySchuetzenfestKey");
+      console.error(new Error(`Faulty key(${key}) in #getSchuetzenBySchuetzenfestKey`));
     }
   }
 
@@ -263,7 +297,7 @@ export class FirebaseServiceProvider {
           return Observable.create(sL.find(s => s.key === key));
         });
     } else {
-      console.warn("Faulty key in #getSchuetzeByKey");
+      console.error(new Error(`Faulty key(${key}) in #getSchuetzeByKey`));
     }
   }
 
@@ -273,7 +307,7 @@ export class FirebaseServiceProvider {
         .snapshotChanges()
         .map(c => this.mapStichPayload(c.payload));
     } else {
-      console.error("Faulty key in #getStichByKey");
+      console.error(new Error(`Faulty key(${key}) in #getStichByKey`));
     }
   }
 
@@ -289,7 +323,7 @@ export class FirebaseServiceProvider {
           }));
         });
     } else {
-      console.error("Faulty key in #getResultatByKey");
+      console.error(new Error(`Faulty key(${key}) in #getResultatByKey`));
     }
   }
 
@@ -298,7 +332,7 @@ export class FirebaseServiceProvider {
       return this.stiche
         .map(stL => stL.filter(st => st._fbSchuetzenfestKey === schuetzenfestKey));
     } else {
-      console.error("Faulty key in #getSticheBySchuetzenfestKey");
+      console.error(new Error(`Faulty key(${schuetzenfestKey}) in #getSticheBySchuetzenfestKey`));
     }
   }
 
@@ -307,7 +341,7 @@ export class FirebaseServiceProvider {
       return this._resultate
         .map(rL => rL.filter(r => r._fbSchuetzeKey === schuetzeKey));
     } else {
-      console.error("Faulty key in #getResultateBySchuetzeKey");
+      console.error(new Error(`Faulty key(${schuetzeKey}) in #getResultateBySchuetzeKey`));
     }
   }
 
@@ -317,7 +351,7 @@ export class FirebaseServiceProvider {
         r.stich._fbSchuetzenfestKey === schuetzenfestKey;
       }));
     } else {
-      console.error("Faulty key in #getResultateBySchuetzeKey");
+      console.error(new Error(`Faulty keys(schuetzenfestKey:${schuetzenfestKey}, schuetzeKey:${schuetzeKey}) in #getResultateBySchuetzeKey`));
     }
   }
 
@@ -327,7 +361,7 @@ export class FirebaseServiceProvider {
       st._fbKey = c.key;
       return new Stich(st);
     } else {
-      console.error("A given key was probably faulty or not existing in firebase");
+      console.error(new Error("A given key was probably faulty or not existing in firebase"));
       return st;
     }
   }
@@ -338,7 +372,7 @@ export class FirebaseServiceProvider {
       r._fbKey = c.key;
       return new Resultat(r)
     } else {
-      console.error("A given key was probably faulty or not existing in firebase");
+      console.error(new Error("A given key was probably faulty or not existing in firebase"));
       return r;
     }
   }
@@ -349,8 +383,8 @@ export class FirebaseServiceProvider {
       sf._fbKey = c.key;
       return new Schuetzenfest(sf);
     } else {
-      console.error("A given key was probably faulty or not existing in firebase");
-      return sf
+      console.error(new Error("A given key was probably faulty or not existing in firebase"));
+      return sf;
     }
   }
 
@@ -360,7 +394,7 @@ export class FirebaseServiceProvider {
       s._fbKey = c.key;
       return new Schuetze(s);
     } else {
-      console.error("A given key was probably faulty or not existing in firebase");
+      console.error(new Error("A given key was probably faulty or not existing in firebase"));
       return s;
     }
   }
@@ -375,16 +409,8 @@ export class FirebaseServiceProvider {
       throw err;
     }
 
-    console.debug(`Check 2 ${path}/${id} exists`);
-
-    if (_.isEmpty(id)) {
-      return Observable.create(false);
-    }
-
-    console.debug(`Check 3 ${path}/${id} exists`);
-
     return Observable.create(this.afd.object(`${path}/${id}`)
       .snapshotChanges()
-      .map(c => c.payload.val() !== null));
+      .map(c => c.payload.val() !== null && !_.isEmpty(id)));
   }
 }
