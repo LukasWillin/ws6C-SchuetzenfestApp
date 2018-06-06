@@ -46,6 +46,7 @@ export class SchuetzenfestShowPage {
 
   private schuetzen: Schuetze[] = [];
   private schuetzenSubscription: Subscription;
+  private sticheSubscription: Subscription;
   // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
 
   private stiche: Stich[] = [];
@@ -69,6 +70,12 @@ export class SchuetzenfestShowPage {
 
     this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key).subscribe(stL => this.stiche = stL);
     this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key).subscribe(sL => this.schuetzen = sL);
+
+    this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key).subscribe(stL => this.stiche = stL);
+    this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key).subscribe(sL => this.schuetzen = sL);
+
+
+
     console.log(this.schuetzen);
   }
 
