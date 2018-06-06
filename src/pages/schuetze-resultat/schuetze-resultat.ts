@@ -1,6 +1,9 @@
 import {Component} from '@angular/core';
 import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Stich} from "../../app/entities/Stich";
+import {Schuetze} from "../../app/entities/Schuetze";
+import {Resultat} from "../../app/entities/Resultat";
+import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 
 /**
  * Generated class for the SchuetzeResultatPage page.
@@ -16,12 +19,11 @@ import {Stich} from "../../app/entities/Stich";
 })
 export class SchuetzeResultatPage {
 
-  schuetze: any; // TODO: change this when switching to DB implementation
-  stiche: any; // TODO: change this when switching to DB implementation
+  schuetze: Schuetze;
+  punktzahlen: string[] = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetze = navParams.get('schuetze');
-    this.stiche = navParams.get('stiche');
   }
 
   ionViewDidLoad() {
@@ -29,17 +31,29 @@ export class SchuetzeResultatPage {
   }
 
   resultatMax(stich) {
-    return stich.scheibe*stich.anzahlSchuss; // maximal erreichbares resultat
+    return stich.scheibe*stich.anzahlschuss; // maximal erreichbares resultat
   }
 
   getResultatOptions(stich) {
     let resultatMax = this.resultatMax(stich); // maximal erreichbares resultat
+    console.log("ResultatMax: ", resultatMax);
     // build array with numbers from 0 to resultatMax inclusive, with reverse order (highest number comes first)
     return Array(resultatMax+1).fill(resultatMax+1).map((x,i)=>i).reverse();
   }
 
   resultatIsDecimal(stich) {
     return stich.scheibe % 10 == 0;
+  }
+
+  updateResultat() {
+    console.log("Updating!");
+    for (let i = 0; i < this.punktzahlen.length; i++) {
+      this.schuetze.resultate[i].punktzahl = this.punktzahlen[i];
+    }
+
+    this.fbSvc.crudBatchResultat(this.schuetze.resultate, CRUD.UPDATE);
+
+    this.navCtrl.pop();
   }
 
 }

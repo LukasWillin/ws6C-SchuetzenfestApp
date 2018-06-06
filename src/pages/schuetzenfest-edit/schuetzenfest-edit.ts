@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
+import {FirebaseServiceProvider} from "../../app/firebase-service";
 
 /**
  * Generated class for the SchuetzenfestEditPage page.
@@ -15,9 +17,11 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SchuetzenfestEditPage {
 
-  schuetzenfest: any;
+  schuetzenfest: Schuetzenfest;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  name: string;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetzenfest = navParams.get('schuetzenfest')
   }
 
@@ -26,7 +30,8 @@ export class SchuetzenfestEditPage {
   }
 
   updateSchuetzenfest() {
-    // TODO: Do something cool with the Schuetzenfest ^~^
+    this.schuetzenfest.name = this.name;
+    this.fbSvc.crudSchuetzenfest(this.schuetzenfest);
 
     // change view
     this.navCtrl.pop();

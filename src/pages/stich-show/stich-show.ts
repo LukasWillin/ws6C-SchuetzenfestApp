@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Stich} from "../../app/entities/Stich";
 
 /**
  * Generated class for the StichShowPage page.
@@ -15,7 +16,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class StichShowPage {
 
-  stich;
+  stich: Stich;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     this.stich = navParams.get('stich');

@@ -9,10 +9,10 @@ import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {StichEditPage} from "../stich-edit/stich-edit";
-import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {Stich} from "../../app/entities/Stich";
-import {Resultat} from "../../app/entities/Resultat";
 import {Subscription} from "rxjs/Subscription";
+import {Resultat} from "../../app/entities/Resultat";
+import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -44,41 +44,53 @@ export class SchuetzenfestShowPage {
   // Defines which tab gets displayed in the view
   tab_selection = "stiche";
 
-  // schuetzen;
-  // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
-  private schuetzen;
+  private schuetzen: Schuetze[];
   private schuetzenSubscription: Subscription;
+  // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
 
-  private stiche;
+  private stiche: Stich[];
   private sticheSubscription: Subscription;
 
-  // stiche = [
-  //   {
-  //     name: "Kranzstich",
-  //     anzahlSchuss: 10,
-  //     scheibe: 10
-  //   },
-  //   {
-  //     name: "Vindonissastich",
-  //     anzahlSchuss: 10,
-  //     scheibe: 10.9
-  //   }
-  // ];
+  sticheGeloest = [
+    1,2
+  ];
 
-  schuetzenfest: string;
-  // schuetzenfestKey;
+  schuetzenfest: Schuetzenfest;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController) {
     this.schuetzenfest = navParams.get('schuetzenfest');
     this.searchbarShowing = false; // hide search bar by default
     console.log(this.schuetzen);
+
+    let stich1: Stich = new Stich();
+    stich1.name ="DEMO Kranzstich";
+    stich1.anzahlschuss = 8;
+
+    stich1.scheibe = 10;
+    let stich2: Stich = new Stich();
+    stich2.name ="DEMO Vindonissastich";
+    stich2.anzahlschuss = 10;
+
+    stich2.scheibe = 10.9;
+
+    this.stiche = [stich1, stich2];
+
     this.initializeSchuetzen();
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad StichPage');
-    this.schuetzenSubscription = this.fbSvc.schuetzen.subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
+    console.log('ionViewDidLoad SchuetzenfestShow');
+    console.log("Key für das Schuetzenfest " + this.schuetzenfest.key);
+    // this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key)
+    //   .subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
+    // this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key)
+    //   .subscribe(sticheListe => this.stiche = sticheListe);
+    // this.schuetzenSubscription = this.fbSvc.schuetzen.subscribe(schuetzenListe => this.schuetzen = schuetzenListe);
     this.sticheSubscription = this.fbSvc.stiche.subscribe(sticheListe => this.stiche = sticheListe);
+    // this.schuetzen.filter(value => {
+    //   value.schuetzenfestKeyList.forEach(value1 => console.log(value1));
+    // });
+    console.log(this.schuetzen);
   }
 
   ionViewWillUnload() {
@@ -92,7 +104,6 @@ export class SchuetzenfestShowPage {
       console.log("show schuetze ", object);
       this.navCtrl.push(SchuetzeResultatPage, {
         schuetze: object,
-        stiche: this.stiche,
       });
     } else {
       console.log("show stich ", object);
@@ -106,12 +117,14 @@ export class SchuetzenfestShowPage {
     if (object instanceof Schuetze) {
       console.log("edit schuetze ", object);
       this.navCtrl.push(SchuetzeEditPage, {
-        schuetze: object
-      })
+        schuetze: object,
+        stiche: this.stiche,
+        sticheGeloest: this.sticheGeloest
+      });
     } else {
       console.log("edit stich ", object);
       this.navCtrl.push(StichEditPage, {
-        stich: object
+        stich: object,
       });
     }
   }
@@ -128,7 +141,10 @@ export class SchuetzenfestShowPage {
 
   addSchuetze() {
     console.log("creating new schuetze");
-    this.navCtrl.push(SchuetzeCreatePage);
+    this.navCtrl.push(SchuetzeCreatePage, {
+      stiche: this.stiche,
+      schuetzenfest: this.schuetzenfest
+    });
   }
 
   addStich() {
@@ -136,18 +152,45 @@ export class SchuetzenfestShowPage {
     this.navCtrl.push(StichCreatePage);
   }
 
+  // TODO: Do we need it... I guess not? => We do need it because of the search!
+  // TODO: change over to database implementation: read in all schuetzen
   initializeSchuetzen() {
+    let schuetze1: Schuetze = new Schuetze();
+    schuetze1.vorname = "DEMO François";
+    schuetze1.nachname = "Martin";
+    schuetze1.lizenzNr = "520921";
+
+    let schuetze2: Schuetze = new Schuetze();
+    schuetze2.vorname = "DEMO Roger";
+    schuetze2.nachname = "Iten";
+    schuetze2.lizenzNr = "666666";
+
+    let resultat1: Resultat = new Resultat();
+    resultat1.stich = this.stiche[0];
+    resultat1.punktzahl = "";
+
+    let resultat2: Resultat = new Resultat();
+    resultat2.stich = this.stiche[1];
+    resultat2.punktzahl = "";
+
+    schuetze1.resultate = [resultat1, resultat2];
+
+    let resultat3: Resultat = new Resultat();
+    resultat3.stich = this.stiche[0];
+    resultat3.punktzahl = "50";
+
+    let resultat4: Resultat = new Resultat();
+    resultat4.stich = this.stiche[1];
+    resultat4.punktzahl = "87.9";
+
+    let resultat5: Resultat = new Resultat();
+    resultat5.stich = this.stiche[1];
+    resultat5.punktzahl = "99.2";
+
+    schuetze2.resultate = [resultat3, resultat4, resultat5];
+
     this.schuetzen = [
-      {
-        vorname: "François",
-        nachname: "Martin",
-        lizenzNr: "520921"
-      },
-      {
-        vorname: "Roger",
-        nachname: "Iten",
-        lizenzNr: "666666"
-      }
+      schuetze1, schuetze2
     ];
   }
 

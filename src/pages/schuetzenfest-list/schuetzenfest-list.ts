@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
-import {ActionSheetController, AlertController, IonicPage, NavController, NavParams, Platform} from 'ionic-angular';
+
 import {SchuetzenfestCreatePage} from "../schuetzenfest-create/schuetzenfest-create";
 import {SchuetzenfestShowPage} from "../schuetzenfest-show/schuetzenfest-show";
 import {SchuetzenfestEditPage} from "../schuetzenfest-edit/schuetzenfest-edit";
 import {FirebaseServiceProvider, CRUD} from "../../app/firebase-service";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
-import {Observable} from "rxjs/Observable";
+import {Component} from "@angular/core";
 import {Subscription} from "rxjs/Subscription";
+import {ActionSheetController, AlertController, IonicPage, NavController, NavParams, Platform} from "ionic-angular";
 
 /**
  * Generated class for the SchuetzenfestListPage page.
@@ -22,7 +22,7 @@ import {Subscription} from "rxjs/Subscription";
 })
 export class SchuetzenfestListPage {
 
-  private schuetzenfeste;
+  private schuetzenfeste: Schuetzenfest[];
   private schuetzenfesteSubscription:Subscription;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController, private fbSvc: FirebaseServiceProvider) {
