@@ -208,8 +208,7 @@ export class FirebaseServiceProvider {
         return _.map(rL, r => (r as Resultat).stich);
       });
     } else {
-      console.warn("Faulty key in #getSticheBySchuetzeKey");
-      return Observable.create([]);
+      console.error("Faulty key in #getSticheBySchuetzeKey");
     }
   }
 
@@ -221,8 +220,7 @@ export class FirebaseServiceProvider {
         return _.filter(rL, r => (r as Resultat)._fbStichKey === key);
       });
     } else {
-      console.warn("Faulty key in #getResultateByStichKey");
-      return Observable.create([]);
+      console.error("Faulty key in #getResultateByStichKey");
     }
   }
 
@@ -245,8 +243,7 @@ export class FirebaseServiceProvider {
           }
         });
     } else {
-      console.warn("Faulty key in #getSchuetzenfestByKey");
-      return Observable.create(null);
+      console.error("Faulty key in #getSchuetzenfestByKey");
     }
   }
 
@@ -255,7 +252,6 @@ export class FirebaseServiceProvider {
       return this.schuetzen.map(sL => sL.filter(s => _.includes(s.schuetzenfestKeyList, key)));
     } else {
       console.warn("Faulty key in #getSchuetzenBySchuetzenfestKey");
-      return Observable.create([]);
     }
   }
 
@@ -268,7 +264,6 @@ export class FirebaseServiceProvider {
         });
     } else {
       console.warn("Faulty key in #getSchuetzeByKey");
-      return Observable.create(null);
     }
   }
 
@@ -278,8 +273,7 @@ export class FirebaseServiceProvider {
         .snapshotChanges()
         .map(c => this.mapStichPayload(c.payload));
     } else {
-      console.warn("Faulty key in #getStichByKey");
-      return Observable.create(null);
+      console.error("Faulty key in #getStichByKey");
     }
   }
 
@@ -295,8 +289,7 @@ export class FirebaseServiceProvider {
           }));
         });
     } else {
-      console.warn("Faulty key in #getResultatByKey");
-      return Observable.create(null);
+      console.error("Faulty key in #getResultatByKey");
     }
   }
 
@@ -305,8 +298,7 @@ export class FirebaseServiceProvider {
       return this.stiche
         .map(stL => stL.filter(st => st._fbSchuetzenfestKey === schuetzenfestKey));
     } else {
-      console.warn("Faulty key in #getSticheBySchuetzenfestKey");
-      return Observable.create([]);
+      console.error("Faulty key in #getSticheBySchuetzenfestKey");
     }
   }
 
@@ -315,8 +307,7 @@ export class FirebaseServiceProvider {
       return this._resultate
         .map(rL => rL.filter(r => r._fbSchuetzeKey === schuetzeKey));
     } else {
-      console.warn("Faulty key in #getResultateBySchuetzeKey");
-      return Observable.create([]);
+      console.error("Faulty key in #getResultateBySchuetzeKey");
     }
   }
 
@@ -326,8 +317,7 @@ export class FirebaseServiceProvider {
         r.stich._fbSchuetzenfestKey === schuetzenfestKey;
       }));
     } else {
-      console.warn("Faulty key in #getResultateBySchuetzeKey");
-      return Observable.create([]);
+      console.error("Faulty key in #getResultateBySchuetzeKey");
     }
   }
 
@@ -337,7 +327,7 @@ export class FirebaseServiceProvider {
       st._fbKey = c.key;
       return new Stich(st);
     } else {
-      console.warn("A given key was probably faulty or not existing in firebase");
+      console.error("A given key was probably faulty or not existing in firebase");
       return st;
     }
   }
@@ -348,7 +338,7 @@ export class FirebaseServiceProvider {
       r._fbKey = c.key;
       return new Resultat(r)
     } else {
-      console.warn("A given key was probably faulty or not existing in firebase");
+      console.error("A given key was probably faulty or not existing in firebase");
       return r;
     }
   }
@@ -359,8 +349,8 @@ export class FirebaseServiceProvider {
       sf._fbKey = c.key;
       return new Schuetzenfest(sf);
     } else {
-      console.warn("A given key was probably faulty or not existing in firebase");
-      return sf;
+      console.error("A given key was probably faulty or not existing in firebase");
+      return sf
     }
   }
 
@@ -370,7 +360,7 @@ export class FirebaseServiceProvider {
       s._fbKey = c.key;
       return new Schuetze(s);
     } else {
-      console.warn("A given key was probably faulty or not existing in firebase");
+      console.error("A given key was probably faulty or not existing in firebase");
       return s;
     }
   }
