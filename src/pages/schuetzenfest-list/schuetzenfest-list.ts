@@ -32,10 +32,10 @@ export class SchuetzenfestListPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SchuetzenfestListPage');
-    this.schuetzenfesteSubscription = this.fbSvc.schuetzenfeste.map(sfL => take(orderBy(sfL, "lastChanged", "descending"), 10))
+    this.schuetzenfesteSubscription = this.fbSvc.schuetzenfeste.map(sfL => take(orderBy(sfL, sf => (sf as Schuetzenfest).lastChanged.getTime(), ["desc"]), 30))
       .subscribe(schuetzenfestListe => {
-      this.schuetzenfeste = schuetzenfestListe;
-    });
+        this.schuetzenfeste = schuetzenfestListe;
+      });
   }
 
   // FIXME: Not needed - according to François.

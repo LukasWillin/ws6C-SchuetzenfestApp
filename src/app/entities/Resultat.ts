@@ -68,6 +68,7 @@ export class Resultat {
       if (isString(obj._fbSchuetzeKey) && !isEmpty(obj._fbSchuetzeKey)) this._fbSchuetzeKey = obj._fbSchuetzeKey;
 
       if (isDate(obj._fb_lastChanged)) this._fb_lastChanged = obj._fb_lastChanged;
+      if (isString(obj._fb_lastChanged)) this._fb_lastChanged = new Date(Date.parse(obj._fb_lastChanged));
     }
     if (isBoolean(setPlaceholder)) {
       this._fb_isPlaceholder = setPlaceholder;

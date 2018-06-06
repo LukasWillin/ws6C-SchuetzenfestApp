@@ -100,6 +100,7 @@ export class Schuetze {
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
 
       if (isDate(obj._fb_lastChanged)) this._fb_lastChanged = obj._fb_lastChanged;
+      if (isString(obj._fb_lastChanged)) this._fb_lastChanged = new Date(Date.parse(obj._fb_lastChanged));
     }
     if (isBoolean(setPlaceholder)) {
       this._fb_isPlaceholder = setPlaceholder;

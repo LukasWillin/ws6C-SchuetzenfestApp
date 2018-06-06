@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {AngularFireDatabase, DatabaseSnapshot} from 'angularfire2/database';
+import { AngularFireDatabase, DatabaseSnapshot } from 'angularfire2/database';
 import { AngularFireList } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 
@@ -133,12 +133,6 @@ export class FirebaseServiceProvider {
 
     const fbKey:string = instance.key;
 
-    if (crudOp != CRUD.PUSH) {
-      this.crudBatchStich(instance._field_stiche, fbKey, crudOp);
-    }
-    instance._field_stiche = null;
-    // push and then remove property _field_stiche
-
     if (crudOp === CRUD.DELETE) {
       this._fbRefSchuetzenfeste.remove(fbKey);
     } else {
@@ -262,20 +256,7 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.afd.object(`${FBREF_PATH_SCHUETZENFESTE}/${key}`)
         .snapshotChanges()
-        .map(c => this.mapSchuetzenfestPayload(c.payload))
-        .map(sf => {
-          if (!_.isEmpty(sf)) {
-            return Observable.create(this.stiche.map(stL => {
-                  return _.filter(stL, st => (st as Stich)._fbSchuetzenfestKey === sf.key);
-                })
-                .map(stL => {
-                  sf.stiche = stL;
-                  return sf;
-                }));
-          } else {
-            return sf;
-          }
-        });
+        .map(c => this.mapSchuetzenfestPayload(c.payload));
     } else {
       console.error(new Error(`Faulty key(${key}) in #getSchuetzenfestByKey`));
     }

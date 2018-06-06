@@ -6,6 +6,7 @@ import isBoolean from "lodash/isBoolean";
 import isDate from "lodash/isDate";
 import isNumber from 'lodash/isNumber';
 import {Schuetzenfest} from "./Schuetzenfest";
+import isString from "lodash/isString";
 
 export class Stich {
 
@@ -80,6 +81,7 @@ export class Stich {
       if (!isEmpty(obj._fbSchuetzenfestKey)) this._fbSchuetzenfestKey = obj._fbSchuetzenfestKey;
 
       if (isDate(obj._fb_lastChanged)) this._fb_lastChanged = obj._fb_lastChanged;
+      if (isString(obj._fb_lastChanged)) this._fb_lastChanged = new Date(Date.parse(obj._fb_lastChanged));
     }
     if (isBoolean(setPlaceholder)) {
       this._fb_isPlaceholder = setPlaceholder;
