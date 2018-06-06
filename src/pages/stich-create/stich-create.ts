@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
-import {FirebaseServiceProvider} from "../../app/firebase-service";
+import {FirebaseServiceProvider, CRUD} from "../../app/firebase-service";
 import {Stich} from "../../app/entities/Stich";
 
 /**
@@ -18,11 +18,14 @@ import {Stich} from "../../app/entities/Stich";
 })
 export class StichCreatePage {
 
-  name: string;
-  scheibe: number;
-  anzahlSchuss: number;
+  private name: string;
+  private scheibe: number;
+  private anzahlSchuss: number;
+
+  private schuetzenfestKey : string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
+    this.schuetzenfestKey = navParams.get("schuetzenfestKey")
   }
 
   ionViewDidLoad() {
@@ -36,7 +39,7 @@ export class StichCreatePage {
     newStich.scheibe = this.scheibe;
     newStich.anzahlschuss = this.anzahlSchuss;
 
-    this.fbSvc.crudStich(newStich);
+    this.fbSvc.crudStich(newStich, this.schuetzenfestKey, CRUD.PUSH);
 
     // Change view
     this.navCtrl.pop();

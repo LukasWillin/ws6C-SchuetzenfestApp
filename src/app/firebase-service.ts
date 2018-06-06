@@ -97,16 +97,18 @@ export class FirebaseServiceProvider {
   public crudSchuetze(instance: Schuetze, schuetzenfestKey:string, crudOp?: string) {
     const fbKey:string = instance.key;
 
+    this.crudBatchResultat(instance.resultate, "", fbKey, crudOp);
+
     if (crudOp === CRUD.DELETE) {
       this._fbRefSchuetzen.remove(fbKey);
-    }
+    } else {
+      if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+        this._fbRefSchuetzen.push(instance);
+      }
 
-    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
-      this._fbRefSchuetzen.push(instance);
-    }
-
-    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
-      this._fbRefSchuetzen.update(fbKey, instance);
+      if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+        this._fbRefSchuetzen.update(fbKey, instance);
+      }
     }
   }
 
@@ -123,14 +125,14 @@ export class FirebaseServiceProvider {
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefSchuetzenfeste.remove(fbKey);
-    }
+    } else {
+      if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+        this._fbRefSchuetzenfeste.push(instance);
+      }
 
-    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
-      this._fbRefSchuetzenfeste.push(instance);
-    }
-
-    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
-      this._fbRefSchuetzenfeste.update(fbKey, instance);
+      if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+        this._fbRefSchuetzenfeste.update(fbKey, instance);
+      }
     }
   }
 
@@ -143,21 +145,23 @@ export class FirebaseServiceProvider {
 
     instance._fbSchuetzenfestKey = schuetzenfestKey;
 
+    this.getResultateByStichKey(fbKey).forEach(rL => this.crudBatchResultat(rL, fbKey, "", crudOp));
+
     if (crudOp === CRUD.DELETE) {
       this._fbRefStiche.remove(fbKey);
-    }
+    } else {
+      if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+        this._fbRefStiche.push(instance);
+      }
 
-    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
-      this._fbRefStiche.push(instance);
-    }
-
-    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
-      this._fbRefStiche.update(fbKey, instance);
+      if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+        this._fbRefStiche.update(fbKey, instance);
+      }
     }
   }
 
-  public crudBatchResultat(instances: Resultat[], crudOp?:string) {
-    instances.forEach(i => this.crudResultat(i, crudOp));
+  public crudBatchResultat(instances: Resultat[], stichKey:string, schuetzeKey, crudOp?:string) {
+    instances.forEach(i => this.crudResultat(i, schuetzeKey, crudOp));
   }
 
   /**
@@ -167,20 +171,24 @@ export class FirebaseServiceProvider {
    * @param {string} crudOp
    * @returns {Promise<Observable<Resultat>>}
    */
-  public crudResultat(instance: Resultat, crudOp?: string) {
+  public crudResultat(instance: Resultat, stichKey:string, schuetzeKey:string, crudOp?: string) {
 
     const fbKey:string = instance.key;
 
+    if(!_.isEmpty(schuetzeKey)) instance._fbSchuetzeKey = schuetzeKey;
+
+    if(!_.isEmpty(stichKey)) instance._fbStichKey = stichKey;
+
     if (crudOp === CRUD.DELETE) {
       this._fbRefResultate.remove(fbKey);
-    }
+    } else {
+      if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+        this._fbRefResultate.push(instance);
+      }
 
-    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
-      this._fbRefResultate.push(instance);
-    }
-
-    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
-      this._fbRefResultate.update(fbKey, instance);
+      if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+        this._fbRefResultate.update(fbKey, instance);
+      }
     }
   }
 
