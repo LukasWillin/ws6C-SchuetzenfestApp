@@ -88,12 +88,13 @@ export class SchuetzenfestShowPage {
     } else {
       console.log("show stich ", object);
       this.navCtrl.push(StichShowPage, {
-        stich: object
+        stich: object,
+        handler: this
       });
     }
   }
 
-  edit(object: Schuetze | Stich) {
+  public edit(object: Schuetze | Stich) {
     if (object instanceof Schuetze) {
       console.log("edit schuetze ", object);
       this.navCtrl.push(SchuetzeEditPage, {
