@@ -85,12 +85,6 @@ export class SchuetzenfestShowPage {
     console.log(this.schuetzen);
   }
 
-  ionViewWillUnload() {
-    console.log("ionViewWillUnload SchuetzenfestShow");
-    this.schuetzenSubscription.unsubscribe();
-    this.sticheSubscription.unsubscribe();
-  }
-
   show(object: Schuetze | Stich) {
     if (object instanceof Schuetze) {
       console.log("show schuetze ", object);

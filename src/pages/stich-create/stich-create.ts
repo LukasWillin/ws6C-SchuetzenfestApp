@@ -41,6 +41,8 @@ export class StichCreatePage {
 
     this.fbSvc.crudStich(newStich, this.schuetzenfestKey, CRUD.PUSH);
 
+    CRUD.PUSH;
+
     // Change view
     this.navCtrl.pop();
   }
