@@ -38,26 +38,6 @@ export class SchuetzenfestListPage {
       });
   }
 
-  // FIXME: Not needed - according to François.
-  // ionViewWillUnload() {
-  //   console.log('ionViewWillUnload SchuetzenfestListPage');
-  //   this.schuetzenfesteSubscription.unsubscribe();
-  // }
-  // TODO: ionViewDestory --> unsubscribble
-
-  //let bhsSchuetzenfest  : BehaviorChange<Schuetzenfest[]> = new BehaviorChange<Schuetzenfest[]>(this.schuetzenfeste);
-
-  // schuetzenfeste = [
-  //   {
-  //     name: 'Vindonissa 2018'
-  //   },
-  //   {
-  //     name: 'Volksschiessen 2018'
-  //   }
-  // ];
-
-  // schuetzenfeste: Schuetzenfest[] = this.fbSvc.schuetzenfeste.value;
-
   create() {
     console.log("creating new schuetzenfest");
     this.navCtrl.push(SchuetzenfestCreatePage);
