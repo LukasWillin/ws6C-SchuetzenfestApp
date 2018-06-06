@@ -95,7 +95,7 @@ export class Stich {
   public _fb_isPlaceholder : boolean = false;
   public _fb_lastChanged : Date = new Date();
 
-  public _fb_field_anzahlschuss : number = 8;
-  public _fb_field_scheibe : number = -5;
+  public _fb_field_anzahlschuss : number = 0;
+  public _fb_field_scheibe : number = -1;
   public _fb_field_name : string = "";
 }
