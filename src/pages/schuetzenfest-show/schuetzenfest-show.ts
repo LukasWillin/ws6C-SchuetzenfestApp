@@ -92,12 +92,14 @@ export class SchuetzenfestShowPage {
       this.navCtrl.push(SchuetzeEditPage, {
         schuetze: object,
         stiche: this.stiche,
-        sticheGeloest: this.sticheGeloest
+        sticheGeloest: this.sticheGeloest,
+        schuetzenfestKey: this.schuetzenfest.key
       });
     } else {
       console.log("edit stich ", object);
       this.navCtrl.push(StichEditPage, {
         stich: object,
+        schuetzenfestKey: this.schuetzenfest.key
       });
     }
   }
