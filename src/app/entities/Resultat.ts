@@ -76,8 +76,8 @@ export class Resultat {
 
   // --- Used by FirebaseServiceProvider : do only read
   public _fbKey : string;
-  public _fbSchuetzeKey : string;
-  public _fbStichKey : string;
+  public _fbSchuetzeKey : string = "";
+  public _fbStichKey : string = "";
 
   public _fb_lastChanged : Date = new Date();
   public _fb_isPlaceholder : boolean = false;

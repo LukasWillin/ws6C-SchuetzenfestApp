@@ -44,12 +44,11 @@ export class SchuetzenfestShowPage {
   // Defines which tab gets displayed in the view
   tab_selection = "stiche";
 
-  private schuetzen: Schuetze[];
+  private schuetzen: Schuetze[] = [];
   private schuetzenSubscription: Subscription;
   // schuetzen : Schuetze[] = this.fbSvc.schuetzen.value;
 
-  private stiche: Stich[];
-  private sticheSubscription: Subscription;
+  private stiche: Stich[] = [];
 
   sticheGeloest = [
     1,2
@@ -62,26 +61,14 @@ export class SchuetzenfestShowPage {
     this.searchbarShowing = false; // hide search bar by default
     console.log(this.schuetzen);
 
-    let stich1: Stich = new Stich();
-    stich1.name ="DEMO Kranzstich";
-    stich1.anzahlschuss = 8;
-
-    stich1.scheibe = 10;
-    let stich2: Stich = new Stich();
-    stich2.name ="DEMO Vindonissastich";
-    stich2.anzahlschuss = 10;
-
-    stich2.scheibe = 10.9;
-
-    this.stiche = [stich1, stich2];
-
-    this.initializeSchuetzen();
-  }
+    }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SchuetzenfestShow');
     console.log("Key für das Schuetzenfest " + this.schuetzenfest.key);
-    this.sticheSubscription = this.fbSvc.stiche.subscribe(sticheListe => this.stiche = sticheListe);
+
+    this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key).subscribe(stL => this.stiche = stL);
+    this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key).subscribe(sL => this.schuetzen = sL);
     console.log(this.schuetzen);
   }
 
@@ -140,52 +127,7 @@ export class SchuetzenfestShowPage {
     });
   }
 
-  // TODO: Do we need it... I guess not? => We do need it because of the search!
-  // TODO: change over to database implementation: read in all schuetzen
-  initializeSchuetzen() {
-    let schuetze1: Schuetze = new Schuetze();
-    schuetze1.vorname = "DEMO François";
-    schuetze1.nachname = "Martin";
-    schuetze1.lizenzNr = "520921";
-
-    let schuetze2: Schuetze = new Schuetze();
-    schuetze2.vorname = "DEMO Roger";
-    schuetze2.nachname = "Iten";
-    schuetze2.lizenzNr = "666666";
-
-    let resultat1: Resultat = new Resultat();
-    resultat1.stich = this.stiche[0];
-    resultat1.punktzahl = "";
-
-    let resultat2: Resultat = new Resultat();
-    resultat2.stich = this.stiche[1];
-    resultat2.punktzahl = "";
-
-    schuetze1.resultate = [resultat1, resultat2];
-
-    let resultat3: Resultat = new Resultat();
-    resultat3.stich = this.stiche[0];
-    resultat3.punktzahl = "50";
-
-    let resultat4: Resultat = new Resultat();
-    resultat4.stich = this.stiche[1];
-    resultat4.punktzahl = "87.9";
-
-    let resultat5: Resultat = new Resultat();
-    resultat5.stich = this.stiche[1];
-    resultat5.punktzahl = "99.2";
-
-    schuetze2.resultate = [resultat3, resultat4, resultat5];
-
-    this.schuetzen = [
-      schuetze1, schuetze2
-    ];
-  }
-
   getSchuetzen(event: any) {
-    // Reset schuetzen back to all of the schuetzen
-    this.initializeSchuetzen();
-
     // set searchText to the value of the searchbar
     const searchText = event.target.value;
 

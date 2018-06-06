@@ -128,6 +128,8 @@ export class FirebaseServiceProvider {
 
     const fbKey:string = instance.key;
 
+    // push and then remove property _field_stiche
+
     if (crudOp === CRUD.DELETE) {
       this._fbRefSchuetzenfeste.remove(fbKey);
     } else {
@@ -301,9 +303,7 @@ export class FirebaseServiceProvider {
   public getSticheBySchuetzenfestKey(schuetzenfestKey:string) : Observable<Stich[]> {
     if (_.isEmpty(schuetzenfestKey)) {
       return this.stiche
-        .map(stL =>
-          stL.filter(st =>
-            st._fbSchuetzenfestKey === schuetzenfestKey));
+        .map(stL => stL.filter(st => st._fbSchuetzenfestKey === schuetzenfestKey));
     } else {
       console.warn("Faulty key in #getSticheBySchuetzenfestKey");
       return Observable.create([]);
