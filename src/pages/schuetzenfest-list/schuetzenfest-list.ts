@@ -32,7 +32,6 @@ export class SchuetzenfestListPage {
     console.log('ionViewDidLoad SchuetzenfestListPage');
     this.schuetzenfesteSubscription = this.fbSvc.schuetzenfeste.subscribe(schuetzenfestListe => {
       this.schuetzenfeste = schuetzenfestListe;
-      // this.schuetzenfesteSubscription.unsubscribe();
     })
   }
 
@@ -55,8 +54,6 @@ export class SchuetzenfestListPage {
   // ];
 
   // schuetzenfeste: Schuetzenfest[] = this.fbSvc.schuetzenfeste.value;
-
-
 
   create() {
     console.log("creating new schuetzenfest");
@@ -119,7 +116,7 @@ export class SchuetzenfestListPage {
   confirmDelete(schuetzenfest: Schuetzenfest) {
     let alert = this.alertCtrl.create({
       title: 'Löschen bestätigen',
-      message: 'Wirklich löschen?',
+      message: `${schuetzenfest.name} wirklich löschen?`,
       buttons: [
         {
           text: 'Abbrechen',
