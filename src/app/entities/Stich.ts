@@ -43,6 +43,10 @@ export class Stich {
     return this._fbKey;
   }
 
+  get schuetzenfestKey() : string {
+    return this._fbSchuetzenfestKey;
+  }
+
   public get isPlaceholder() : boolean {
     return !!this._fb_isPlaceholder;
   }
