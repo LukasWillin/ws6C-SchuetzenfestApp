@@ -17,15 +17,15 @@ export class MyApp {
 
   rootPage: any = SchuetzenfestListPage;
 
-  pages: Array<{title: string, component: any}>;
+  // pages: Array<{title: string, component: any}>;
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public fb:FirebaseServiceProvider) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
-    this.pages = [
-      { title: 'Schützenfest', component: SchuetzenfestListPage },
-    ];
+    // this.pages = [
+    //   { title: 'Schützenfest', component: SchuetzenfestListPage },
+    // ];
 
     (<any>window).GlobalFBService = fb;
     (<any>window).GlobalSchuetze = Schuetze;
