@@ -20,11 +20,11 @@ export class Resultat {
     this._field_stich = value;
   }
 
-  get punktzahl(): string {
+  get punktzahl(): number {
     return this._fb_field_punktzahl;
   }
 
-  set punktzahl(value: string) {
+  set punktzahl(value: number) {
     this._fb_lastChanged = new Date();
     this._fb_isPlaceholder = false;
     this._fb_field_punktzahl = value;
@@ -58,10 +58,10 @@ export class Resultat {
 
     if (isObject(obj)) {
       if (isObject(obj.stich)) this._field_stich = obj.stich;
-      if (isInteger(obj.punktzahl)) this._fb_field_punktzahl = obj.punktzahl;
+      if (isInteger(+obj.punktzahl)) this._fb_field_punktzahl = +obj.punktzahl;
 
       if (isObject(obj._field_stich)) this._field_stich = obj._field_stich;
-      if (isInteger(obj._fb_field_punktzahl)) this._fb_field_punktzahl = obj._fb_field_punktzahl;
+      if (isInteger(+obj._fb_field_punktzahl)) this._fb_field_punktzahl = +obj._fb_field_punktzahl;
 
       if (isString(obj._fbKey) && !isEmpty(obj._fbKey)) this._fbKey = obj._fbKey;
       if (isString(obj._fbStichKey) && !isEmpty(obj._fbStichKey)) this._fbStichKey = obj._fbStichKey;
@@ -83,7 +83,7 @@ export class Resultat {
   public _fb_lastChanged : Date = new Date();
   public _fb_isPlaceholder : boolean = false;
 
-  public _fb_field_punktzahl : string = "";
+  public _fb_field_punktzahl : number = -1;
 
   public _field_stich : Stich = null;
 }
