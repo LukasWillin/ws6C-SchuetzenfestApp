@@ -14,8 +14,8 @@
 
 <ion-content padding-top>
   <ion-list>
-    <button ion-item [color]="even? 'light' : 'lightgrey'" *ngFor="let schuetzenfest of schuetzenfeste, let even = even" (tap)="show(schuetzenfest)"
-            (press)="presentActionSheet(schuetzenfest)">
+    <button ion-item no-lines [color]="even? 'light' : 'lightgrey'" *ngFor="let schuetzenfest of schuetzenfeste, let even = even"
+            (tap)="show(schuetzenfest)" (press)="presentActionSheet(schuetzenfest)">
       {{ schuetzenfest.name }}
     </button>
   </ion-list>

@@ -22,6 +22,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {SchuetzeEditPage} from "../pages/schuetze-edit/schuetze-edit";
 import {StichEditPage} from "../pages/stich-edit/stich-edit";
 import {SchuetzenfestEditPage} from "../pages/schuetzenfest-edit/schuetzenfest-edit";
+import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCkW_Qob61IQRreDHnDtqw3nhAPwZ7dywM",
@@ -71,6 +72,7 @@ const firebaseConfig = {
   providers: [
     StatusBar,
     SplashScreen,
+    BarcodeScanner,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     FirebaseServiceProvider
   ]

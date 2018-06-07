@@ -12,6 +12,10 @@
       <button ion-button icon-only (click)="toggleSearchbarVisibility()" *ngIf="tab_selection == 'schuetzen'">
         <ion-icon name="search"></ion-icon>
       </button>
+
+      <button ion-button icon-only (tap)="scan()">
+        <ion-icon name="barcode"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
   <ion-toolbar no-border-top color="primary">
@@ -32,7 +36,7 @@
 
   <div [ngSwitch]="tab_selection">
     <ion-list *ngSwitchCase="'stiche'" (ionFocus)="searchbarShowing = false">
-      <button ion-item [color]="even? 'light' : 'lightgrey'" *ngFor="let stich of stiche, let even = even" (tap)="show(stich)" (press)="presentActionSheet(stich)">
+      <button ion-item no-lines [color]="even? 'light' : 'lightgrey'" *ngFor="let stich of stiche, let even = even" (tap)="show(stich)" (press)="presentActionSheet(stich)">
         {{ stich.name }}
       </button>
 
@@ -42,7 +46,7 @@
     </ion-list>
 
     <ion-list *ngSwitchCase="'schuetzen'">
-      <button ion-item [color]="even? 'light' : 'lightgrey'" *ngFor="let schuetze of schuetzenFiltered, let even = even" (tap)="show(schuetze)" (press)="presentActionSheet(schuetze)">
+      <button ion-item no-lines [color]="even? 'light' : 'lightgrey'" *ngFor="let schuetze of schuetzenFiltered, let even = even" (tap)="show(schuetze)" (press)="presentActionSheet(schuetze)">
         <span class="schuetze-name" float-left>{{ schuetze.vorname }} {{ schuetze.nachname }}</span>
         <span class="schuetze-lizenz" float-right>{{ schuetze.lizenzNr }}</span>
       </button>
