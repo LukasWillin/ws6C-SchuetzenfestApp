@@ -27,12 +27,8 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
   <ion-searchbar (ionInput)="getSchuetzen($event)" *ngIf="searchbarShowing && tab_selection == 'schuetzen'" [@searchbarAnimation]></ion-searchbar>
-
-  <div padding>
-
-  </div>
 
   <div [ngSwitch]="tab_selection">
     <ion-list *ngSwitchCase="'stiche'" (ionFocus)="searchbarShowing = false">
