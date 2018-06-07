@@ -20,7 +20,7 @@ import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 export class SchuetzeResultatPage {
 
   schuetze: Schuetze;
-  punktzahlen: string[] = [];
+  punktzahlen: number[] = [];
 
   resultate : Resultat[] = [];
 
