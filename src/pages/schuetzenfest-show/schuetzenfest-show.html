@@ -41,7 +41,7 @@
       </button>
 
       <ion-fab right bottom>
-        <button ion-fab (tap)="addStich()"><ion-icon name="add"></ion-icon></button>
+        <button ion-fab color="secondary" (tap)="addStich()"><ion-icon name="add"></ion-icon></button>
       </ion-fab>
     </ion-list>
 
@@ -51,8 +51,10 @@
         <span class="schuetze-lizenz" float-right>{{ schuetze.lizenzNr }}</span>
       </button>
 
-      <ion-fab right bottom>
-        <button ion-fab (tap)="addSchuetze()"><ion-icon name="add"></ion-icon></button>
+      <ion-fab right bottom >
+        <button ion-fab color="secondary" (tap)="addSchuetze()" >
+          <ion-icon name="add"></ion-icon>
+        </button>
       </ion-fab>
     </ion-list>
   </div>
