@@ -289,7 +289,6 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       return this.schuetzen
         .map(sL => {
-          console.log(`get by key schuetze ${sL} ${key}`);
           return Observable.create(sL.find(s => s.key === key));
         });
     } else {
