@@ -16,6 +16,7 @@ import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import filter from 'lodash/filter';
 import orderBy from 'lodash/orderBy';
 import take from 'lodash/take';
+import {BarcodeScanner} from "@ionic-native/barcode-scanner";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -42,6 +43,8 @@ import take from 'lodash/take';
 })
 export class SchuetzenfestShowPage {
 
+  barcode: string;
+
   searchbarShowing: boolean;
 
   // Defines which tab gets displayed in the view
@@ -56,7 +59,7 @@ export class SchuetzenfestShowPage {
 
   schuetzenfest: Schuetzenfest;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController, private barcodeScanner: BarcodeScanner) {
     this.schuetzenfest = navParams.get('schuetzenfest');
     this.searchbarShowing = false; // hide search bar by default
     console.log(this.schuetzen);
@@ -85,6 +88,7 @@ export class SchuetzenfestShowPage {
     if (object instanceof Schuetze) {
       console.log("show schuetze ", object);
       this.navCtrl.push(SchuetzeResultatPage, {
+        schuetze: object,
         schuetzeKey: object.key,
         schuetzenfestKey: this.schuetzenfest.key,
       });
@@ -223,5 +227,21 @@ export class SchuetzenfestShowPage {
       ]
     });
     alert.present();
+  }
+
+  scan() {
+    this.barcodeScanner.scan().then((barcodeData) => {
+      this.barcode = barcodeData.text;
+      let schuetzeFound = this.schuetzen.filter((schuetze) => {
+        return schuetze.lizenzNr == this.barcode
+      });
+      if (schuetzeFound.length == 1) {
+        this.show(schuetzeFound[0]);
+      } else {
+        console.error("Found more than one Schütze!");
+      }
+    }, (err) => {
+      console.error("Failed scanning barcode!");
+    });
   }
 }

@@ -12,6 +12,10 @@
       <button ion-button icon-only (click)="toggleSearchbarVisibility()" *ngIf="tab_selection == 'schuetzen'">
         <ion-icon name="search"></ion-icon>
       </button>
+
+      <button ion-button icon-only (tap)="scan()">
+        <ion-icon name="barcode"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
   <ion-toolbar no-border-top color="primary">
