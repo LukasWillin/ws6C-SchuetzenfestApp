@@ -50,9 +50,9 @@ export class SchuetzeResultatPage {
 
   updateResultat() {
     console.log("Updating!");
-    for (let i = 0; i < this.punktzahlen.length; i++) {
-      this.schuetze.resultate[i].punktzahl = this.punktzahlen[i];
-    }
+    // for (let i = 0; i < this.punktzahlen.length; i++) {
+    //   this.schuetze.resultate[i].punktzahl = this.punktzahlen[i];
+    // }
 
     this.navCtrl.pop();
   }

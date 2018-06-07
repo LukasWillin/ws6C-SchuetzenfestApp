@@ -5,7 +5,7 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>{{schuetzenfest.name}}</ion-title>
 
     <ion-buttons end>
@@ -14,15 +14,8 @@
       </button>
     </ion-buttons>
   </ion-navbar>
-
-</ion-header>
-
-
-<ion-content padding>
-  <ion-searchbar (ionInput)="getSchuetzen($event)" *ngIf="searchbarShowing && tab_selection == 'schuetzen'" [@searchbarAnimation]></ion-searchbar>
-
-  <div padding>
-    <ion-segment [(ngModel)]="tab_selection">
+  <ion-toolbar no-border-top color="primary">
+    <ion-segment [(ngModel)]="tab_selection" color="light">
       <ion-segment-button value="stiche">
         Stiche
       </ion-segment-button>
@@ -30,6 +23,15 @@
         Schützen
       </ion-segment-button>
     </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-searchbar (ionInput)="getSchuetzen($event)" *ngIf="searchbarShowing && tab_selection == 'schuetzen'" [@searchbarAnimation]></ion-searchbar>
+
+  <div padding>
+
   </div>
 
   <div [ngSwitch]="tab_selection">
@@ -39,7 +41,7 @@
       </button>
 
       <ion-fab right bottom>
-        <button ion-fab (tap)="addStich()"><ion-icon name="add"></ion-icon></button>
+        <button ion-fab color="secondary" (tap)="addStich()"><ion-icon name="add"></ion-icon></button>
       </ion-fab>
     </ion-list>
 
@@ -49,8 +51,10 @@
         <span class="schuetze-lizenz" float-right>{{ schuetze.lizenzNr }}</span>
       </button>
 
-      <ion-fab right bottom>
-        <button ion-fab (tap)="addSchuetze()"><ion-icon name="add"></ion-icon></button>
+      <ion-fab right bottom >
+        <button ion-fab color="secondary" (tap)="addSchuetze()" >
+          <ion-icon name="add"></ion-icon>
+        </button>
       </ion-fab>
     </ion-list>
   </div>
