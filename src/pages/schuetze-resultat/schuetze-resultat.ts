@@ -19,18 +19,23 @@ import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 })
 export class SchuetzeResultatPage {
 
-  schuetze: Schuetze;
+  schuetze : Schuetze = new Schuetze();
+  schuetzeKey: string = "";
+  schuetzenfestKey: string = "";
   punktzahlen: number[] = [];
 
   resultate : Resultat[] = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
-    this.schuetze = navParams.get('schuetze');
-    this.resultate = this.schuetze.resultate;
+    this.schuetzeKey = navParams.get('schuetzeKey');
+    this.schuetzenfestKey = navParams.get('schuetzenfestKey');
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ResultatPage');
+    this.fbSvc.getSchuetzeByKey(this.schuetzeKey).subscribe(s => this.schuetze = s);
+    this.fbSvc.getResultateBySchuetzeAndSchuetzenfestKey(this.schuetzenfestKey, this.schuetzeKey)
+      .forEach(rL => this.resultate = rL);
   }
 
   resultatMax(stich) {
@@ -41,7 +46,7 @@ export class SchuetzeResultatPage {
     let resultatMax = this.resultatMax(stich); // maximal erreichbares resultat
     console.log("ResultatMax: ", resultatMax);
     // build array with numbers from 0 to resultatMax inclusive, with reverse order (highest number comes first)
-    return Array(resultatMax+1).fill(resultatMax+1).map((x,i)=>i).reverse();
+    return (new Array(resultatMax+1)).fill(resultatMax+1).map((x,i)=>i).reverse();
   }
 
   resultatIsDecimal(stich) {
@@ -50,10 +55,7 @@ export class SchuetzeResultatPage {
 
   updateResultat() {
     console.log("Updating!");
-    // for (let i = 0; i < this.punktzahlen.length; i++) {
-    //   this.schuetze.resultate[i].punktzahl = this.punktzahlen[i];
-    // }
-
+    this.fbSvc.crudBatchResultat(this.resultate, "", "", CRUD.UPDATE);
     this.navCtrl.pop();
   }
 
