@@ -13,6 +13,9 @@ import {Stich} from "../../app/entities/Stich";
 import {Subscription} from "rxjs/Subscription";
 import {Resultat} from "../../app/entities/Resultat";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
+import filter from 'lodash/filter';
+import orderBy from 'lodash/orderBy';
+import take from 'lodash/take';
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -45,6 +48,7 @@ export class SchuetzenfestShowPage {
   tab_selection = "stiche";
 
   private schuetzen: Schuetze[] = [];
+  private schuetzenFiltered: Schuetze[] = [];
   private schuetzenSubscription: Subscription;
   private sticheSubscription: Subscription;
 
@@ -64,11 +68,14 @@ export class SchuetzenfestShowPage {
     console.log("Key für das Schuetzenfest " + this.schuetzenfest.key);
 
     this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key).subscribe(stL => this.stiche = stL);
-    this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key).subscribe(sL => this.schuetzen = sL);
+    this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key).subscribe(sL => {
+      this.schuetzen = sL;
+      this.getSchuetzen();
+    });
 
-    this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key).subscribe(stL => this.stiche = stL);
+    /*this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key).subscribe(stL => this.stiche = stL);
     this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key).subscribe(sL => this.schuetzen = sL);
-
+*/
 
 
     console.log(this.schuetzen);
@@ -78,12 +85,14 @@ export class SchuetzenfestShowPage {
     if (object instanceof Schuetze) {
       console.log("show schuetze ", object);
       this.navCtrl.push(SchuetzeResultatPage, {
-        schuetze: object,
+        schuetzeKey: object.key,
+        schuetzenfestKey: this.schuetzenfest.key,
       });
     } else {
       console.log("show stich ", object);
       this.navCtrl.push(StichShowPage, {
         stich: object,
+        schuetzenfestKey: this.schuetzenfest.key,
         handler: this
       });
     }
@@ -132,18 +141,21 @@ export class SchuetzenfestShowPage {
     });
   }
 
-  getSchuetzen(event: any) {
+  getSchuetzen(event?: any) {
     // set searchText to the value of the searchbar
-    const searchText = event.target.value;
+    let searchText;
+    if (event) searchText = event.target.value;
 
     // if the value is an empty string don't filter the items
     if (searchText && searchText.trim() != '') {
-      this.schuetzen = this.schuetzen.filter((schuetze) => {
+      this.schuetzenFiltered = orderBy(take(filter(this.schuetzen,(schuetze) => {
         let matchVorname = this.containsIgnoreCase(schuetze.vorname, searchText);
         let matchNachname = this.containsIgnoreCase(schuetze.nachname, searchText);
         let matchLizenzNr = this.containsIgnoreCase(schuetze.lizenzNr, searchText);
         return (matchVorname || matchNachname || matchLizenzNr);
-      })
+      }), 30), ['vorname', 'nachname']);
+    } else {
+      this.schuetzenFiltered = take(this.schuetzen, 30);
     }
   }
 
