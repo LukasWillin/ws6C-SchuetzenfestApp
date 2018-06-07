@@ -68,15 +68,17 @@ export class FirebaseServiceProvider {
     this._stiche = this._fbRefStiche.snapshotChanges().map(changes => {
         return changes.map(c => this.mapStichPayload(c.payload));
       });
-    this._resultate = this._fbRefResultate.snapshotChanges().map(changes => {
-        return changes.map(c => this.mapResultatPayload(c.payload))
-          .map(rL => {
-            for (let rKey in rL) {
-              let r = rL[rKey];
-              this.stiche.forEach(stL => r._field_stich = _.find(stL, st => st.key === r._fbStichKey));
-            }
-            return rL;
-          });
+    this._resultate = this._fbRefResultate.snapshotChanges()
+      .map(changes => {
+        return changes.map(c => this.mapResultatPayload(c.payload));
+      })
+      .map(rL => {
+        for (let rKey in rL) {
+          let r : Resultat = rL[rKey];
+          console.log(`Resultat 'r' was ${r}`);
+          this.stiche.forEach(stL => r._field_stich = _.find(stL, st => st.key === r._fbStichKey));
+        }
+        return rL;
       });
     this._schuetzenfeste = this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
         return changes.map(c => this.mapSchuetzenfestPayload(c.payload));
@@ -106,6 +108,7 @@ export class FirebaseServiceProvider {
    */
   public crudSchuetze(instance: Schuetze, schuetzenfestKey:string, crudOp?: string) {
     let fbKey:string = instance.key;
+    if (_.isUndefined(crudOp)) crudOp = _.isEmpty(fbKey) ? CRUD.PUSH : CRUD.UPDATE;
 
     if (!_.isEmpty(schuetzenfestKey) && !_.includes(instance._fb_list_schuetzenfestKey, schuetzenfestKey)) {
       instance._fb_list_schuetzenfestKey.push(schuetzenfestKey);
@@ -220,18 +223,20 @@ export class FirebaseServiceProvider {
   public crudResultat(instance: Resultat, stichKey:string, schuetzeKey:string, crudOp?: string) {
 
     const fbKey:string = instance.key;
+    if (_.isEmpty(schuetzeKey)) {
+      schuetzeKey = instance._fbSchuetzeKey;
+    } else {
+      instance._fbSchuetzeKey = schuetzeKey;
+    }
 
     // Try to find an association to a Schuetze
-    // IF you cant find any switch to DELETE.
-    if (!_.isEmpty(schuetzeKey)) instance._fbSchuetzeKey = schuetzeKey;
-    const crudWas = crudOp;
-    if (_.isEmpty(schuetzeKey)) crudOp = CRUD.DELETE;
-    else this.updateLastChanged(FBREF_PATH_SCHUETZEN, schuetzeKey);
-
-    if (crudOp === CRUD.DELETE) {
-      console.error(new Error(`The Resultat(${instance}) could not be associated to a Schuetze and will be removed. schuetzeKey was ${schuetzeKey}@CRUD.${crudWas}`));
+    // IF you cant find any do DELETE or we pollute the db.
+    if (_.isEmpty(schuetzeKey)) {
+      console.error(new Error(`The Resultat(${instance}) could not be associated to a Schuetze and will be removed. schuetzeKey was ${schuetzeKey}@CRUD.${crudOp}`));
       this._fbRefResultate.remove(fbKey);
       return;
+    } else {
+      this.updateLastChanged(FBREF_PATH_SCHUETZEN, schuetzeKey);
     }
 
     if (_.isEmpty(stichKey) && isObject(instance._field_stich)) stichKey = instance._field_stich.key;
@@ -366,7 +371,7 @@ export class FirebaseServiceProvider {
     const r = c.val();
     if (isObject(r)) {
       r._fbKey = c.key;
-      return new Resultat(r)
+      return new Resultat(r);
     } else {
       console.error(new Error("A given key was probably faulty or not existing in firebase"));
       return r;
