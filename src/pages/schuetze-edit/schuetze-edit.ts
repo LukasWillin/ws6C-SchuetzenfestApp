@@ -3,6 +3,8 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {Schuetze} from "../../app/entities/Schuetze";
 import {Stich} from "../../app/entities/Stich";
+import {Resultat} from "../../app/entities/Resultat";
+import {groupBy} from "rxjs/operators";
 
 /**
  * Generated class for the SchuetzeEditPage page.
@@ -19,17 +21,18 @@ import {Stich} from "../../app/entities/Stich";
 export class SchuetzeEditPage {
 
   schuetze: Schuetze;
-  stiche: Stich;
-  sticheGeloest: number[]; // TODO: implement in Schütze and get from DB
+  stiche: Stich[];
+  sticheGeloest: number[] = [];
 
   vorname: string;
   nachname: string;
   lizenzNr: string;
+  schuetzenfestKey: string = "";
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetze = navParams.get('schuetze');
     this.stiche = navParams.get('stiche');
-    this.sticheGeloest = navParams.get('sticheGeloest');
+    this.schuetzenfestKey = navParams.get('schuetzenfestKey');
   }
 
   ionViewDidLoad() {
@@ -40,6 +43,17 @@ export class SchuetzeEditPage {
     this.schuetze.vorname = this.vorname;
     this.schuetze.nachname = this.nachname;
     this.schuetze.lizenzNr = this.lizenzNr;
+
+    let schuetzeResultate = this.fbSvc.getResultateBySchuetzeAndSchuetzenfestKey(this.schuetzenfestKey, this.schuetze.key);
+
+    // create resultate based on stiche gelöst
+    for (let i = 0; i < this.stiche.length; i++) {
+      for (let j = 0; j < this.sticheGeloest[i]; j++) {
+        let tempResultat = new Resultat();
+        tempResultat.stich = this.stiche[i];
+        this.fbSvc.crudResultat(tempResultat, this.stiche[i].key, this.schuetze.key, CRUD.PUSH);
+      }
+    }
 
     this.fbSvc.crudSchuetze(this.schuetze, CRUD.UPDATE);
 

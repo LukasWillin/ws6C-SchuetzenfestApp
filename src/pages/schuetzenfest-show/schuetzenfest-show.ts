@@ -104,7 +104,6 @@ export class SchuetzenfestShowPage {
       this.navCtrl.push(SchuetzeEditPage, {
         schuetze: object,
         stiche: this.stiche,
-        // sticheGeloest: object.sticheGeloest,
         schuetzenfestKey: this.schuetzenfest.key
       });
     } else {
