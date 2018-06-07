@@ -65,18 +65,24 @@ export class FirebaseServiceProvider {
     this._fbRefResultate = this.afd.list(FBREF_PATH_RESULTATE);
     this._fbRefStiche = this.afd.list(FBREF_PATH_STICHE);
 
-    const self = this;
     this._stiche = this._fbRefStiche.snapshotChanges().map(changes => {
         return changes.map(c => this.mapStichPayload(c.payload));
       });
     this._resultate = this._fbRefResultate.snapshotChanges().map(changes => {
-        return changes.map(c => self.mapResultatPayload(c.payload));
+        return changes.map(c => this.mapResultatPayload(c.payload))
+          .map(rL => {
+            for (let rKey in rL) {
+              let r = rL[rKey];
+              this.stiche.forEach(stL => r._field_stich = _.find(stL, st => st.key === r._fbStichKey));
+            }
+            return rL;
+          });
       });
     this._schuetzenfeste = this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
-        return changes.map(c => self.mapSchuetzenfestPayload(c.payload));
+        return changes.map(c => this.mapSchuetzenfestPayload(c.payload));
       });
     this._schuetzen = this._fbRefSchuetzen.snapshotChanges().map(changes => {
-        return changes.map(c => self.mapSchuetzePayload(c.payload));
+        return changes.map(c => this.mapSchuetzePayload(c.payload));
       });
 
     this.crudBatchResultat = this.crudBatchResultat.bind(this);
@@ -99,22 +105,28 @@ export class FirebaseServiceProvider {
    * @param {string} crudOp (optional) - The CRUD operation.
    */
   public crudSchuetze(instance: Schuetze, schuetzenfestKey:string, crudOp?: string) {
-    const fbKey:string = instance.key;
+    let fbKey:string = instance.key;
 
     if (!_.isEmpty(schuetzenfestKey) && !_.includes(instance._fb_list_schuetzenfestKey, schuetzenfestKey)) {
       instance._fb_list_schuetzenfestKey.push(schuetzenfestKey);
+      this.updateLastChanged(FBREF_PATH_SCHUETZENFESTE, schuetzenfestKey);
     }
 
-    if (_.isUndefined(instance.resultate))
+    const resultate = instance.resultate;
+    if (_.isUndefined(resultate))
       throw new Error(`Property Resultate on Schuetze is required`);
-    this.crudBatchResultat(instance.resultate, "", fbKey, crudOp);
+    if (crudOp !== CRUD.PUSH)
+      this.crudBatchResultat(resultate, "", fbKey, crudOp);
     instance._field_resultate = null;
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefSchuetzen.remove(fbKey);
     } else {
       if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
-        this._fbRefSchuetzen.push(instance);
+        this._fbRefSchuetzen.push(instance).then(s => {
+          fbKey = s.key;
+          this.crudBatchResultat(resultate, "", fbKey, crudOp);
+        });
       }
 
       if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
@@ -163,6 +175,8 @@ export class FirebaseServiceProvider {
 
     instance._fbSchuetzenfestKey = schuetzenfestKey;
 
+    this.updateLastChanged(FBREF_PATH_SCHUETZENFESTE, instance._fbSchuetzenfestKey);
+
     if (crudOp === CRUD.DELETE) {
       this._fbRefStiche.remove(fbKey);
       this.getResultateByStichKey(fbKey).forEach(rL => this.crudBatchResultat(rL, fbKey, "", crudOp));
@@ -187,7 +201,7 @@ export class FirebaseServiceProvider {
    *    If you dont want to alter Schuetze pass an empty string("").
    * @param {string} crudOp (optional) - The CRUD operation.
    */
-  public crudBatchResultat(instances: Resultat[], stichKey:string, schuetzeKey, crudOp?:string) {
+  public crudBatchResultat(instances: Resultat[], stichKey:string, schuetzeKey:string, crudOp?:string) {
     instances.forEach(i => this.crudResultat(i, stichKey, schuetzeKey, crudOp));
   }
 
@@ -212,6 +226,7 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(schuetzeKey)) instance._fbSchuetzeKey = schuetzeKey;
     const crudWas = crudOp;
     if (_.isEmpty(schuetzeKey)) crudOp = CRUD.DELETE;
+    else this.updateLastChanged(FBREF_PATH_SCHUETZEN, schuetzeKey);
 
     if (crudOp === CRUD.DELETE) {
       console.error(new Error(`The Resultat(${instance}) could not be associated to a Schuetze and will be removed. schuetzeKey was ${schuetzeKey}@CRUD.${crudWas}`));
@@ -328,9 +343,10 @@ export class FirebaseServiceProvider {
 
   public getResultateBySchuetzeAndSchuetzenfestKey(schuetzenfestKey:string, schuetzeKey:string) {
     if (!_.isEmpty(schuetzeKey) && !_.isEmpty(schuetzenfestKey)) {
-      return this.getResultateBySchuetzeKey(schuetzeKey).map(rL => rL.filter(r => {
-        r.stich._fbSchuetzenfestKey === schuetzenfestKey;
-      }));
+      return this.getResultateBySchuetzeKey(schuetzeKey)
+        .map(rL => rL.filter(r =>
+          r.stich._fbSchuetzenfestKey === schuetzenfestKey
+        ));
     } else {
       console.error(new Error(`Faulty keys(schuetzenfestKey:${schuetzenfestKey}, schuetzeKey:${schuetzeKey}) in #getResultateBySchuetzeKey`));
     }
@@ -379,6 +395,32 @@ export class FirebaseServiceProvider {
       return s;
     }
   }
+
+  private updateLastChanged(path:string, id:string) {
+    return this.afd.object(`${path}/${id}`)
+      .snapshotChanges()
+      .forEach(c => {
+        const payload = c.payload;
+        let mappedPayload: Schuetze | Schuetzenfest | Resultat | Stich;
+        switch (path) {
+          case FBREF_PATH_STICHE:
+            this.crudStich(this.mapStichPayload(payload), "", CRUD.UPDATE);
+            break;
+          case FBREF_PATH_SCHUETZEN:
+            this.crudSchuetze(this.mapSchuetzePayload(payload), "", CRUD.UPDATE);
+            break;
+          case FBREF_PATH_RESULTATE:
+            this.crudResultat(this.mapResultatPayload(payload), "", "", CRUD.UPDATE);
+            break;
+          case FBREF_PATH_SCHUETZENFESTE:
+            this.crudSchuetzenfest(this.mapSchuetzenfestPayload(payload), CRUD.UPDATE);
+            break;
+          default:
+            throw new Error(`Given path(${path}) must be one of ${FBREF_PATH_STICHE}${FBREF_PATH_SCHUETZEN}${FBREF_PATH_RESULTATE}${FBREF_PATH_SCHUETZENFESTE}`);
+        }
+      });
+  }
+
 
   private checkIfItemExists(path:string, id:string) : Observable<boolean> {
 
