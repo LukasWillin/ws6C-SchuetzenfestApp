@@ -396,9 +396,10 @@ export class FirebaseServiceProvider {
   }
 
   private updateLastChanged(path:string, id:string) {
-    return this.afd.object(`${path}/${id}`)
+    /*return this.afd.object(`${path}/${id}`)
       .snapshotChanges()
-      .forEach(c => {
+      .toPromise()
+      .then(c => {
         const payload = c.payload;
         let mappedPayload: Schuetze | Schuetzenfest | Resultat | Stich;
         switch (path) {
@@ -417,7 +418,7 @@ export class FirebaseServiceProvider {
           default:
             throw new Error(`Given path(${path}) must be one of ${FBREF_PATH_STICHE}${FBREF_PATH_SCHUETZEN}${FBREF_PATH_RESULTATE}${FBREF_PATH_SCHUETZENFESTE}`);
         }
-      });
+      });*/
   }
 
 
