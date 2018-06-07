@@ -4,6 +4,7 @@ import {Schuetze} from "../../app/entities/Schuetze";
 import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {Stich} from "../../app/entities/Stich";
+import {Resultat} from "../../app/entities/Resultat";
 
 /**
  * Generated class for the SchuetzeCreatePage page.
@@ -22,8 +23,8 @@ export class SchuetzeCreatePage {
   vorname: string;
   nachname: string;
   lizenzNr: string;
-  stiche: Stich;
-  sticheGeloest: number[] = [];  // TODO: implement in Schütze and get from DB
+  stiche: Stich[];
+  sticheGeloest: number[] = [];
   schuetzenfest: Schuetzenfest;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
@@ -42,12 +43,22 @@ export class SchuetzeCreatePage {
     newSchuetze.nachname = this.nachname;
     newSchuetze.vorname = this.vorname;
     newSchuetze.lizenzNr = this.lizenzNr;
+    const resultate = [];
 
-    console.log(newSchuetze);
-    console.log(this.schuetzenfest.key);
+    // create resultate based on stiche gelöst
+    for (let i = 0; i < this.stiche.length; i++) {
+      for (let j = 0; j < this.sticheGeloest[i]; j++) {
+        let tempResultat = new Resultat();
+        tempResultat.stich = this.stiche[i];
+        resultate.push(tempResultat);
+      }
+    }
+    console.log(resultate);
+    newSchuetze.resultate = resultate;
 
     this.fbSvc.crudSchuetze(newSchuetze, this.schuetzenfest.key);
-    CRUD.PUSH;
+    console.log(newSchuetze);
+    console.log(this.schuetzenfest.key);
     // this.fbSvc.crudSchuetze("OKAY", this.schuetzenfest.key, CRUD.PUSH);
 
     // Change view
