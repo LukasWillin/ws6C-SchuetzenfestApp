@@ -71,6 +71,13 @@ export class SchuetzeResultatPage {
   }
 
   clickBack() {
+    // if nothing has been changed, don't display alert
+    if (!this.isDirty()) {
+     console.log("Results are unchanged");
+      this.navCtrl.pop();
+      return;
+    }
+
     let alert = this.alertCtrl.create({
       title: 'Nicht speichern',
       message: 'Wirklich ohne zu speichern zurück gehen? Die eingegebenen Resultate gehen dann verloren!',
@@ -92,6 +99,16 @@ export class SchuetzeResultatPage {
       ]
     });
     alert.present();
+  }
+
+  isDirty(){
+    var changed: boolean = false;
+    for (let i = 0; i < this.punktzahlen.length; i++) {
+      if (this.punktzahlen[i] != this.resultate[i].punktzahl) {
+       changed = true;
+      }
+    }
+    return changed;
   }
 
 }
