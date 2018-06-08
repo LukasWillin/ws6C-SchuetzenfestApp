@@ -209,6 +209,7 @@ export class FirebaseServiceProvider {
     const resultate = instance.resultate;
     if (_.isUndefined(resultate))
       throw new Error(`Property Resultate on Schuetze is required`);
+
     if (crudOp !== CRUD.PUSH)
       this.crudBatchResultat(resultate, "", fbKey, crudOp);
     instance._field_resultate = null;
@@ -322,7 +323,9 @@ export class FirebaseServiceProvider {
   public crudResultat(instance: Resultat, stichKey:string, schuetzeKey:string, crudOp?: string) {
 
     const fbKey:string = instance.key;
+
     instance = new Resultat(instance);
+
     if (_.isEmpty(schuetzeKey)) {
       schuetzeKey = instance._fbSchuetzeKey;
     } else {
@@ -343,12 +346,15 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(stichKey)) instance._fbStichKey = stichKey;
     instance._field_stich = null;
 
-
-    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
-      this._fbRefResultate.push(instance);
-    }
-    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
-      this._fbRefResultate.update(fbKey, instance);
+    if (crudOp == CRUD.DELETE) {
+      this._fbRefResultate.remove(fbKey);
+    } else {
+      if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+        this._fbRefResultate.push(instance);
+      }
+      if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+        this._fbRefResultate.update(fbKey, instance);
+      }
     }
   }
 
