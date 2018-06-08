@@ -1,7 +1,7 @@
 - Make DB work!
 - Datenbank verknüpfen mit Views --> partially done, see todos
 X Design
-- When using icons on the top right to delete a "Stich", the view doesn't close... make it close! but only if delete was approved
+X When using icons on the top right to delete a "Stich", the view doesn't close... make it close! but only if delete was approved
 X Splash Screen a.k.a. Loading Screen - done
 X ICON! - done - was not done... or not pushed!
 X Add Save button to Resultat - done

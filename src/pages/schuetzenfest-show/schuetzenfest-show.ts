@@ -241,6 +241,31 @@ export class SchuetzenfestShowPage {
     alert.present();
   }
 
+  confirmDeletePop(object: Schuetze|Stich) {
+    let alert = this.alertCtrl.create({
+      title: 'Löschen bestätigen',
+      message: 'Wirklich löschen?',
+      buttons: [
+        {
+          text: 'Abbrechen',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            console.log('OK clicked');
+            this.delete(object);
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
   scan() {
     this.barcodeScanner.scan().then((barcodeData) => {
       this.barcode = barcodeData.text;
