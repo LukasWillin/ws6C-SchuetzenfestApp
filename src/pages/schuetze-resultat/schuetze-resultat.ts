@@ -93,10 +93,6 @@ export class SchuetzeResultatPage {
       ]
     });
     alert.present();
-
-
-    this.navCtrl.pop();
-
   }
 
 }
