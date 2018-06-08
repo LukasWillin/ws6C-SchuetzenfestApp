@@ -40,7 +40,7 @@ export class SchuetzeResultatPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad ResultatPage');
     // initialize default values for selects
-    for (let i = 0; i < this.punktzahlen.length; i++) {
+    for (let i = 0; i < this.resultate.length; i++) {
       this.punktzahlen[i] = this.resultate[i].punktzahl;
     }
   }
@@ -103,7 +103,7 @@ export class SchuetzeResultatPage {
 
   isDirty(){
     var changed: boolean = false;
-    for (let i = 0; i < this.punktzahlen.length; i++) {
+    for (let i = 0; i < this.resultate.length; i++) {
       if (this.punktzahlen[i] != this.resultate[i].punktzahl) {
        changed = true;
       }
