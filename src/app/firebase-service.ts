@@ -281,7 +281,7 @@ export class FirebaseServiceProvider {
   /**
    * CRUD method to update, delete, push.
    * The `crudOp` parameter might only be necessary upon deletion.
-   * @param {Resultat[]} instance - One or more Resultat instances.
+   * @param {Resultat[]} instances - One or more Resultat instances.
    * @param {string} stichKey - Key of associated Stich.
    *    If you dont want to alter the Stich pass an empty string("").
    * @param {string} schuetzeKey - Key of owning Schuetze.

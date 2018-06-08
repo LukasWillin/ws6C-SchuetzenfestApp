@@ -35,7 +35,7 @@ export class Resultat {
   }
 
   public get isPlaceholder() : boolean {
-    return !!this._fb_isPlaceholder;
+    return this._fb_isPlaceholder;
   }
 
   public get lastChanged() : Date {
