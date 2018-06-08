@@ -13,3 +13,6 @@ x Stich, Schütze, Schützenfest löschbar machen (eventuell über long press zu
 X Edit und Delete Button im Schützenfest Show, am beschte obe rächts (By LW)
 X Barcode scannen bei schuetzenfest-show mit icon
 - (Beleg scannen und Resultat auslesen)
+
+
+- A drag to refresh? maybe? https://ionicframework.com/docs/api/components/refresher/Refresher/
