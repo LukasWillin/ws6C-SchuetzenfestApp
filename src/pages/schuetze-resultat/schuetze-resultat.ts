@@ -26,23 +26,24 @@ export class SchuetzeResultatPage {
   schuetzenfestKey: string = "";
   punktzahlen: number[] = [];
 
-  resultate : Resultat[] = [];
+  resultate : Resultat[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetzeKey = navParams.get('schuetzeKey');
     this.schuetzenfestKey = navParams.get('schuetzenfestKey');
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ResultatPage');
     this.fbSvc.getSchuetzeAboByKey(this.schuetzeKey).subscribe(
       "pages/schuetze-resultat/schuetze"
       ,function(s) {
         this.schuetze = s;
-        this.resultate.push.apply(this.resultate, filter(this.schuetze.resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfestKey));
+        this.resultate = filter(this.schuetze.resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfestKey);
+        console.warn(`called with ${this.schuetze}`);
       }.bind(this)
-      ,1
+      ,2
       ,false);
+  }
+
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad ResultatPage');
   }
 
   resultatMax(stich) {

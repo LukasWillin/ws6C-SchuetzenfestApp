@@ -26,13 +26,13 @@
       <ion-label>{{ resultat.stich.name }}</ion-label>
 
       <!-- Case: Select -->
-      <ion-select [(ngModel)]="punktzahlen[index]" *ngSwitchCase="true">
+      <!--<ion-select [(ngModel)]="punktzahlen[index]" *ngSwitchCase="true">
         <ion-option *ngFor="let resultatWert of getResultatOptions(resultat.stich)" value="{{resultatWert}}">{{resultatWert}}</ion-option>
-      </ion-select>
+      </ion-select>-->
 
       <!-- Case: Input TODO: add validation of having exactly one decimal point here (maybe with decimalpipe: https://stackoverflow.com/questions/42069234/force-2-decimal-places-precision-in-ion-input -->
-      <ion-input [(ngModel)]="punktzahlen[index]" type="number" value="{{resultat.punktzahl}}" *ngSwitchCase="false" min="0" max="{{resultatMax(resultat.stich)}}" step="0.1" text-right></ion-input>
-
+      <!--<ion-input [(ngModel)]="punktzahlen[index]" type="number" value="{{resultat.punktzahl}}" *ngSwitchCase="false" min="0" max="{{resultatMax(resultat.stich)}}" step="0.1" text-right></ion-input>
+-->
     </ion-item>
   </ion-list>
 </ion-content>
