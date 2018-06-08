@@ -73,8 +73,8 @@ export class SchuetzeResultatPage {
     // TODO: Ask if user wants to exit. For now this is that we can work around this
 
     let alert = this.alertCtrl.create({
-      title: 'Resultat eingeben',
-      message: 'Wirklich zurück gehen? Sie haben kein Resultat eingegeben.',
+      title: 'Nicht speichern',
+      message: 'Wirklich ohne zu speichern zurück gehen? Die eingegebenen Resultate gehen dann verloren!',
       buttons: [
         {
           text: 'Abbrechen',
