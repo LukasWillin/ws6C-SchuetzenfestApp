@@ -21,14 +21,15 @@ import filter from 'lodash/filter';
 })
 export class SchuetzeResultatPage {
 
-  schuetze : Schuetze = new Schuetze();
-  schuetzeKey: string = "";
+  schuetze : Schuetze;
+  schuetzeKey: string;
   schuetzenfestKey: string = "";
   punktzahlen: number[] = [];
 
   resultate : Resultat[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
+    this.schuetze = navParams.get('schuetze');
     this.schuetzeKey = navParams.get('schuetzeKey');
     this.schuetzenfestKey = navParams.get('schuetzenfestKey');
     this.fbSvc.getSchuetzeAboByKey(this.schuetzeKey).subscribe(
