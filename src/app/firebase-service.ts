@@ -209,6 +209,7 @@ export class FirebaseServiceProvider {
     const resultate = instance.resultate;
     if (_.isUndefined(resultate))
       throw new Error(`Property Resultate on Schuetze is required`);
+
     if (crudOp !== CRUD.PUSH)
       this.crudBatchResultat(resultate, "", fbKey, crudOp);
     instance._field_resultate = null;
@@ -277,11 +278,13 @@ export class FirebaseServiceProvider {
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefStiche.remove(fbKey);
-      this.getResultateAboByStichKey(fbKey)
+      let rLDel = _.filter(this._resultate, r => (r as Resultat)._fbStichKey === fbKey);
+      this.crudBatchResultat(rLDel, fbKey, "", CRUD.DELETE);
+      /*this.getResultateAboByStichKey(fbKey)
         .subscribe("providers/firebase-service/crudStich/crudBatchResultat"
           , rL => this.crudBatchResultat(rL, fbKey, "", crudOp)
           , 1
-          , true);
+          , true);*/
     } else {
       if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
         this._fbRefStiche.push(instance);
@@ -322,7 +325,9 @@ export class FirebaseServiceProvider {
   public crudResultat(instance: Resultat, stichKey:string, schuetzeKey:string, crudOp?: string) {
 
     const fbKey:string = instance.key;
+
     instance = new Resultat(instance);
+
     if (_.isEmpty(schuetzeKey)) {
       schuetzeKey = instance._fbSchuetzeKey;
     } else {
@@ -343,12 +348,15 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(stichKey)) instance._fbStichKey = stichKey;
     instance._field_stich = null;
 
-
-    if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
-      this._fbRefResultate.push(instance);
-    }
-    if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
-      this._fbRefResultate.update(fbKey, instance);
+    if (crudOp == CRUD.DELETE) {
+      this._fbRefResultate.remove(fbKey);
+    } else {
+      if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
+        this._fbRefResultate.push(instance);
+      }
+      if (crudOp === CRUD.UPDATE || !_.isEmpty(fbKey)) {
+        this._fbRefResultate.update(fbKey, instance);
+      }
     }
   }
 
@@ -378,7 +386,8 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       let abo = new Abonnement<Resultat[]>(function publisher(resolve, rL) {
         if (rL) {
-          resolve(_.filter(rL, r => (r as Resultat)._fbStichKey === key));
+          rL = _.filter(rL, r => (r as Resultat)._fbStichKey === key);
+          resolve(rL);
         } else {
           resolve(rL, 250);
         }
