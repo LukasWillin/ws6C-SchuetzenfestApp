@@ -44,7 +44,14 @@ export class SchuetzeEditPage {
     this.schuetze.nachname = this.nachname;
     this.schuetze.lizenzNr = this.lizenzNr;
 
-    let schuetzeResultate = this.fbSvc.getResultateBySchuetzeAndSchuetzenfestKey(this.schuetzenfestKey, this.schuetze.key);
+    let schuetzeResultate;
+    this.fbSvc.getResultateAboBySchuetzeAndSchuetzenfestKey(this.schuetzenfestKey, this.schuetze.key)
+      .subscribe(
+        "pages/schuetze-edit/resultateBySchuetzeKeyAndSchuetzenfestKey"
+        , rL => schuetzeResultate = rL
+        , 1
+        ,true
+      );
 
     // create resultate based on stiche gelöst
     for (let i = 0; i < this.stiche.length; i++) {

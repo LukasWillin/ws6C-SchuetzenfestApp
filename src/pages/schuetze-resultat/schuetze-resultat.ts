@@ -33,9 +33,18 @@ export class SchuetzeResultatPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ResultatPage');
-    this.fbSvc.getSchuetzeByKey(this.schuetzeKey).subscribe(s => this.schuetze = s);
-    this.fbSvc.getResultateBySchuetzeAndSchuetzenfestKey(this.schuetzenfestKey, this.schuetzeKey)
-      .forEach(rL => this.resultate = rL);
+    this.fbSvc.getSchuetzeAboByKey(this.schuetzeKey).subscribe(
+      "pages/schuetze-resultat/schuetze"
+      ,s => {
+        this.schuetze = s;
+        this.fbSvc.getResultateAboBySchuetzeAndSchuetzenfestKey(this.schuetzenfestKey, this.schuetzeKey)
+          .subscribe("pages/schuetze-resultat/schuetze-resultate"
+            ,rL => this.resultate = rL
+            ,1
+            ,true);
+      }
+      ,1
+      ,true);
   }
 
   resultatMax(stich) {

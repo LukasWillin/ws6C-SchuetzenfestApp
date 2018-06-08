@@ -25,17 +25,16 @@ import orderBy from 'lodash/orderBy';
 export class SchuetzenfestListPage {
 
   private schuetzenfeste: Schuetzenfest[];
-  private schuetzenfesteSubscription:Subscription;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController, private fbSvc: FirebaseServiceProvider) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SchuetzenfestListPage');
-    this.schuetzenfesteSubscription = this.fbSvc.schuetzenfeste.map(sfL => take(orderBy(sfL, sf => (sf as Schuetzenfest).lastChanged.getTime(), ["desc"]), 30))
-      .subscribe(schuetzenfestListe => {
-        this.schuetzenfeste = schuetzenfestListe;
-      });
+    this.fbSvc.schuetzenfesteAbo.subscribe(
+      ""
+      ,sfL => this.schuetzenfeste = take(orderBy(sfL, sf => (sf as Schuetzenfest).lastChanged.getTime(), ["desc"]), 30)
+      ,10, true);
   }
 
   create() {

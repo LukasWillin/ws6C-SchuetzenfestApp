@@ -10,6 +10,7 @@ import { Schuetze } from "./entities/Schuetze";
 import { Schuetzenfest } from "./entities/Schuetzenfest";
 import { Resultat } from "./entities/Resultat";
 import { Stich } from "./entities/Stich";
+import { Abonnement } from "./Abonnement";
 
 const FBREF_PATH_SCHUETZEN = '/schuetzen';
 const FBREF_PATH_SCHUETZENFESTE = '/schuetzenfeste';
@@ -42,21 +43,38 @@ export class FirebaseServiceProvider {
   private _fbRefResultate:AngularFireList<Resultat>;
   private _fbRefStiche:AngularFireList<Stich>;
 
-  private _schuetzenfeste: Observable<Schuetzenfest[]>;
-  get schuetzenfeste(): Observable<Schuetzenfest[]> {
+  private _schuetzenfeste: Schuetzenfest[] = [];
+  get schuetzenfeste(): Schuetzenfest[] {
     return this._schuetzenfeste;
   }
-  private _schuetzen: Observable<Schuetze[]>;
-  get schuetzen(): Observable<Schuetze[]> {
+  private _schuetzen: Schuetze[] = [];
+  get schuetzen(): Schuetze[] {
     return this._schuetzen;
   }
-  private _resultate: Observable<Resultat[]>;
-  get resultate(): Observable<Resultat[]> {
+  private _resultate: Resultat[] = [];
+  get resultate(): Resultat[] {
     return this._resultate;
   }
-  private _stiche: Observable<Stich[]>;
-  get stiche(): Observable<Stich[]> {
+  private _stiche: Stich[] = [];
+  get stiche(): Stich[] {
     return this._stiche;
+  }
+
+  private _schuetzenfesteAbo : Abonnement<Schuetzenfest[]>;
+  get schuetzenfesteAbo(): Abonnement<Schuetzenfest[]> {
+    return this._schuetzenfesteAbo;
+  }
+  private _schuetzenAbo : Abonnement<Schuetze[]>;
+  get schuetzenAbo() : Abonnement<Schuetze[]> {
+    return this._schuetzenAbo;
+  }
+  private _sticheAbo : Abonnement<Stich[]>;
+  get sticheAbo() : Abonnement<Stich[]> {
+    return this._sticheAbo;
+  }
+  private _resultateAbo : Abonnement<Resultat[]>;
+  get resultateAbo() : Abonnement<Resultat[]> {
+    return this._resultateAbo;
   }
 
   public constructor(public afd: AngularFireDatabase) {
@@ -65,35 +83,97 @@ export class FirebaseServiceProvider {
     this._fbRefResultate = this.afd.list(FBREF_PATH_RESULTATE);
     this._fbRefStiche = this.afd.list(FBREF_PATH_STICHE);
 
-    this._stiche = this._fbRefStiche.snapshotChanges().map(changes => {
+    this._sticheAbo = new Abonnement<Stich[]>(function publisher(resolve, stL) {
+      if (stL) {
+        resolve(stL);
+      } else {
+        resolve(stL, 250);
+      }
+    }, [], 100);
+
+    this._resultateAbo = new Abonnement<Resultat[]>(function publisher(resolve, rL) {
+      rL = this._resultate;
+      if (rL) {
+        for (let i = 0; i < rL.length; i++) {
+          let r = rL[i];
+          r._field_stich = _.find(this._stiche, st => st.key === r._fbStichKey);
+        }
+        resolve(rL);
+      } else {
+        resolve(rL, 250);
+      }
+    }, [], 100);
+
+    this._sticheAbo.subscribe(
+      "providers/firebase-service/resultateAbo"
+      ,this._resultateAbo.publishNewIssue
+      ,undefined
+      ,true
+    );
+
+    this._schuetzenfesteAbo = new Abonnement<Schuetzenfest[]>(function publisher(resolve, sfL) {
+      if (sfL) {
+        resolve(sfL);
+      } else {
+        resolve(sfL, 250);
+      }
+    }, [], 100);
+
+    this._schuetzenAbo = new Abonnement<Schuetze[]>(function publisher(resolve, sL) {
+      sL = this._schuetzen;
+      if (sL) {
+        for (let i = 0; i < sL.length; i++) {
+          let s : Schuetze = sL[i];
+          s._field_resultate = _.filter(this._resultate, r => r._fbSchuetzeKey === s.key);
+        }
+        resolve(sL);
+      } else {
+        resolve(sL, 250);
+      }
+    }, [], 100);
+
+    this._resultateAbo.subscribe(
+      "providers/firebase-service/schuetzeAbo"
+      , this._schuetzenAbo.publishNewIssue
+      ,undefined
+      ,true
+    );
+
+    this._fbRefStiche.snapshotChanges().map(changes => {
         return changes.map(c => this.mapStichPayload(c.payload));
+      })
+      .subscribe(stL => {
+        this._stiche = stL;
+        this.sticheAbo.publishNewIssue(stL);
       });
-    this._resultate = this._fbRefResultate.snapshotChanges()
+    this._fbRefResultate.snapshotChanges()
       .map(changes => {
         return changes.map(c => this.mapResultatPayload(c.payload));
       })
-      .map(rL => {
-        for (let rKey in rL) {
-          let r : Resultat = rL[rKey];
-          console.log(`Resultat 'r' was ${r}`);
-          this.stiche.forEach(stL => r._field_stich = _.find(stL, st => st.key === r._fbStichKey));
-        }
-        return rL;
+      .subscribe(rL => {
+        this._resultate = rL;
+        this.resultateAbo.publishNewIssue(rL);
       });
-    this._schuetzenfeste = this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
+    this._fbRefSchuetzenfeste.snapshotChanges().map(changes => {
         return changes.map(c => this.mapSchuetzenfestPayload(c.payload));
+      })
+      .subscribe(sfL => {
+        this._schuetzenfeste = sfL;
+        this.schuetzenfesteAbo.publishNewIssue(sfL);
       });
-    this._schuetzen = this._fbRefSchuetzen.snapshotChanges().map(changes => {
+    this._fbRefSchuetzen.snapshotChanges().map(changes => {
         return changes.map(c => this.mapSchuetzePayload(c.payload));
+      })
+      .subscribe(sL => {
+        this._schuetzen = sL;
+        this.schuetzenAbo.publishNewIssue(sL);
       });
 
     this.crudBatchResultat = this.crudBatchResultat.bind(this);
     this.crudResultat = this.crudResultat.bind(this);
     this.mapSchuetzePayload = this.mapSchuetzePayload.bind(this);
     this.mapSchuetzenfestPayload = this.mapSchuetzenfestPayload.bind(this);
-    this.getResultateBySchuetzeKey = this.getResultateBySchuetzeKey.bind(this);
     this.checkIfItemExists = this.checkIfItemExists.bind(this);
-    this.getSticheBySchuetzenfestKey = this.getSticheBySchuetzenfestKey.bind(this);
   }
 
   /**
@@ -182,7 +262,11 @@ export class FirebaseServiceProvider {
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefStiche.remove(fbKey);
-      this.getResultateByStichKey(fbKey).forEach(rL => this.crudBatchResultat(rL, fbKey, "", crudOp));
+      this.getResultateAboByStichKey(fbKey)
+        .subscribe("providers/firebase-service/crudStich/crudBatchResultat"
+          , rL => this.crudBatchResultat(rL, fbKey, "", crudOp)
+          , 1
+          , true);
     } else {
       if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
         this._fbRefStiche.push(instance);
@@ -252,68 +336,144 @@ export class FirebaseServiceProvider {
     }
   }
 
-  public getSticheBySchuetzeKey(key:string) : Observable<Stich[]> {
+  public getSticheAboBySchuetzeKey(key:string) : Abonnement<Stich[]> {
     if (!_.isEmpty(key)) {
-      return this.getResultateBySchuetzeKey(key).map(rL => {
-        return _.map(rL, r => (r as Resultat).stich);
-      });
+      let abo = new Abonnement<Stich[]>(function publisher(resolve, rL) {
+        if (rL) {
+          resolve(_.map(rL, r => (r as Resultat).stich));
+        } else {
+          resolve(rL, 250);
+        }
+      }, [], 100);
+
+      abo.ownSubscription = this.getResultateAboBySchuetzeKey(key).subscribe(
+        `providers/firebase-service/sticheBySchuetzeKey/${key}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty key(${key}) in #getSticheBySchuetzeKey`));
     }
   }
 
-  public getResultateByStichKey(key:string) : Observable<Resultat[]> {
+  public getResultateAboByStichKey(key:string) : Abonnement<Resultat[]> {
     if (!_.isEmpty(key)) {
-      return this.resultate.map(rL => {
-        return _.filter(rL, r => (r as Resultat)._fbStichKey === key);
-      });
+      let abo = new Abonnement<Resultat[]>(function publisher(resolve, rL) {
+        if (rL) {
+          resolve(_.filter(rL, r => (r as Resultat)._fbStichKey === key));
+        } else {
+          resolve(rL, 250);
+        }
+      }, [], 100);
+
+      abo.ownSubscription = this.resultateAbo.subscribe(
+        `providers/firebase-service/resultateByStichKey/${key}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty key(${key}) in #getResultateByStichKey`));
     }
   }
 
-  public getSchuetzenfestByKey(key:string): Observable<Schuetzenfest> {
+  public getSchuetzenfestByKey(key:string): Abonnement<Schuetzenfest> {
     if (!_.isEmpty(key)) {
-      return this.afd.object(`${FBREF_PATH_SCHUETZENFESTE}/${key}`)
-        .snapshotChanges()
-        .map(c => this.mapSchuetzenfestPayload(c.payload));
+      let abo = new Abonnement<Schuetzenfest>(function publisher(resolve, sfL) {
+        if (sfL) {
+          resolve(_.find(sfL, sf => sf.key === key));
+        } else {
+          resolve(sfL, 250);
+        }
+      }, [], 100);
+
+      abo.ownSubscription = this.schuetzenfesteAbo.subscribe(
+        `providers/firebase-service/schuetzenfestByKey/${key}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty key(${key}) in #getSchuetzenfestByKey`));
     }
   }
 
-  public getSchuetzenBySchuetzenfestKey(key:string) {
+  public getSchuetzenAboBySchuetzenfestKey(key:string) : Abonnement<Schuetze[]> {
     if (!_.isEmpty(key)) {
-      return this.schuetzen.map(sL => sL.filter(s => _.includes(s.schuetzenfestKeyList, key)));
+      let abo = new Abonnement<Schuetze[]>(
+        function publisher(resolve, sL) {
+          if (sL) {
+            resolve(_.filter(sL, s => _.includes((s as Schuetze).schuetzenfestKeyList, key)));
+          } else {
+            resolve(sL, 250);
+          }
+        }
+        ,[]
+        ,100);
+
+      abo.ownSubscription = this.schuetzenAbo.subscribe(
+        `providers/firebase-service/schuetzenBySchuetzenfestKey/${key}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty key(${key}) in #getSchuetzenBySchuetzenfestKey`));
     }
   }
 
-  public getSchuetzeByKey(key:string): Observable<Schuetze> {
+  public getSchuetzeAboByKey(key:string): Abonnement<Schuetze> {
     if (!_.isEmpty(key)) {
-      return this.schuetzen
-        .map(sL => {
-          return Observable.create(sL.find(s => s.key === key));
-        });
+      let abo = new Abonnement<Schuetze>(function publisher(resolve, sL) {
+        if (sL) {
+          resolve(_.find(sL, s => s.key === key));
+        } else {
+          resolve(sL, 250);
+        }
+      }, [], 100);
+
+      abo.ownSubscription = this.schuetzenAbo.subscribe(
+        `providers/firebase-service/schuetzeByKey/${key}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty key(${key}) in #getSchuetzeByKey`));
     }
   }
 
-  public getStichByKey(key:string): Observable<Stich> {
+  public getStichByKey(key:string): Abonnement<Stich> {
     if (!_.isEmpty(key)) {
-      return this.afd.object(`${FBREF_PATH_STICHE}/${key}`)
-        .snapshotChanges()
-        .map(c => this.mapStichPayload(c.payload));
+      let abo = new Abonnement<Stich>(function publisher(resolve, stL) {
+        if (stL) {
+          resolve(_.find(stL, st => st.key === key));
+        } else {
+          resolve(stL, 250);
+        }
+      }, [], 100);
+
+      abo.ownSubscription = this.schuetzenAbo.subscribe(
+        `providers/firebase-service/stichByKey/${key}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty key(${key}) in #getStichByKey`));
     }
   }
 
-  public getResultatByKey(key:string): Observable<Resultat> {
+  /*public getResultatByKey(key:string): Observable<Resultat> {
     if (!_.isEmpty(key)) {
-      return this.afd.object(`${FBREF_PATH_RESULTATE}/${key}`)
+      /*return this.afd.object(`${FBREF_PATH_RESULTATE}/${key}`)
         .snapshotChanges()
         .map(c => this.mapResultatPayload(c.payload))
         .map(r => {
@@ -325,32 +485,71 @@ export class FirebaseServiceProvider {
     } else {
       console.error(new Error(`Faulty key(${key}) in #getResultatByKey`));
     }
-  }
+  }*/
 
-  public getSticheBySchuetzenfestKey(schuetzenfestKey:string) : Observable<Stich[]> {
+  public getSticheAboBySchuetzenfestKey(schuetzenfestKey:string) : Abonnement<Stich[]> {
     if (!_.isEmpty(schuetzenfestKey)) {
-      return this.stiche
-        .map(stL => stL.filter(st => st._fbSchuetzenfestKey === schuetzenfestKey));
+      let abo = new Abonnement<Stich[]>(function publisher(resolve, stL) {
+        if (stL) {
+          resolve(stL.filter(st => st._fbSchuetzenfestKey === schuetzenfestKey));
+        } else {
+          resolve(stL, 250);
+        }
+      }, [], 100);
+
+      abo.ownSubscription = this.sticheAbo.subscribe(
+        `providers/firebase-service/stichBySchuetzenfestKey/${schuetzenfestKey}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty key(${schuetzenfestKey}) in #getSticheBySchuetzenfestKey`));
     }
   }
 
-  public getResultateBySchuetzeKey(schuetzeKey:string): Observable<Resultat[]> {
+  public getResultateAboBySchuetzeKey(schuetzeKey:string): Abonnement<Resultat[]> {
     if (!_.isEmpty(schuetzeKey)) {
-      return this._resultate
-        .map(rL => rL.filter(r => r._fbSchuetzeKey === schuetzeKey));
+      let abo = new Abonnement<Resultat[]>(function publisher(resolve, rL) {
+        if (rL) {
+          resolve(_.filter(rL, r => r._fbSchuetzeKey === schuetzeKey));
+        } else {
+          resolve(rL, 250);
+        }
+      }, [], 100);
+
+      abo.ownSubscription = this.resultateAbo.subscribe(
+        `providers/firebase-service/resultateBySchuetzeKey/${schuetzeKey}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty key(${schuetzeKey}) in #getResultateBySchuetzeKey`));
     }
   }
 
-  public getResultateBySchuetzeAndSchuetzenfestKey(schuetzenfestKey:string, schuetzeKey:string) {
+  public getResultateAboBySchuetzeAndSchuetzenfestKey(schuetzenfestKey:string, schuetzeKey:string) {
     if (!_.isEmpty(schuetzeKey) && !_.isEmpty(schuetzenfestKey)) {
-      return this.getResultateBySchuetzeKey(schuetzeKey)
-        .map(rL => rL.filter(r =>
-          r.stich._fbSchuetzenfestKey === schuetzenfestKey
-        ));
+      let abo = new Abonnement<Resultat[]>(function publisher(resolve, rL) {
+        if (rL) {
+          resolve(rL.filter(r =>
+            r.stich._fbSchuetzenfestKey === schuetzenfestKey
+          ));
+        } else {
+          resolve(rL, 250);
+        }
+      }, [], 100);
+
+      abo.ownSubscription = this.getResultateAboBySchuetzeKey(schuetzeKey).subscribe(
+        `providers/firebase-service/resultateBySchuetzeAndSchuetzenfestKey/${schuetzeKey}${schuetzenfestKey}`
+        , abo.publishNewIssue
+        , undefined
+        , true);
+
+      return abo;
     } else {
       console.error(new Error(`Faulty keys(schuetzenfestKey:${schuetzenfestKey}, schuetzeKey:${schuetzeKey}) in #getResultateBySchuetzeKey`));
     }

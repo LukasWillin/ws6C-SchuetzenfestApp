@@ -70,11 +70,21 @@ export class SchuetzenfestShowPage {
     console.log('ionViewDidLoad SchuetzenfestShow');
     console.log("Key für das Schuetzenfest " + this.schuetzenfest.key);
 
-    this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key).subscribe(stL => this.stiche = stL);
-    this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key).subscribe(sL => {
-      this.schuetzen = sL;
-      this.getSchuetzen();
-    });
+    this.fbSvc.getSticheAboBySchuetzenfestKey(this.schuetzenfest.key)
+      .subscribe(
+        "pages/schuetzenfest-show/stiche"
+        ,stL => this.stiche = stL
+        ,50
+        ,true);
+    this.fbSvc.getSchuetzenAboBySchuetzenfestKey(this.schuetzenfest.key)
+      .subscribe(
+        "pages/schuetzenfest-show/schuetzen"
+        ,sL => {
+          this.schuetzen = sL;
+          this.getSchuetzen();
+        }
+        , 50
+        , true);
 
     /*this.sticheSubscription = this.fbSvc.getSticheBySchuetzenfestKey(this.schuetzenfest.key).subscribe(stL => this.stiche = stL);
     this.schuetzenSubscription = this.fbSvc.getSchuetzenBySchuetzenfestKey(this.schuetzenfest.key).subscribe(sL => this.schuetzen = sL);

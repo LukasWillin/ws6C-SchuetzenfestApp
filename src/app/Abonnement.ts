@@ -1,9 +1,10 @@
 
 import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 
 const GROUP_PATH_SEPERATOR : string = "/";
 
-class AboSubscription {
+export class AboSubscription {
   private id : string;
   private group : string;
   public _unsubscribe : Function;
@@ -49,7 +50,7 @@ class AboSubscription {
    *
    * @returns {AboSubscription}
    */
-  public static subscribeTo(abo:Abonnement, groupThenId:string, subscriber/*:Function*/, numberOfIssues?:number, immediately?:boolean) {
+  public static subscribeTo(abo:Abonnement<any>, groupThenId:string, subscriber/*:Function*/, numberOfIssues?:number, immediately?:boolean) {
     return abo.subscribe(groupThenId, subscriber, numberOfIssues, immediately);
   }
 
@@ -69,11 +70,12 @@ class AboSubscription {
   }
 }
 
-class Abonnement {
+export class Abonnement<T> {
 
   private delayedPublication : number;
   private subscribers : Object = {};
-  private previousIssue : any;
+  private previousIssue : T;
+  public ownSubscription : AboSubscription;
 
   /**
    * Create an Abonnement instance.
@@ -169,7 +171,7 @@ class Abonnement {
    * the publisher opts to delay his work.
    * @param fromValue - A value which can be mutated or ignored by a set publisher.
    */
-  public publishNewIssue(fromValue:any) {
+  public publishNewIssue(fromValue?:any) {
     if (this.publisher !== undefined) {
       clearTimeout(this.delayedPublication);
       this.delayedPublication = undefined;
@@ -179,7 +181,7 @@ class Abonnement {
     }
   }
 
-  private resolve(newIssue:any, delay?:number) {
+  private resolve(newIssue:T, delay?:number) {
     if(delay !== undefined && delay >= 0) {
       this.delayedPublication = setTimeout(() => this.publishNewIssue(newIssue), delay);
     } else {
@@ -195,7 +197,7 @@ class Abonnement {
     this.previousIssue = newIssue;
   }
 
-  private notifySubscriber(subscriber/*:Function*/, newIssue:any) {
+  private notifySubscriber(subscriber/*:Function*/, newIssue:T) {
     if (subscriber.remainingIssues === undefined || subscriber.remainingIssues > 0) {
       subscriber(newIssue);
     }
@@ -208,6 +210,9 @@ class Abonnement {
       if (subscriber.remainingIssues <= 0) {
         delete this.subscribers[subscriber.groupThenId];
       }
+    }
+    if (isEmpty(this.subscribers) && !isEmpty(this.ownSubscription)) {
+      this.ownSubscription.unsubscribe();
     }
   }
 }
