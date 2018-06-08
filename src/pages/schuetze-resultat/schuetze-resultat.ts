@@ -53,7 +53,7 @@ export class SchuetzeResultatPage {
   }
 
   resultatIsDecimal(stich) {
-    return stich.scheibe % 10 == 0;
+    return stich.scheibe % 1 == 0;
   }
 
   updateResultat() {
