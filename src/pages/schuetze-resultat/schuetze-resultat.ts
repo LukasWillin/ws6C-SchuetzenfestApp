@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
-import {Stich} from "../../app/entities/Stich";
+import {AlertController, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Schuetze} from "../../app/entities/Schuetze";
 import {Resultat, ResultatViewModel} from "../../app/entities/Resultat";
 import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
@@ -29,7 +28,8 @@ export class SchuetzeResultatPage {
 
   resultate : ResultatViewModel[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider,
+  private alertCtrl: AlertController) {
     this.schuetze = navParams.get('schuetze');
     this.schuetzeKey = navParams.get('schuetzeKey');
     this.schuetzenfestKey = navParams.get('schuetzenfestKey');
@@ -68,8 +68,28 @@ export class SchuetzeResultatPage {
     this.navCtrl.pop();
   }
 
-  updateResultatPunktzahl(punktzahl) {
-
+  clickBack() {
+    let alert = this.alertCtrl.create({
+      title: 'Nicht speichern',
+      message: 'Wirklich ohne zu speichern zurück gehen? Die eingegebenen Resultate gehen dann verloren!',
+      buttons: [
+        {
+          text: 'Abbrechen',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            console.log('OK clicked');
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 
 }

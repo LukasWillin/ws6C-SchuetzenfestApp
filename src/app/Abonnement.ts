@@ -143,7 +143,7 @@ export class Abonnement<T> {
    * @param {string} id (optional) - Id of subscriber(s).
    */
   public unsubscribeAllInGroupWithId(group:string, id?:string) {
-    for (var groupThenId in this.subscribers) {
+    for (let groupThenId in this.subscribers) {
       let subscriber = this.subscribers[groupThenId];
       if ((subscriber.groupThenId as string).includes(GROUP_PATH_SEPERATOR)
         && (subscriber.groupThenId as string).startsWith(group)) {

@@ -48,7 +48,7 @@ export class Stich {
   }
 
   public get isPlaceholder() : boolean {
-    return !!this._fb_isPlaceholder;
+    return this._fb_isPlaceholder;
   }
   public get lastChanged() : Date {
     return new Date(this._fb_lastChanged.getTime());
