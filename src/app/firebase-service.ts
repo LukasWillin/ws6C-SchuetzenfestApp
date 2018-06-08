@@ -278,11 +278,13 @@ export class FirebaseServiceProvider {
 
     if (crudOp === CRUD.DELETE) {
       this._fbRefStiche.remove(fbKey);
-      this.getResultateAboByStichKey(fbKey)
+      let rLDel = _.filter(this._resultate, r => (r as Resultat)._fbStichKey === fbKey);
+      this.crudBatchResultat(rLDel, fbKey, "", CRUD.DELETE);
+      /*this.getResultateAboByStichKey(fbKey)
         .subscribe("providers/firebase-service/crudStich/crudBatchResultat"
           , rL => this.crudBatchResultat(rL, fbKey, "", crudOp)
           , 1
-          , true);
+          , true);*/
     } else {
       if (crudOp === CRUD.PUSH || _.isEmpty(fbKey)) {
         this._fbRefStiche.push(instance);
@@ -384,7 +386,8 @@ export class FirebaseServiceProvider {
     if (!_.isEmpty(key)) {
       let abo = new Abonnement<Resultat[]>(function publisher(resolve, rL) {
         if (rL) {
-          resolve(_.filter(rL, r => (r as Resultat)._fbStichKey === key));
+          rL = _.filter(rL, r => (r as Resultat)._fbStichKey === key);
+          resolve(rL);
         } else {
           resolve(rL, 250);
         }
