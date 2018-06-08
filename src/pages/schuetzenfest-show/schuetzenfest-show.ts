@@ -201,7 +201,7 @@ export class SchuetzenfestShowPage {
           icon: !this.platform.is('ios') ? 'trash' : null,
           handler: () => {
             console.log('Löschen clicked');
-            this.confirmDelete(object);
+            this.confirmDelete(object, false);
           }
         },
         {
@@ -217,7 +217,7 @@ export class SchuetzenfestShowPage {
     actionSheet.present();
   }
 
-  confirmDelete(object: Schuetze|Stich) {
+  confirmDelete(object: Schuetze|Stich, popView: boolean) {
     let alert = this.alertCtrl.create({
       title: 'Löschen bestätigen',
       message: 'Wirklich löschen?',
@@ -234,31 +234,9 @@ export class SchuetzenfestShowPage {
           handler: () => {
             console.log('OK clicked');
             this.delete(object);
-          }
-        }
-      ]
-    });
-    alert.present();
-  }
-
-  confirmDeletePop(object: Schuetze|Stich) {
-    let alert = this.alertCtrl.create({
-      title: 'Löschen bestätigen',
-      message: 'Wirklich löschen?',
-      buttons: [
-        {
-          text: 'Abbrechen',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'OK',
-          handler: () => {
-            console.log('OK clicked');
-            this.delete(object);
-            this.navCtrl.pop();
+            if (popView) {
+              this.navCtrl.pop();
+            }
           }
         }
       ]
