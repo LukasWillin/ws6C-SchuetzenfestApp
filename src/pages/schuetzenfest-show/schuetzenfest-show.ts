@@ -15,6 +15,8 @@ import filter from 'lodash/filter';
 import orderBy from 'lodash/orderBy';
 import take from 'lodash/take';
 import {BarcodeScanner} from "@ionic-native/barcode-scanner";
+import {Resultat, ResultatViewModel} from "../../app/entities/Resultat";
+import map from "lodash/map";
 
 /**
  * Generated class for the SchuetzenfestShowPage page.
@@ -90,10 +92,20 @@ export class SchuetzenfestShowPage {
   show(object: Schuetze | Stich) {
     if (object instanceof Schuetze) {
       console.log("show schuetze ", object);
+      var resultate: Resultat[] = [];
+      this.fbSvc.getSchuetzeAboByKey(object.key).subscribe(
+        "pages/schuetze-resultat/schuetze"
+        ,function(s) {
+          object = s;
+          this.resultate = map(filter((object as Schuetze).resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfest.key), r => new ResultatViewModel(r));
+        }.bind(this)
+        ,1
+        ,false);
       this.navCtrl.push(SchuetzeResultatPage, {
         schuetze: object,
         schuetzeKey: object.key,
         schuetzenfestKey: this.schuetzenfest.key,
+        resultate: resultate
       });
     } else {
       console.log("show stich ", object);

@@ -33,14 +33,8 @@ export class SchuetzeResultatPage {
     this.schuetze = navParams.get('schuetze');
     this.schuetzeKey = navParams.get('schuetzeKey');
     this.schuetzenfestKey = navParams.get('schuetzenfestKey');
-    this.fbSvc.getSchuetzeAboByKey(this.schuetzeKey).subscribe(
-      "pages/schuetze-resultat/schuetze"
-      ,function(s) {
-        this.schuetze = s;
-        this.resultate = map(filter(this.schuetze.resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfestKey), r => new ResultatViewModel(r));
-      }.bind(this)
-      ,1
-      ,false);
+    this.resultate = navParams.get('resultate');
+    console.log(this.resultate);
   }
 
   ionViewDidLoad() {
@@ -64,6 +58,10 @@ export class SchuetzeResultatPage {
 
   updateResultat() {
     console.log("Updating!");
+    for (let i = 0; i < this.punktzahlen.length; i++) {
+      this.resultate[i].punktzahl = this.punktzahlen[i];
+      console.log("Resultat " + i + " " + this.resultate[i]);
+    }
     this.fbSvc.crudBatchResultat(map(this.resultate, r => r.model), "", "", CRUD.UPDATE);
     this.navCtrl.pop();
   }
