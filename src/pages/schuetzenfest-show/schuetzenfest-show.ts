@@ -10,8 +10,6 @@ import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {StichEditPage} from "../stich-edit/stich-edit";
 import {Stich} from "../../app/entities/Stich";
-import {Subscription} from "rxjs/Subscription";
-import {Resultat} from "../../app/entities/Resultat";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import filter from 'lodash/filter';
 import orderBy from 'lodash/orderBy';
@@ -52,14 +50,14 @@ export class SchuetzenfestShowPage {
 
   private schuetzen: Schuetze[] = [];
   private schuetzenFiltered: Schuetze[] = [];
-  private schuetzenSubscription: Subscription;
-  private sticheSubscription: Subscription;
 
   private stiche: Stich[] = [];
 
   schuetzenfest: Schuetzenfest;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController, private barcodeScanner: BarcodeScanner) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider,
+              public platform: Platform, public actionsheetCtrl: ActionSheetController,
+              private alertCtrl: AlertController, private barcodeScanner: BarcodeScanner) {
     this.schuetzenfest = navParams.get('schuetzenfest');
     this.searchbarShowing = false; // hide search bar by default
     console.log(this.schuetzen);
@@ -199,7 +197,7 @@ export class SchuetzenfestShowPage {
           icon: !this.platform.is('ios') ? 'trash' : null,
           handler: () => {
             console.log('Löschen clicked');
-            this.confirmDelete(object);
+            this.confirmDelete(object, false);
           }
         },
         {
@@ -215,7 +213,7 @@ export class SchuetzenfestShowPage {
     actionSheet.present();
   }
 
-  confirmDelete(object: Schuetze|Stich) {
+  confirmDelete(object: Schuetze|Stich, popView: boolean) {
     let alert = this.alertCtrl.create({
       title: 'Löschen bestätigen',
       message: 'Wirklich löschen?',
@@ -232,6 +230,9 @@ export class SchuetzenfestShowPage {
           handler: () => {
             console.log('OK clicked');
             this.delete(object);
+            if (popView) {
+              this.navCtrl.pop();
+            }
           }
         }
       ]

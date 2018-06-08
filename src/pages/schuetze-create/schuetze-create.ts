@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {Schuetze} from "../../app/entities/Schuetze";
-import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
+import {FirebaseServiceProvider} from "../../app/firebase-service";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {Stich} from "../../app/entities/Stich";
 import {Resultat} from "../../app/entities/Resultat";
@@ -59,7 +59,6 @@ export class SchuetzeCreatePage {
     this.fbSvc.crudSchuetze(newSchuetze, this.schuetzenfest.key);
     console.log(newSchuetze);
     console.log(this.schuetzenfest.key);
-    // this.fbSvc.crudSchuetze("OKAY", this.schuetzenfest.key, CRUD.PUSH);
 
     // Change view
     this.navCtrl.pop();

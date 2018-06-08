@@ -28,11 +28,4 @@ export class StichShowPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad StichShowPage');
   }
-
-  delete(stich: Stich) {
-    if (this.handler.confirmDelete(stich)) {
-      this.navCtrl.pop();
-    }
-  }
-
 }

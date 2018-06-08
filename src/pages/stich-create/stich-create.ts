@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {FirebaseServiceProvider, CRUD} from "../../app/firebase-service";
 import {Stich} from "../../app/entities/Stich";
 

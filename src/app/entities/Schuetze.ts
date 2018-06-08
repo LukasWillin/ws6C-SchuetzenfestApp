@@ -7,8 +7,6 @@ import isString from 'lodash/isString';
 import isBoolean from 'lodash/isBoolean';
 import isDate from 'lodash/isDate';
 
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-
 export class Schuetze {
 
   get schuetzenfestKeyList() : string[] {

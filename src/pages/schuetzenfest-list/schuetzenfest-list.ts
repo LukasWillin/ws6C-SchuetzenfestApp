@@ -5,7 +5,6 @@ import {SchuetzenfestEditPage} from "../schuetzenfest-edit/schuetzenfest-edit";
 import {FirebaseServiceProvider, CRUD} from "../../app/firebase-service";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import {Component} from "@angular/core";
-import {Subscription} from "rxjs/Subscription";
 import {ActionSheetController, AlertController, IonicPage, NavController, NavParams, Platform} from "ionic-angular";
 import take from 'lodash/take';
 import orderBy from 'lodash/orderBy';
