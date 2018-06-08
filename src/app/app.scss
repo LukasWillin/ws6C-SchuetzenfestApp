@@ -14,3 +14,15 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+//.list-md .item-input.item-input-has-focus:last-child, .list-md .item-input.input-has-focus:last-child {
+//  margin: 20px 20px 20px 20px !important;
+//}
+
+.list-md .item-input:last-child {
+  margin-left: 16px !important;
+  padding-left: 0 !important;
+}
+
+ion-item.item {
+  padding-right: 16px !important;
+}
