@@ -92,21 +92,21 @@ export class SchuetzenfestShowPage {
   show(object: Schuetze | Stich) {
     if (object instanceof Schuetze) {
       console.log("show schuetze ", object);
-      var resultate: Resultat[] = [];
       this.fbSvc.getSchuetzeAboByKey(object.key).subscribe(
         "pages/schuetze-resultat/schuetze"
         ,function(s) {
           object = s;
-          this.resultate = map(filter((object as Schuetze).resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfest.key), r => new ResultatViewModel(r));
+          let resultate = map(filter((object as Schuetze).resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfest.key), r => new ResultatViewModel(r));
+          this.navCtrl.push(SchuetzeResultatPage, {
+            schuetze: object,
+            schuetzeKey: object.key,
+            schuetzenfestKey: this.schuetzenfest.key,
+            resultate: resultate
+          });
         }.bind(this)
         ,1
         ,false);
-      this.navCtrl.push(SchuetzeResultatPage, {
-        schuetze: object,
-        schuetzeKey: object.key,
-        schuetzenfestKey: this.schuetzenfest.key,
-        resultate: resultate
-      });
+
     } else {
       console.log("show stich ", object);
       this.navCtrl.push(StichShowPage, {
