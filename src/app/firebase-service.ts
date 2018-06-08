@@ -89,7 +89,7 @@ export class FirebaseServiceProvider {
       } else {
         resolve(stL, 250);
       }
-    }, [], 100);
+    }.bind(this), [], 100);
 
     this._resultateAbo = new Abonnement<Resultat[]>(function publisher(resolve, rL) {
       rL = this._resultate;
@@ -102,7 +102,7 @@ export class FirebaseServiceProvider {
       } else {
         resolve(rL, 250);
       }
-    }, [], 100);
+    }.bind(this), [], 100);
 
     this._sticheAbo.subscribe(
       "providers/firebase-service/resultateAbo"
@@ -117,7 +117,7 @@ export class FirebaseServiceProvider {
       } else {
         resolve(sfL, 250);
       }
-    }, [], 100);
+    }.bind(this), [], 100);
 
     this._schuetzenAbo = new Abonnement<Schuetze[]>(function publisher(resolve, sL) {
       sL = this._schuetzen;
@@ -130,7 +130,7 @@ export class FirebaseServiceProvider {
       } else {
         resolve(sL, 250);
       }
-    }, [], 100);
+    }.bind(this), [], 100);
 
     this._resultateAbo.subscribe(
       "providers/firebase-service/schuetzeAbo"
@@ -338,13 +338,13 @@ export class FirebaseServiceProvider {
 
   public getSticheAboBySchuetzeKey(key:string) : Abonnement<Stich[]> {
     if (!_.isEmpty(key)) {
-      let abo = new Abonnement<Stich[]>(function publisher(resolve, rL) {
+      let abo = new Abonnement<Stich[]>((function publisher(resolve, rL) {
         if (rL) {
           resolve(_.map(rL, r => (r as Resultat).stich));
         } else {
           resolve(rL, 250);
         }
-      }, [], 100);
+      }).bind(this), [], 100);
 
       abo.ownSubscription = this.getResultateAboBySchuetzeKey(key).subscribe(
         `providers/firebase-service/sticheBySchuetzeKey/${key}`
@@ -366,7 +366,7 @@ export class FirebaseServiceProvider {
         } else {
           resolve(rL, 250);
         }
-      }, [], 100);
+      }.bind(this), [], 100);
 
       abo.ownSubscription = this.resultateAbo.subscribe(
         `providers/firebase-service/resultateByStichKey/${key}`
@@ -388,7 +388,7 @@ export class FirebaseServiceProvider {
         } else {
           resolve(sfL, 250);
         }
-      }, [], 100);
+      }.bind(this), [], 100);
 
       abo.ownSubscription = this.schuetzenfesteAbo.subscribe(
         `providers/firebase-service/schuetzenfestByKey/${key}`
@@ -411,15 +411,15 @@ export class FirebaseServiceProvider {
           } else {
             resolve(sL, 250);
           }
-        }
+        }.bind(this)
         ,[]
         ,100);
 
       abo.ownSubscription = this.schuetzenAbo.subscribe(
         `providers/firebase-service/schuetzenBySchuetzenfestKey/${key}`
         , abo.publishNewIssue
-        , undefined
-        , true);
+        ,undefined
+        ,true);
 
       return abo;
     } else {
@@ -435,7 +435,7 @@ export class FirebaseServiceProvider {
         } else {
           resolve(sL, 250);
         }
-      }, [], 100);
+      }.bind(this), [], 100);
 
       abo.ownSubscription = this.schuetzenAbo.subscribe(
         `providers/firebase-service/schuetzeByKey/${key}`
@@ -457,7 +457,7 @@ export class FirebaseServiceProvider {
         } else {
           resolve(stL, 250);
         }
-      }, [], 100);
+      }.bind(this), [], 100);
 
       abo.ownSubscription = this.schuetzenAbo.subscribe(
         `providers/firebase-service/stichByKey/${key}`
@@ -495,7 +495,7 @@ export class FirebaseServiceProvider {
         } else {
           resolve(stL, 250);
         }
-      }, [], 100);
+      }.bind(this), [], 100);
 
       abo.ownSubscription = this.sticheAbo.subscribe(
         `providers/firebase-service/stichBySchuetzenfestKey/${schuetzenfestKey}`
@@ -517,7 +517,7 @@ export class FirebaseServiceProvider {
         } else {
           resolve(rL, 250);
         }
-      }, [], 100);
+      }.bind(this), [], 100);
 
       abo.ownSubscription = this.resultateAbo.subscribe(
         `providers/firebase-service/resultateBySchuetzeKey/${schuetzeKey}`
@@ -541,7 +541,7 @@ export class FirebaseServiceProvider {
         } else {
           resolve(rL, 250);
         }
-      }, [], 100);
+      }.bind(this), [], 100);
 
       abo.ownSubscription = this.getResultateAboBySchuetzeKey(schuetzeKey).subscribe(
         `providers/firebase-service/resultateBySchuetzeAndSchuetzenfestKey/${schuetzeKey}${schuetzenfestKey}`
