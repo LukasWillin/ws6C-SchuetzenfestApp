@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {AlertController, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Stich} from "../../app/entities/Stich";
 import {Schuetze} from "../../app/entities/Schuetze";
 import {Resultat} from "../../app/entities/Resultat";
@@ -28,7 +28,8 @@ export class SchuetzeResultatPage {
 
   resultate : Resultat[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider,
+  private alertCtrl: AlertController) {
     this.schuetze = navParams.get('schuetze');
     this.schuetzeKey = navParams.get('schuetzeKey');
     this.schuetzenfestKey = navParams.get('schuetzenfestKey');
@@ -70,6 +71,30 @@ export class SchuetzeResultatPage {
 
   clickBack() {
     // TODO: Ask if user wants to exit. For now this is that we can work around this
+
+    let alert = this.alertCtrl.create({
+      title: 'Resultat eingeben',
+      message: 'Wirklich zurück gehen? Sie haben kein Resultat eingegeben.',
+      buttons: [
+        {
+          text: 'Abbrechen',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            console.log('OK clicked');
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    });
+    alert.present();
+
+
     this.navCtrl.pop();
 
   }
