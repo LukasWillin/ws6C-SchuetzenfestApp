@@ -39,6 +39,10 @@ export class SchuetzeResultatPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ResultatPage');
+    // initialize default values for selects
+    for (let i = 0; i < this.punktzahlen.length; i++) {
+      this.punktzahlen[i] = this.resultate[i].punktzahl;
+    }
   }
 
   resultatMax(stich) {
