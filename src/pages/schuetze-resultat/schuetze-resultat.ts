@@ -68,4 +68,10 @@ export class SchuetzeResultatPage {
     this.navCtrl.pop();
   }
 
+  clickBack() {
+    // TODO: Ask if user wants to exit. For now this is that we can work around this
+    this.navCtrl.pop();
+
+  }
+
 }
