@@ -5,6 +5,8 @@ import {Schuetze} from "../../app/entities/Schuetze";
 import {Resultat} from "../../app/entities/Resultat";
 import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 
+import filter from 'lodash/filter';
+
 /**
  * Generated class for the SchuetzeResultatPage page.
  *
@@ -35,16 +37,12 @@ export class SchuetzeResultatPage {
     console.log('ionViewDidLoad ResultatPage');
     this.fbSvc.getSchuetzeAboByKey(this.schuetzeKey).subscribe(
       "pages/schuetze-resultat/schuetze"
-      ,s => {
+      ,function(s) {
         this.schuetze = s;
-        this.fbSvc.getResultateAboBySchuetzeAndSchuetzenfestKey(this.schuetzenfestKey, this.schuetzeKey)
-          .subscribe("pages/schuetze-resultat/schuetze-resultate"
-            ,rL => this.resultate = rL
-            ,1
-            ,true);
-      }
+        this.resultate.push.apply(this.resultate, filter(this.schuetze.resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfestKey));
+      }.bind(this)
       ,1
-      ,true);
+      ,false);
   }
 
   resultatMax(stich) {
