@@ -31,7 +31,7 @@
 
   <ion-item>
     <ion-label stacked>Lizenznummer</ion-label>
-    <ion-input [(ngModel)]="lizenzNr" type="text" value={{schuetze.lizenzNr}}></ion-input>
+    <ion-input [(ngModel)]="lizenzNr" type="number" min="0" max="999999" step="1" value={{schuetze.lizenzNr}}></ion-input>
   </ion-item>
 
   <ion-item *ngFor="let stich of stiche; let index = index;">
