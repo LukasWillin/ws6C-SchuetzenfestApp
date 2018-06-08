@@ -8,6 +8,55 @@ import isDate from 'lodash/isDate';
 
 import { Stich } from './Stich';
 
+export class ResultatViewModel {
+  get stich(): Stich {
+    return this._model.stich;
+  }
+
+  set stich(value: Stich) {
+    this._model.stich = value;
+  }
+
+  get punktzahl(): number {
+    return (this._model.punktzahl >= 0) ? this._model.punktzahl : undefined;
+  }
+
+  set punktzahl(value: number) {
+    if(value >= 0) {
+      this._model.punktzahl = value;
+    } else {
+      this._model.punktzahl = -1;
+    }
+  }
+
+  public get key() : string {
+    return this._model.key;
+  }
+
+  public get isPlaceholder() : boolean {
+    return this._model.isPlaceholder;
+  }
+
+  public get lastChanged() : Date {
+    return this._model.lastChanged;
+  }
+
+  public get clone() : ResultatViewModel {
+    return new ResultatViewModel(this._model);
+  }
+  public toString() : string {
+    return this._model.toString();
+  }
+
+  public get model(): Resultat {
+    return this._model;
+  }
+
+  constructor(private _model:Resultat) {
+
+  }
+}
+
 export class Resultat {
   get stich(): Stich {
     return this._field_stich;
@@ -53,6 +102,7 @@ export class Resultat {
 
 
   constructor(obj?:any, setPlaceholder?:boolean) {
+
     if (arguments.length === 1)
       setPlaceholder = obj;
 

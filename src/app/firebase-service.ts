@@ -87,7 +87,7 @@ export class FirebaseServiceProvider {
       if (stL) {
         resolve(stL);
       } else {
-        resolve(stL, 250);
+        resolve(stL, 500);
       }
     }.bind(this), [], 100);
 
@@ -100,7 +100,7 @@ export class FirebaseServiceProvider {
         }
         resolve(rL);
       } else {
-        resolve(rL, 250);
+        resolve(rL, 500);
       }
     }.bind(this), [], 100);
 
@@ -115,7 +115,7 @@ export class FirebaseServiceProvider {
       if (sfL) {
         resolve(sfL);
       } else {
-        resolve(sfL, 250);
+        resolve(sfL, 500);
       }
     }.bind(this), [], 100);
 
@@ -124,11 +124,20 @@ export class FirebaseServiceProvider {
       if (sL) {
         for (let i = 0; i < sL.length; i++) {
           let s : Schuetze = sL[i];
-          s._field_resultate = _.filter(this._resultate, r => r._fbSchuetzeKey === s.key);
+          (function(_s) {
+            this._resultateAbo.subscribe(
+              "providers/firebase-service/schuetzenAbo"
+              ,function(rL) {
+                _s._field_resultate = _.filter(rL, r => r._fbSchuetzeKey === s.key);
+              }
+              ,1
+              ,true
+            )
+          }.bind(this))(s)
         }
         resolve(sL);
       } else {
-        resolve(sL, 250);
+        resolve(sL, 500);
       }
     }.bind(this), [], 100);
 
@@ -190,6 +199,8 @@ export class FirebaseServiceProvider {
     let fbKey:string = instance.key;
     if (_.isUndefined(crudOp)) crudOp = _.isEmpty(fbKey) ? CRUD.PUSH : CRUD.UPDATE;
 
+    instance = new Schuetze(instance);
+
     if (!_.isEmpty(schuetzenfestKey) && !_.includes(instance._fb_list_schuetzenfestKey, schuetzenfestKey)) {
       instance._fb_list_schuetzenfestKey.push(schuetzenfestKey);
       this.updateLastChanged(FBREF_PATH_SCHUETZENFESTE, schuetzenfestKey);
@@ -228,6 +239,8 @@ export class FirebaseServiceProvider {
 
     const fbKey:string = instance.key;
 
+    instance = new Schuetzenfest(instance);
+
     if (crudOp === CRUD.DELETE) {
       this._fbRefSchuetzenfeste.remove(fbKey);
     } else {
@@ -255,6 +268,8 @@ export class FirebaseServiceProvider {
    */
   public crudStich(instance: Stich, schuetzenfestKey:string, crudOp?: string) {
     const fbKey:string = instance.key;
+
+    instance = new Stich(instance);
 
     instance._fbSchuetzenfestKey = schuetzenfestKey;
 
@@ -307,6 +322,7 @@ export class FirebaseServiceProvider {
   public crudResultat(instance: Resultat, stichKey:string, schuetzeKey:string, crudOp?: string) {
 
     const fbKey:string = instance.key;
+    instance = new Resultat(instance);
     if (_.isEmpty(schuetzeKey)) {
       schuetzeKey = instance._fbSchuetzeKey;
     } else {

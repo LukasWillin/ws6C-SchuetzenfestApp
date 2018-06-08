@@ -2,10 +2,11 @@ import {Component} from '@angular/core';
 import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {Stich} from "../../app/entities/Stich";
 import {Schuetze} from "../../app/entities/Schuetze";
-import {Resultat} from "../../app/entities/Resultat";
+import {Resultat, ResultatViewModel} from "../../app/entities/Resultat";
 import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 
 import filter from 'lodash/filter';
+import map from 'lodash/map';
 
 /**
  * Generated class for the SchuetzeResultatPage page.
@@ -26,7 +27,7 @@ export class SchuetzeResultatPage {
   schuetzenfestKey: string = "";
   punktzahlen: number[] = [];
 
-  resultate : Resultat[];
+  resultate : ResultatViewModel[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider) {
     this.schuetze = navParams.get('schuetze');
@@ -36,10 +37,9 @@ export class SchuetzeResultatPage {
       "pages/schuetze-resultat/schuetze"
       ,function(s) {
         this.schuetze = s;
-        this.resultate = filter(this.schuetze.resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfestKey);
-        console.warn(`called with ${this.schuetze}`);
+        this.resultate = map(filter(this.schuetze.resultate, r => (r as Resultat).stich.schuetzenfestKey === this.schuetzenfestKey), r => new ResultatViewModel(r));
       }.bind(this)
-      ,2
+      ,1
       ,false);
   }
 
@@ -64,8 +64,12 @@ export class SchuetzeResultatPage {
 
   updateResultat() {
     console.log("Updating!");
-    this.fbSvc.crudBatchResultat(this.resultate, "", "", CRUD.UPDATE);
+    this.fbSvc.crudBatchResultat(map(this.resultate, r => r.model), "", "", CRUD.UPDATE);
     this.navCtrl.pop();
+  }
+
+  updateResultatPunktzahl(punktzahl) {
+
   }
 
 }
