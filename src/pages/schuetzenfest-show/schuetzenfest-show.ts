@@ -59,7 +59,9 @@ export class SchuetzenfestShowPage {
 
   schuetzenfest: Schuetzenfest;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider, public platform: Platform, public actionsheetCtrl: ActionSheetController, private alertCtrl: AlertController, private barcodeScanner: BarcodeScanner) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public fbSvc : FirebaseServiceProvider,
+              public platform: Platform, public actionsheetCtrl: ActionSheetController,
+              private alertCtrl: AlertController, private barcodeScanner: BarcodeScanner) {
     this.schuetzenfest = navParams.get('schuetzenfest');
     this.searchbarShowing = false; // hide search bar by default
     console.log(this.schuetzen);
