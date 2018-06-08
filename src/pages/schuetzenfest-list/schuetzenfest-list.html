@@ -1,0 +1,27 @@
+<!--
+  Generated template for the SchuetzenfestListPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>Schützenfeste</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding-top>
+  <ion-list>
+    <button ion-item no-lines [color]="even? 'light' : 'lightgrey'" *ngFor="let schuetzenfest of schuetzenfeste, let even = even"
+            (tap)="show(schuetzenfest)" (press)="presentActionSheet(schuetzenfest)">
+      {{ schuetzenfest.name }}
+    </button>
+  </ion-list>
+
+  <ion-fab right bottom>
+    <button ion-fab color="secondary" (tap)="create()"><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
+
+</ion-content>

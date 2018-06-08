@@ -1,0 +1,37 @@
+<!--
+  Generated template for the StichShowPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>{{stich.name}}</ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (tap)="handler.edit(stich)">
+        <ion-icon name="md-create"></ion-icon>
+      </button>
+
+      <button ion-button icon-only (tap)="handler.confirmDelete(stich, true)">
+        <ion-icon name="trash"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+
+
+</ion-header>
+
+
+<ion-content padding-top>
+  <ion-item>
+    <ion-label>Anzahl Schuss</ion-label>
+    <ion-label float-right text-right>{{stich.anzahlschuss}}</ion-label>
+  </ion-item>
+  <ion-item>
+    <ion-label>Scheibe</ion-label>
+    <ion-label float-right text-right>{{stich.scheibe}}</ion-label>
+  </ion-item>
+</ion-content>

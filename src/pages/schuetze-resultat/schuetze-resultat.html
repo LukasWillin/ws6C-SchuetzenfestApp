@@ -1,0 +1,45 @@
+<!--
+  Generated template for the SchuetzeResultatPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>{{schuetze.vorname}} {{schuetze.nachname}}</ion-title>
+
+    <ion-buttons left *ngIf="navCtrl.canGoBack()">
+      <button ion-button icon-only (click)="clickBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
+
+    <ion-buttons end>
+      <button ion-button icon-only (tap)="updateResultat()">
+        <ion-icon name="checkmark"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding-top>
+  <ion-list> <!-- Stiche -->
+
+    <!-- If result is in whole integers, show select, else show regular input for entry -->
+    <ion-item *ngFor="let resultat of resultate; let index = index;" [ngSwitch]="resultatIsDecimal(resultat.stich)"> <!-- Stich -->
+      <ion-label>{{ resultat.stich.name }}</ion-label>
+
+      <!-- Case: Select -->
+      <ion-select [(ngModel)]="punktzahlen[index]" *ngSwitchCase="true">
+        <ion-option *ngFor="let resultatWert of getResultatOptions(resultat.stich)" value="{{resultatWert}}">{{resultatWert}}</ion-option>
+      </ion-select>
+
+      <!-- Case: Input -->
+      <ion-input [(ngModel)]="punktzahlen[index]" type="number" value="{{resultat.punktzahl}}" *ngSwitchCase="false"
+                 min="0" max="{{resultatMax(resultat.stich)}}" step="0.1" text-right>{{resultat.punktzahl}}</ion-input>
+    </ion-item>
+  </ion-list>
+</ion-content>
