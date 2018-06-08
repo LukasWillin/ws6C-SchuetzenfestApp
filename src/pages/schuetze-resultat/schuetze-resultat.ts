@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {AlertController, IonicPage, NavController, NavParams} from 'ionic-angular';
-import {Stich} from "../../app/entities/Stich";
 import {Schuetze} from "../../app/entities/Schuetze";
 import {Resultat} from "../../app/entities/Resultat";
 import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
@@ -70,8 +69,6 @@ export class SchuetzeResultatPage {
   }
 
   clickBack() {
-    // TODO: Ask if user wants to exit. For now this is that we can work around this
-
     let alert = this.alertCtrl.create({
       title: 'Nicht speichern',
       message: 'Wirklich ohne zu speichern zurück gehen? Die eingegebenen Resultate gehen dann verloren!',
