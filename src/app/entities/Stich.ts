@@ -5,7 +5,6 @@ import isEmpty from 'lodash/isEmpty';
 import isBoolean from "lodash/isBoolean";
 import isDate from "lodash/isDate";
 import isNumber from 'lodash/isNumber';
-import {Schuetzenfest} from "./Schuetzenfest";
 import isString from "lodash/isString";
 
 export class Stich {

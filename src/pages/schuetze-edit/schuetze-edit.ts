@@ -4,7 +4,6 @@ import {CRUD, FirebaseServiceProvider} from "../../app/firebase-service";
 import {Schuetze} from "../../app/entities/Schuetze";
 import {Stich} from "../../app/entities/Stich";
 import {Resultat} from "../../app/entities/Resultat";
-import {groupBy} from "rxjs/operators";
 
 /**
  * Generated class for the SchuetzeEditPage page.

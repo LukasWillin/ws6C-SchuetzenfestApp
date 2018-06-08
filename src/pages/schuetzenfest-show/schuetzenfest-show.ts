@@ -10,8 +10,6 @@ import {SchuetzeEditPage} from "../schuetze-edit/schuetze-edit";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {StichEditPage} from "../stich-edit/stich-edit";
 import {Stich} from "../../app/entities/Stich";
-import {Subscription} from "rxjs/Subscription";
-import {Resultat} from "../../app/entities/Resultat";
 import {Schuetzenfest} from "../../app/entities/Schuetzenfest";
 import filter from 'lodash/filter';
 import orderBy from 'lodash/orderBy';
@@ -52,8 +50,6 @@ export class SchuetzenfestShowPage {
 
   private schuetzen: Schuetze[] = [];
   private schuetzenFiltered: Schuetze[] = [];
-  private schuetzenSubscription: Subscription;
-  private sticheSubscription: Subscription;
 
   private stiche: Stich[] = [];
 
